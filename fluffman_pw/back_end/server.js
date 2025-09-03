@@ -1,16 +1,22 @@
-//import express
+//importo express
 import express from "express";
 
-//import cors
+//importo cors
 import cors from "cors";
 
-//import dotenv
+//importo dotenv
 import dotenv from "dotenv";
 
 // FIXME: import router
 
 //caricare le variabili da .env
 dotenv.config();
+
+//middleware handleServerError
+import handleServerError from "./middlewares/handleServerError";
+
+//middleware notFoundError
+import notFoundError from "./middlewares/notFoundError";
 
 //funzione express
 const app = express();
@@ -30,5 +36,11 @@ app.use('/api/products', router);
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
 
-//server is listening
+//uso middleware handleServerError
+app.use(handleServerError);
+
+//uso middleware notFoundError
+app.use(notFoundError);
+
+//server in ascolto
 app.listen(PORT, () => { console.log(`Server is listening on http://127.0.0.1:${PORT}`) });
