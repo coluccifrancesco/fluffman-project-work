@@ -33,4 +33,51 @@
 
 li{
     font-size: 18px;
+
+    p,i{
+        color: var(--background);
+        transition: 0.2s;
+
+        &:hover{
+            color: var(--accent);
+        }
+    }
+}
+
+.search-btn{
+    color: var(--background);
+    border-radius: 10px;
+    padding: 5px 10px;
+    border: 2px solid var(--background);
+    background-color: transparent;
+    transition: 0.2s;
+
+    &:hover{
+        border: 2px solid var(--accent);
+        color: var(--accent);
+    }
+
+    &:active{
+        border: 2px solid var(--accent);
+        background-color: var(--accent);
+        color: white;
+    }
+}
+
+.offcanvas-btn{
+    font-size: 25px;
+    border-radius: 10px;
+    border: none;
+    background-color: transparent;
+    color: var(--background);
+    transition: 0.2s;
+
+    &:hover{
+        color: var(--accent);
+        box-shadow: 0 0 5px #e7a150;
+    }
+    
+    &:active{
+        box-shadow: 0 0 5px #e7a150;
+    }
 }

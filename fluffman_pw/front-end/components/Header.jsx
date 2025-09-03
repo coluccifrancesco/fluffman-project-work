@@ -20,21 +20,17 @@ export default function Header() {
 
             {/* Voci menù */}
             <ul className='d-none d-lg-flex list-unstyled m-0 gap-4 align-items-center'>
-                <li><Link><p className='m-0'>Prodotti</p></Link></li>
-                <li><Link><p className='m-0'>Cane</p></Link></li>
-                <li><Link><p className='m-0'>Gatto</p></Link></li>
-                <li><Link><p className='m-0'>Altri animali</p></Link></li>
-                <li><Link>
-                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Cerca
-                    </button>
-                </Link></li>
+                <li><Link style={{ textDecoration: 'none' }}><p className='m-0'>Prodotti</p></Link></li>
+                <li><Link style={{ textDecoration: 'none' }}><p className='m-0'>Cane</p></Link></li>
+                <li><Link style={{ textDecoration: 'none' }}><p className='m-0'>Gatto</p></Link></li>
+                <li><Link style={{ textDecoration: 'none' }}><p className='m-0'>Altri animali</p></Link></li>
+                <li><Link><button type="button" className="search-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Cerca</button></Link></li>
                 <li><Link><i className="fa-solid fa-star m-0"></i></Link></li>
                 <li><Link><i className="fa-solid fa-cart-shopping m-0"></i></Link></li>
             </ul>
 
-            {/* Modale */}
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            {/* Modale DA AGGIUSTARE */}
+            <div className="modal fade z-2" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -52,8 +48,9 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Offcanvas */}
-            <button className='d-block d-lg-none' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"></button>
+            {/* Offcanvas con relativi tipi di bottoni: uno tablet e uno mobile */}
+            <button className='offcanvas-btn d-none d-sm-block d-lg-none' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class="fa-solid fa-bars"></i></button>
+            <button className='offcanvas-btn d-block d-sm-none' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class="fa-solid fa-ellipsis-vertical"></i></button>
 
             <div className="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabIndex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
                 <div className="offcanvas-header">
@@ -64,7 +61,13 @@ export default function Header() {
                 {/* Voci menù */}
                 <div className="offcanvas-body px-4">
                     <ul className='list-unstyled m-0'>
-                        <li><p className='m-0'>Funziona</p></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}><p className='m-0'>Prodotti</p></Link></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}><p className='m-0'>Cane</p></Link></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}><p className='m-0'>Gatto</p></Link></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}><p className='m-0'>Altri animali</p></Link></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}><p type="button" className="m-0" data-bs-toggle="modal" data-bs-target="#exampleModal">Cerca</p></Link></li>
+                        <li className='py-2'><Link style={{ textDecoration: 'none' }}></Link><p className='m-0'>Wishlist</p></li>
+                        <li className='py-2'><Link><i className="fa-solid fa-cart-shopping m-0"></i></Link></li>
                     </ul>
                 </div>
             </div>
