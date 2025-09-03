@@ -1,57 +1,53 @@
+import { useState, useEffect } from "react";
 
-import React, { useState, useEffect } from 'react';
+export default function Carousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-export default function carousel() {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isLocked, setIsLocked] = useState(false);
+  const slides = [
+    {
+      image: "/carousel_img/happy_dog.jpg",
+    },
+    {
+      image: "/carousel_img/happy_cat.jpg",
+    },
+    {
+      image: "/carousel_img/happy_sphinx.jpg",
+    },
+    {
+      image: "/carousel_img/happy_rottie.jpg",
+    },
+    {
+      image: "/carousel_img/happy_maine.jpg",
+    },
+  ];
 
-    const slides = [
-        {
-            image: "image1.jpg",
-            caption: "Cane"
-        },
-        {
-            image: "image2.jpg",
-            caption: "Gatto"
-        },
-        {
-            image: "image3.jpg",
-            caption: "Criceto"
-        },
-        {
-            image: "image4.jpg",
-            caption: "Pesce Rosso"
-        },
-        {
-            image: "image5.jpg",
-            caption: "Pappagallo"
-        },
-    ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    }, 3000); //interval 3s
 
-    useEffect(() => {
-        if (isLocked) return;
+    return () => clearInterval(interval); //clears interval
+  }, []);
 
-        setAutoSlide();
-    }, [isLocked]);
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+  };
 
-    const setAutoSlide = () => {
-        setTimeout(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-        }, 3000); // Cambia ogni 3 secondi (3000ms)
-    };
-
-    const toggleSlide = () => {
-        setIsLocked(true); // Impedisce scorrimenti multipli
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-        setTimeout(() => { setIsLocked(false); }, 50); // Rilascia il blocco dopo un breve periodo
-    };
-
-    return (
-        <div className="carosello">
-            <div className="slide" onClick={toggleSlide}>
-                <img src={slides[currentIndex].image} alt={slides[currentIndex].image} />
-                <div className="caption">{slides[currentIndex].caption}</div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="carosello" style={{ textAlign: "center" }}>
+      <div className="slide" onClick={nextSlide}>
+        <img
+          src={slides[currentIndex].image}
+          alt={slides[currentIndex].caption}
+          style={{
+            width: "100rem",
+            height: "500px",
+            objectFit: "contain",
+            overflow: "hidden",
+          }}
+        />
+        <div className="caption">{slides[currentIndex].caption}</div>
+      </div>
+    </div>
+  );
 }
