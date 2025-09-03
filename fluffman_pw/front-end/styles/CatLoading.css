@@ -1,0 +1,249 @@
+/** LoadingCat Component Css Styles */
+/* This component creates a loading cat image using gradients and div to separate each limb and body part of the smiling cat.
+It's possible to change color of every piece of the cat, sizing or speed of the loop */
+
+/*#region LoadingCat */
+.loading-cat {
+  position: relative;
+  display: inline-block;
+  width: 480px;
+  height: 360px;
+  animation: 2.74s linear infinite loading-cat;
+}
+.loading-cat .head,
+.loading-cat .foot,
+.loading-cat .body {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 50%;
+  width: 240px;
+  height: 240px;
+}
+.loading-cat .body {
+  background-image: radial-gradient(
+    transparent 0 35%,
+    #383c4b 35% 39%,
+    #eda65d 39% 46%,
+    #f2c089 46% 60%,
+    #eda65d 60% 67%,
+    #383c4b 67% 100%
+  );
+  animation: 2.74s linear infinite body;
+}
+.loading-cat .head:before,
+.loading-cat .foot:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    transparent 0 35%,
+    #383c4b 35% 39%,
+    #eda65d 39% 67%,
+    #383c4b 67% 100%
+  );
+}
+.loading-cat .head:before {
+  clip-path: polygon(100% 20%, 50% 50%, 70% -10%);
+}
+.loading-cat .head:after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  right: 63px;
+  width: 66px;
+  height: 40px;
+  transform: rotate(-66deg);
+  background-image: linear-gradient(#3a8376 65%, transparent 65%),
+    radial-gradient(#3a8376 51%, #383c4b 55% 68%, transparent 70%);
+}
+.loading-cat .head .face {
+  position: absolute;
+  top: 29px;
+  left: 145px;
+  width: 80px;
+  height: 60px;
+  transform: rotate(-47deg);
+  background: radial-gradient(circle, #f2c089 0 23%, transparent 23%) -3px 17px no-repeat,
+    radial-gradient(circle, #383c4b 0 6%, transparent 6%) 12px -12px no-repeat,
+    radial-gradient(circle, #383c4b 0 6%, transparent 6%) -12px -12px no-repeat,
+    radial-gradient(#eda65d 0 15%, transparent 15%) 0 -11px no-repeat,
+    radial-gradient(circle, transparent 5%, #383c4b 5% 10%, transparent 10%) -3px -5px
+      no-repeat,
+    radial-gradient(circle, transparent 5%, #383c4b 5% 10%, transparent 10%) 3px -5px
+      no-repeat,
+    radial-gradient(circle, #eda65d 45%, transparent 45%) 0 -3px,
+    linear-gradient(
+      transparent 35%,
+      #383c4b 35% 41%,
+      transparent 41% 44%,
+      #383c4b 44% 50%,
+      transparent 50% 53%,
+      #383c4b 53% 59%,
+      transparent 59%
+    );
+}
+.loading-cat .foot:before,
+.loading-cat .foot:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.loading-cat .foot:before {
+  clip-path: polygon(50% 50%, 0% 50%, 0% 25%);
+}
+.loading-cat .foot {
+  animation: 2.74s linear infinite foot;
+}
+.loading-cat .foot .tummy-end {
+  position: absolute;
+  top: 105px;
+  left: 19px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f2c089;
+}
+.loading-cat .foot .bottom {
+  position: absolute;
+  top: 78px;
+  left: 12px;
+  width: 48px;
+  height: 15px;
+  background: #eda65d;
+  border-top: 6.5px solid #383c4b;
+  border-radius: 50%;
+  transform: rotate(21deg);
+}
+.loading-cat .hands,
+.loading-cat .legs,
+.loading-cat .foot:after {
+  position: absolute;
+  background-color: #eda65d;
+  border: 6.5px solid #383c4b;
+}
+.loading-cat .hands,
+.loading-cat .legs {
+  width: 10px;
+  height: 25px;
+}
+.loading-cat .hands {
+  border-top: 0;
+  border-radius: 0 0 13px 13px;
+}
+.loading-cat .hands.left {
+  top: 144px;
+  right: 161px;
+  transform: rotate(-20deg);
+}
+.loading-cat .hands.right {
+  top: 123px;
+  right: 128px;
+  transform: rotate(-25deg);
+}
+.loading-cat .legs {
+  border-bottom: 0;
+  border-radius: 13px 13px 0 0;
+}
+.loading-cat .legs.left {
+  top: 65px;
+  left: 49px;
+  transform: rotate(25deg);
+}
+.loading-cat .legs.right {
+  top: 53px;
+  left: 12px;
+  transform: rotate(22deg);
+}
+.loading-cat .foot:after {
+  top: 42px;
+  left: 36px;
+  width: 8px;
+  height: 40px;
+  z-index: -1;
+  transform: rotate(25deg);
+  background-color: #c6823b;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+}
+/*#endregion LoadingCat*/
+
+/*#region KeyFrames */
+@keyframes body {
+  0% {
+    clip-path: polygon(50% 50%, 0% 50%, 0% 100%, 100% 100%, 100% 20%);
+  }
+  10% {
+    clip-path: polygon(50% 50%, 30% 120%, 50% 100%, 100% 100%, 100% 20%);
+  }
+  20% {
+    clip-path: polygon(50% 50%, 100% 90%, 120% 90%, 100% 100%, 100% 20%);
+  }
+  40%,
+  50% {
+    clip-path: polygon(50% 50%, 100% 45%, 120% 45%, 120% 50%, 100% 20%);
+  }
+  65% {
+    clip-path: polygon(50% 50%, 100% 65%, 120% 65%, 120% 50%, 100% 20%);
+  }
+  80% {
+    clip-path: polygon(50% 50%, 75% 130%, 120% 65%, 120% 50%, 100% 20%);
+  }
+  90% {
+    clip-path: polygon(50% 50%, -20% 110%, 50% 120%, 100% 100%, 100% 20%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 0% 50%, 0% 100%, 100% 100%, 100% 20%);
+  }
+}
+@keyframes loading-cat {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-80deg);
+  }
+  20% {
+    transform: rotate(-180deg);
+  }
+  40% {
+    transform: rotate(-245deg);
+  }
+  50% {
+    transform: rotate(-250deg);
+  }
+  68% {
+    transform: rotate(-300deg);
+  }
+  90% {
+    transform: rotate(-560deg);
+  }
+  100% {
+    transform: rotate(-720deg);
+  }
+}
+@keyframes foot {
+  0% {
+    transform: rotate(-10deg);
+  }
+  10% {
+    transform: rotate(-100deg);
+  }
+  20% {
+    transform: rotate(-145deg);
+  }
+  35% {
+    transform: rotate(-190deg);
+  }
+  50% {
+    transform: rotate(-195deg);
+  }
+  70% {
+    transform: rotate(-165deg);
+  }
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+/*#endregion KeyFrames*/
