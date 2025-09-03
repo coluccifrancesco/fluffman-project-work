@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function header(){
+export default function Header(){
     return <header>
 
         <nav className='px-4 d-flex jsutify-content-between align-items-center'>
