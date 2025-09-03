@@ -13,10 +13,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 //middleware handleServerError
-import handleServerError from "./middlewares/handleServerError";
+import handleServerError from "./middlewares/handleServerError.js";
 
 //middleware notFoundError
-import notFoundError from "./middlewares/notFoundError";
+import notFoundError from "./middlewares/notFoundError.js";
 
 //funzione express
 const app = express();
@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(cors());
 
 //rottte API
-app.use('/api/products', router);
+// FIXME: app.use('/api/products', router);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
