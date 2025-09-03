@@ -1,6 +1,3 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import "bootstrap-icons/font/bootstrap-icons.css";
-
 /*#region ROOT*/
 :root {
   --text: #f3f1ec;
@@ -10,3 +7,7 @@
   --accent: #e7a150;
 }
 /*#endregion ROOT */
+
+.hp_bg {
+  background-color: var(--background);
+}
