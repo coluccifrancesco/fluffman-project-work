@@ -4,7 +4,7 @@ Collaboratori:
 - Mariya Dyshkant
 - Nicola Domingo Rizzo
 - Francesco Colucci
-- Francsco Sales
+- Francesco Sales
 - Adriano Rotondo
 
 ## In breve:
