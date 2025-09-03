@@ -4,7 +4,7 @@ export default function header(){
     return <header>
 
         <nav className='px-4 d-flex jsutify-content-between align-items-center'>
-            <div></div>
+            <img src='../public/Logo1.png' />
             
             <div></div>
         </nav>
