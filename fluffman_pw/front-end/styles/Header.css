@@ -1,0 +1,36 @@
+:root {
+  --text: #f3f1ec;
+  --background: #3a8376;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.upper-header{
+    background-color: var(--accent);
+    color: white;
+}
+
+.header-logo-belowLg{
+    height: 70px;
+    transition: 0.15s;
+}
+
+.header-logo-fromLg{
+    height: 80px;
+    transition: 0.2s;
+}
+
+.header-logo-belowLg:hover,
+.header-logo-fromLg:hover{
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+.header-logo-belowLg:hover{
+    rotate: 15deg;
+}
+
+li{
+    font-size: 18px;
+}
