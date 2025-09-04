@@ -7,7 +7,7 @@ import cors from "cors";
 //importo dotenv
 import dotenv from "dotenv";
 
-// FIXME: import router
+import productsRouter from './routes/productsRouter.js';
 
 //caricare le variabili da .env
 dotenv.config();
@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(cors());
 
 //rottte API
-// FIXME: app.use('/api/products', router);
+app.use('/api/products', productsRouter);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });

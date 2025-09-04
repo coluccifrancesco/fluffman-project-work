@@ -1,15 +1,37 @@
-//importo express
+// importo express
 import express from "express";
 
-// import {NOMI ROTTE CONTROLLERS} from ''
+// Importa i controller che abbiamo creato in precedenza
+// Nota: ho aggiunto 'changePrice' all'import
+import {
+    index,
+    store,
+    update,
+    destroy,
+    changePrice
+} from '../controllers/productsController.js';
 
 //inizializzo il router
 const router = express.Router();
 
-//FIXME: router.get("/", NOME INDEX); // lista
-//FIXME: router.get("/", NOME STORE); // crea
-//FIXME: router.patch("/:id/status", NOME CHANGESTATUS); // cambia stato (completed)
-//FIXME: router.put("/:id", NOME UPDATE); // aggiorna
-//FIXME: router.delete("/:id", NOME DESTROY); // elimina
+// --- ROTTE CRUD BASE ---
+
+// Rotta index
+router.get('/', index);
+
+// Rotta store
+router.post('/', store);
+
+// Rotta update
+router.put('/:id', update);
+
+// Rotta destroy
+router.delete('/:id', destroy);
+
+// --- ROTTA SPECIFICA ---
+
+// Rotta per aggiornare solo il prezzo di un prodotto (UPDATE)
+// Usiamo PATCH perché stiamo modificando solo un campo specifico.
+router.patch('/:id/price', changePrice);
 
 export default router;
