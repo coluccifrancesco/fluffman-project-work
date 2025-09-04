@@ -6,6 +6,7 @@ import CatProductsPage from "../pages/CatProductsPage";
 import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
 import AboutUsPage from '../pages/AboutUsPage'
 import SingleProductPage from "../pages/SingleProductPage";
+import ContactsPage from "../pages/ContactsPage";
 
 
 
@@ -24,6 +25,7 @@ function App() {
               element={<OtherAnimalProductsPage />}
             />
             <Route path="/SingleProductPage" element={<SingleProductPage />} />
+            <Route path="/Contacts" element={<ContactsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
