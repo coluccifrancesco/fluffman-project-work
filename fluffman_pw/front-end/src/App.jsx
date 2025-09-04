@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layouts/DefaultLayout";
 import HomePage from "../pages/HomePage";
-import DogProducts from "../components/DogProducts";
-import CatProducts from "../components/CatProducts";
-import OtherAnimalProducts from "../components/OtherAnimalProducts";
+import DogProductsPage from "../pages/DogProductsPage";
+import CatProductsPage from "../pages/CatProductsPage";
+import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
 
 
 
@@ -15,9 +15,9 @@ function App() {
         <Routes>
           <Route path="/" element={<DefaultLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/DogProducts" element={<DogProducts />} />
-            <Route path="/CatProducts" element={<CatProducts />} />
-            <Route path="/OtherAnimalProducts" element={<OtherAnimalProducts />} />
+            <Route path="/DogProducts" element={<DogProductsPage />} />
+            <Route path="/CatProducts" element={<CatProductsPage />} />
+            <Route path="/OtherAnimalProducts" element={<OtherAnimalProductsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

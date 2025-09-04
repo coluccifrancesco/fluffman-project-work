@@ -38,6 +38,18 @@ const products = [
         price: 24.99,
         image: "product6.webp"
     },
+    {
+        id: 7,
+        title: "Prodotto 7",
+        price: 27.99,
+        image: "product7.webp"
+    },
+    {
+        id: 8,
+        title: "Prodotto 8",
+        price: 30.99,
+        image: "product8.webp"
+    }
 ];
 
 export default function NewProducts() {
