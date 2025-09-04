@@ -13,8 +13,9 @@ export default function HomePage() {
       <div className="p-3">
         <div className="container my-4">
           {/*Section - Best Sellers */}
-          <h2 className="mb-3">Nuovi Prodotti</h2>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          <h2 className="mb-3 d-block d-md-none text-center">Nuovi Prodotti</h2>
+          <h2 className="mb-3 d-none d-md-block">Nuovi Prodotti</h2>
+          <div className="row row-cols-1  row-cols-md-2 row-cols-lg-4 g-4 ">
             {[...Array(4)].map((_, idx) => (
               <CardItem key={idx} title={`Prodotto ${idx + 1}`} />
             ))}
