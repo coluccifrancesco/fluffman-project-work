@@ -1,0 +1,70 @@
+:root {
+    --text: #f3f1ec;
+    --background: #3a8376;
+    --primary: #daf6e3;
+    --secondary: #af6818;
+    --accent: #e7a150;
+}
+
+.i-and-p-hover:hover {
+
+    i,
+    p {
+        color: var(--accent);
+    }
+}
+
+.social-margin-on-hover:hover{
+    
+    i{
+        margin-top: -4px;
+    }
+}
+
+.contact-card {
+    border: 3px solid var(--background);
+    border-radius: 12px;
+    padding: 15px;
+    transition: 0.2s;
+
+    h2,
+    p,
+    i {
+        margin: 0;
+    }
+
+    i {
+        font-size: 35px;
+        transition: 0.2s;
+    }
+}
+
+.contacts-hover:hover {
+
+    box-shadow: 3px 3px 10px #3a8376bb;
+    margin-bottom: 3px;
+    margin-top: -6px;
+    cursor: pointer;
+}
+
+.socials {
+
+    button {
+        border-radius: 10px;
+        background-color: transparent;
+        border: 2px solid transparent;
+        transition: 0.2s;
+
+        i {
+            padding: 5px 0;
+        }
+
+        &:active {
+            background-color: var(--background);
+
+            i {
+                color: white;
+            }
+        }
+    }
+}
