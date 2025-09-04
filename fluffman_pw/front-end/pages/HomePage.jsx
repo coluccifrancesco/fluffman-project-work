@@ -51,6 +51,14 @@ export default function HomePage() {
                 {/* Section - Ultimi Arrivi */}
                 <NewProducts />
             </div>
+
+          {/* Section - Ultimi Arrivi */}
+          <h2 className="my-4">Ultimi Arrivi</h2>
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
+            {[...Array(6)].map((_, idx) => (
+              <CardItem key={idx} title={`Prodotto ${idx + 1}`} />
+            ))}
+          </div>
         </div>
     );
 }

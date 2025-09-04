@@ -1,0 +1,124 @@
+:root {
+  --text: #f3f1ec;
+  --background: #3a8376;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.upper-header{
+    background-color: var(--accent);
+    color: white;
+}
+
+.header-logo-belowLg{
+    height: 70px;
+    transition: 0.15s;
+}
+
+.header-logo-fromLg{
+    height: 80px;
+    transition: 0.2s;
+}
+
+.header-logo-belowLg:hover,
+.header-logo-fromLg:hover{
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+.header-logo-belowLg:hover{
+    rotate: 15deg;
+}
+
+
+p,i{
+    color: var(--background);
+}
+
+
+.search-btn{
+    color: var(--background);
+    border-radius: 10px;
+    padding: 5px 10px;
+    border: 2px solid var(--background);
+    background-color: transparent;
+    transition: 0.2s;
+
+    &:hover{
+        border: 2px solid var(--accent);
+        color: var(--accent);
+    }
+
+    &:active{
+        border: 2px solid var(--accent);
+        background-color: var(--accent);
+        color: white;
+    }
+}
+
+.offcanvas-btn{
+    font-size: 25px;
+    border-radius: 10px;
+    border: none;
+    background-color: transparent;
+    color: var(--background);
+    transition: 0.2s;
+
+    &:hover{
+        box-shadow: 0 0 5px #e7a150;
+
+        i{
+            color: var(--accent);
+        }
+    }
+    
+    &:active{
+        box-shadow: none;
+    }
+}
+
+.offcanvas-item{
+    width: 100%;
+    font-weight: bold;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    background-color: white;
+
+    p{
+        font-size: 25px;
+        transition: 0.2s;
+    }
+
+    i{
+        font-size: 40px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        transition: 0.2s;
+    }
+
+    &:hover{
+        cursor: pointer;
+        box-shadow: 0 0 20px #e7a1504c;
+
+        p{
+            color: var(--accent);
+            font-size: 28px;
+        }
+
+        i{
+            color:var(--accent);
+            font-size: 50px;
+        }
+    }
+
+    &:active{
+        background-color: var(--background);
+        box-shadow: none;
+        transition: 0.2s;
+
+        p,i{
+            color: white;
+        }
+    }
+}
