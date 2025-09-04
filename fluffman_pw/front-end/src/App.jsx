@@ -3,6 +3,7 @@ import DefaultLayout from "../layouts/DefaultLayout";
 import HomePage from "../pages/HomePage";
 import DogProducts from "../components/DogProducts";
 import CatProducts from "../components/CatProducts";
+import OtherAnimalProducts from "../components/OtherAnimalProducts";
 
 
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/DogProducts" element={<DogProducts />} />
             <Route path="/CatProducts" element={<CatProducts />} />
+            <Route path="/OtherAnimalProducts" element={<OtherAnimalProducts />} />
           </Route>
         </Routes>
       </BrowserRouter>
