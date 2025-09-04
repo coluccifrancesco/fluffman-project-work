@@ -72,7 +72,8 @@ export default function NewProducts() {
     return (
         <div className="section_container">
             <button id="arrow_left" className="btn" onClick={handlePrev}><i className="bi bi-arrow-left-square"></i></button>
-            <h2 className="my-4">Ultimi Arrivi</h2>
+            <h2 className="my-4 d-block d-md-none text-center">Ultimi Arrivi</h2>
+            <h2 className="my-4 d-none d-md-block">Ultimi Arrivi</h2>
             <div className="row justify-content-space-between g-4">
                 {visibleProducts.map((product) => (
                     <CardItem
