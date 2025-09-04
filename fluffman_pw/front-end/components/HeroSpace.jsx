@@ -5,16 +5,16 @@ export default function Carousel() {
 
   const slides = [
     {
-      image: "/carousel_img/happy_dog.jpg",
+      image: "/carousel_img/cat_smol.jpg",
     },
     {
-      image: "/carousel_img/happy_cat.jpg",
+      image: "/carousel_img/couple_dc.jpg",
     },
     {
-      image: "/carousel_img/happy_sphinx.jpg",
+      image: "/carousel_img/border_c.jpg",
     },
     {
-      image: "/carousel_img/happy_rottie.jpg",
+      image: "/carousel_img/wonder_dog.jpg",
     },
     {
       image: "/carousel_img/happy_maine.jpg",
@@ -24,7 +24,7 @@ export default function Carousel() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 3000); //interval 3s
+    }, 5000); //interval 5s
 
     return () => clearInterval(interval); //clears interval
   }, []);
@@ -37,13 +37,14 @@ export default function Carousel() {
     <div className="carosello" style={{ textAlign: "center" }}>
       <div className="slide" onClick={nextSlide}>
         <img
+          className="img-fluid"
           src={slides[currentIndex].image}
-          alt={slides[currentIndex].caption}
+          alt={`slide-${currentIndex}`}
           style={{
-            width: "100rem",
-            height: "500px",
-            objectFit: "contain",
-            overflow: "hidden",
+            minWidth: "100%",
+            maxHeight: "500px",
+            objectFit: "cover",
+            margin: "0 auto",
           }}
         />
         <div className="caption">{slides[currentIndex].caption}</div>
