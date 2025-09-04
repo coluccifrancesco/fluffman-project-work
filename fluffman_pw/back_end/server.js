@@ -7,7 +7,9 @@ import cors from "cors";
 //importo dotenv
 import dotenv from "dotenv";
 
+//importo controllers
 import productsRouter from './routes/productsRouter.js';
+import imagesRouter from './routes/imagesRouter.js';
 
 //caricare le variabili da .env
 dotenv.config();
@@ -32,6 +34,9 @@ app.use(cors());
 
 //rottte API
 app.use('/api/products', productsRouter);
+
+// Tutte le rotte che iniziano con '/images' verranno gestite da imagesRouter
+app.use('api/images', imagesRouter);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
