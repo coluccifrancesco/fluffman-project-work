@@ -5,10 +5,7 @@ import DogProductsPage from "../pages/DogProductsPage";
 import CatProductsPage from "../pages/CatProductsPage";
 import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
 
-
-
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -17,7 +14,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/DogProducts" element={<DogProductsPage />} />
             <Route path="/CatProducts" element={<CatProductsPage />} />
-            <Route path="/OtherAnimalProducts" element={<OtherAnimalProductsPage />} />
+            <Route
+              path="/OtherAnimalProducts"
+              element={<OtherAnimalProductsPage />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>
