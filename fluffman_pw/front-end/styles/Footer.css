@@ -8,7 +8,7 @@
 }
 /*#endregion ROOT */
 footer {
-  color: #3a8376;
+  color: var(--background);
 }
 footer a {
   color: inherit;
@@ -20,4 +20,8 @@ footer a:hover {
 }
 .copyright {
   background-color: var(--accent);
+}
+
+footer img {
+  border-radius: 33rem;
 }

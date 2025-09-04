@@ -20,14 +20,14 @@ export default function HomePage() {
           {/* Double mid Banner */}
           <div className="container mid-banner my-5">
             <div className="row g-3">
-              <div className="col-12 col-md-6 text-center p-4 border rounded">
+              <div className="col-12 col-md-6 text-center p-4 ">
                 <img
                   className="img-fluid rounded"
                   src="/BCC_placeholder.png"
                   alt="black_cats_coding"
                 />
               </div>
-              <div className="col-12 col-md-6 text-center p-4 border rounded">
+              <div className="col-12 col-md-6 text-center p-4 ">
                 <img
                   className="img-fluid rounded"
                   src="/Doggo_placeholder.png"
