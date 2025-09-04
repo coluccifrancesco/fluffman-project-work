@@ -31,3 +31,9 @@ footer a:hover {
 footer img {
   border-radius: 33rem;
 }
+
+.slogan{
+  position: relative;
+  left:6rem;
+  top: 1.5em;
+}

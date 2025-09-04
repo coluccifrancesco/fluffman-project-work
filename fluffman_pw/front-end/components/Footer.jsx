@@ -10,17 +10,31 @@ export default function Footer() {
             <div className="col">
               <ul className="list-unstyled">
                 <h5>
-                  Quick links{" "}
+                 Info Utili{" "}
+                  <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
+                </h5>
+                <li className="unstyled">
+                  <Link >Indirizzi</Link>
+                </li>
+                <li className="unstyled">
+                  <Link>Buoni</Link>
+                </li>
+                <li className="unstyled">
+                  <Link>Privacy</Link>
+                </li>
+              </ul>
+            </div>
+            <div className="col">
+              <ul className="list-unstyled">
+                <h5>
+                  Chi Siamo{" "}
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
                   <Link to={'/aboutUs'} >Chi Siamo</Link>
                 </li>
                 <li className="unstyled">
-                  <Link>Cookies</Link>
-                </li>
-                <li className="unstyled">
-                  <Link>Privacy</Link>
+                  <Link>Contatti</Link>
                 </li>
               </ul>
             </div>
@@ -47,7 +61,7 @@ export default function Footer() {
                 alt="footer_dog_happy"
               />
             </div>
-            <div className="col m-5 text-dark">
+            <div className="slogan col text-dark">
               <em>
                 <strong>
                   Scopri il nuovo modo di vivere la cura del tuo animale da

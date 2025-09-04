@@ -33,27 +33,27 @@ export default function OurStoryPage() {
                         <h2 className="text-center mb-4">Il Nostro Percorso</h2>
                         <div className="row g-4">
                             <div className="col-12 col-md-4 text-center">
-                                <div className="p-4 border rounded shadow-sm h-100">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100">
                                     <h3>2020</h3>
-                                    <p className="text-light">
+                                    <p>
                                         Nasce l’idea e cominciamo con i primi prodotti dedicati agli
                                         animali domestici.
                                     </p>
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 text-center">
-                                <div className="p-4 border rounded shadow-sm h-100">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100">
                                     <h3>2022</h3>
-                                    <p className="text-light">
+                                    <p>
                                         Ampliamo il nostro catalogo e apriamo lo shop online per
                                         raggiungere più famiglie.
                                     </p>
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 text-center">
-                                <div className="p-4 border rounded shadow-sm h-100">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100">
                                     <h3>Oggi</h3>
-                                    <p className="text-light">
+                                    <p>
                                         Continuiamo a crescere, sempre con lo stesso obiettivo:
                                         garantire il meglio per cani e gatti.
                                     </p>
