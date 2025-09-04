@@ -4,6 +4,8 @@ import HomePage from "../pages/HomePage";
 import DogProductsPage from "../pages/DogProductsPage";
 import CatProductsPage from "../pages/CatProductsPage";
 import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
+import SingleProductPage from "../pages/SingleProductPage";
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
               path="/OtherAnimalProducts"
               element={<OtherAnimalProductsPage />}
             />
+            <Route path="/SingleProductPage" element={<SingleProductPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
