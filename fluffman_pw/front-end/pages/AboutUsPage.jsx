@@ -18,7 +18,7 @@ export default function OurStoryPage() {
                             />
                         </div>
                         <div className="col-12 col-md-6">
-                            <p className="lead">
+                            <p className="lead text-light">
                                 La nostra avventura è iniziata con una semplice idea: offrire
                                 prodotti di qualità che portino benessere e felicità ai nostri
                                 amici a quattro zampe. Da un piccolo progetto familiare, siamo
@@ -35,7 +35,7 @@ export default function OurStoryPage() {
                             <div className="col-12 col-md-4 text-center">
                                 <div className="p-4 border rounded shadow-sm h-100">
                                     <h3>2020</h3>
-                                    <p>
+                                    <p className="text-light">
                                         Nasce l’idea e cominciamo con i primi prodotti dedicati agli
                                         animali domestici.
                                     </p>
@@ -44,7 +44,7 @@ export default function OurStoryPage() {
                             <div className="col-12 col-md-4 text-center">
                                 <div className="p-4 border rounded shadow-sm h-100">
                                     <h3>2022</h3>
-                                    <p>
+                                    <p className="text-light">
                                         Ampliamo il nostro catalogo e apriamo lo shop online per
                                         raggiungere più famiglie.
                                     </p>
@@ -53,7 +53,7 @@ export default function OurStoryPage() {
                             <div className="col-12 col-md-4 text-center">
                                 <div className="p-4 border rounded shadow-sm h-100">
                                     <h3>Oggi</h3>
-                                    <p>
+                                    <p className="text-light">
                                         Continuiamo a crescere, sempre con lo stesso obiettivo:
                                         garantire il meglio per cani e gatti.
                                     </p>
@@ -65,7 +65,7 @@ export default function OurStoryPage() {
                     {/* Mission/Valori */}
                     <div className="my-5 text-center">
                         <h2>I Nostri Valori</h2>
-                        <p className="mt-3">
+                        <p className="mt-3 text-light">
                             Crediamo nell’amore incondizionato tra persone e animali. Per
                             questo ogni nostro prodotto è pensato per migliorare la vita dei
                             nostri amici pelosi, rispettando sempre qualità, sicurezza e

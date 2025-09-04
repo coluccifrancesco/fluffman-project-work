@@ -9,7 +9,8 @@
 /*#endregion ROOT */
 
 footer {
-  color: var(--background);
+  background-color: #f7fffd;
+  color: #237a6a;
 }
 footer a {
   color: inherit;
