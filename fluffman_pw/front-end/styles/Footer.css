@@ -1,7 +1,7 @@
 /*#region ROOT*/
 :root {
   --text: #f3f1ec;
-  --background: #3a8376;
+  --background: #5fbbaae1;
   --primary: #daf6e3;
   --secondary: #af6818;
   --accent: #e7a150;
@@ -30,10 +30,4 @@ footer a:hover {
 
 footer img {
   border-radius: 33rem;
-}
-
-.slogan{
-  position: relative;
-  left:6rem;
-  top: 1.5em;
 }

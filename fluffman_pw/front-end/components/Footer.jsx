@@ -10,11 +10,11 @@ export default function Footer() {
             <div className="col">
               <ul className="list-unstyled">
                 <h5>
-                 Info Utili{" "}
+                  Info Utili{" "}
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link >Indirizzi</Link>
+                  <Link>Indirizzi</Link>
                 </li>
                 <li className="unstyled">
                   <Link>Buoni</Link>
@@ -31,7 +31,7 @@ export default function Footer() {
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link to={'/aboutUs'} >Chi Siamo</Link>
+                  <Link to={"/aboutUs"}>Chi Siamo</Link>
                 </li>
                 <li className="unstyled">
                   <Link>Contatti</Link>
