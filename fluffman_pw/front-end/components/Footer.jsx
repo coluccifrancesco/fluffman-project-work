@@ -14,7 +14,7 @@ export default function Footer() {
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link>Chi Siamo</Link>
+                  <Link to={'/aboutUs'} >Chi Siamo</Link>
                 </li>
                 <li className="unstyled">
                   <Link>Cookies</Link>
