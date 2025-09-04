@@ -7,11 +7,13 @@ import cors from "cors";
 //importo dotenv
 import dotenv from "dotenv";
 
-//importo controllers
+//importo le routes
 import productsRouter from './routes/productsRouter.js';
 import imagesRouter from './routes/imagesRouter.js';
 import animalsRouter from './routes/animalsRouter.js';
 import brandsRouter from './routes/brandsRouter.js';
+import purchasesRouter from './routers/purchasesRouter.js';
+import productPurchaseRouter from './routers/productPurchaseRouter.js';
 
 //caricare le variabili da .env
 dotenv.config();
@@ -45,6 +47,12 @@ app.use('/api/animals', animalsRouter);
 
 // Collega il router dei brands all'URL /api/brands
 app.use('/api/brands', brandsRouter);
+
+// Collega il router dei purchases all'URL /api/purchases
+app.use('/api/purchases', purchasesRouter);
+
+// Collega il router dei product_purchase all'URL /api/product_purchase
+app.use('/api/product_purchase', productPurchaseRouter);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
