@@ -8,12 +8,22 @@ export async function store(req, res) {
     }
 
     try {
+        /* Codice Supabase (PostgreSQL)
         const { rows: [newItem] } = await pool.query(
             `INSERT INTO product_purchase (product_id, purchase_id, quantity, price)
              VALUES ($1, $2, $3, $4) RETURNING *`,
             [product_id, purchase_id, quantity, price]
         );
         res.status(201).json(newItem);
+        */
+
+        // Codice MySQL
+        const query = `INSERT INTO product_purchase (product_id, purchase_id, quantity, price) VALUES (?, ?, ?, ?)`;
+        const values = [product_id, purchase_id, quantity, price];
+        const [result] = await pool.query(query, values);
+
+        const [rows] = await pool.query("SELECT * FROM product_purchase WHERE id = ?", [result.insertId]);
+        res.status(201).json(rows[0]);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -22,7 +32,7 @@ export async function store(req, res) {
 // INDEX
 export async function index(req, res) {
     try {
-        const { rows } = await pool.query("SELECT * FROM product_purchase ORDER BY id ASC");
+        const [rows] = await pool.query("SELECT * FROM product_purchase ORDER BY id ASC");
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
@@ -33,22 +43,23 @@ export async function index(req, res) {
 export async function show(req, res) {
     const { id } = req.params;
     try {
-        const { rows: [item] } = await pool.query("SELECT * FROM product_purchase WHERE id = $1", [id]);
-        if (!item) {
+        const [rows] = await pool.query("SELECT * FROM product_purchase WHERE id = ?", [id]);
+        if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "Articolo acquisto non trovato." });
         }
-        res.json(item);
+        res.json(rows[0]);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
 }
 
-// UPDATE Aggiorna la quantità di un articolo in un acquisto
+// UPDATE
 export async function update(req, res) {
     const { id } = req.params;
-    const { quantity, price } = req.body; // Puoi aggiornare anche il prezzo
+    const { quantity, price } = req.body;
 
     try {
+        /* Codice Supabase (PostgreSQL)
         const { rows: [updatedItem] } = await pool.query(
             "UPDATE product_purchase SET quantity = $1, price = $2 WHERE id = $3 RETURNING *",
             [quantity, price, id]
@@ -57,6 +68,17 @@ export async function update(req, res) {
             return res.status(404).json({ error: true, message: "Articolo acquisto non trovato." });
         }
         res.json(updatedItem);
+        */
+
+        // Codice MySQL
+        const [result] = await pool.query("UPDATE product_purchase SET quantity = ?, price = ? WHERE id = ?", [quantity, price, id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: "Articolo acquisto non trovato." });
+        }
+
+        const [rows] = await pool.query("SELECT * FROM product_purchase WHERE id = ?", [id]);
+        res.json(rows[0]);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -66,8 +88,17 @@ export async function update(req, res) {
 export async function destroy(req, res) {
     const { id } = req.params;
     try {
+        /* Codice Supabase (PostgreSQL)
         const result = await pool.query("DELETE FROM product_purchase WHERE id = $1", [id]);
         if (result.rowCount === 0) {
+            return res.status(404).json({ error: true, message: "Articolo acquisto non trovato." });
+        }
+        res.sendStatus(204);
+        */
+
+        // Codice MySQL
+        const [result] = await pool.query("DELETE FROM product_purchase WHERE id = ?", [id]);
+        if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Articolo acquisto non trovato." });
         }
         res.sendStatus(204);
