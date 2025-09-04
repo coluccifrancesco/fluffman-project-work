@@ -55,7 +55,7 @@ export default function OurStoryPage() {
                                     <h3>Oggi</h3>
                                     <p>
                                         Continuiamo a crescere, sempre con lo stesso obiettivo:
-                                        garantire il meglio per cani e gatti.
+                                        garantire il meglio per i piccoli amici.
                                     </p>
                                 </div>
                             </div>
