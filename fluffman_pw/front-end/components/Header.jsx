@@ -19,7 +19,7 @@ export default function Header() {
                {/* Loghi */}
                 <div>
                     {/* Pagina estesa */}
-                    <NavLink to={"/"}>
+                    <NavLink to="/">
                         <img
                             src="Logo3.png"
                             className="header-logo-fromLg d-none d-lg-block"
@@ -27,7 +27,7 @@ export default function Header() {
                     </NavLink>
 
                     {/* Pagina ridotta */}
-                    <NavLink to={"/"}>
+                    <NavLink to="/">
                         <img
                             src="Logo1.png"
                             className="header-logo-belowLg d-block d-lg-none"
@@ -38,22 +38,22 @@ export default function Header() {
                 {/* Voci menù */}
                 <ul className="d-none d-lg-flex list-unstyled m-0 gap-4 align-items-center nav-list-desktop">
                     <li>
-                        <NavLink style={{ textDecoration: "none" }}>
+                        <NavLink to="/" style={{ textDecoration: "none" }}>
                             <p className="m-0">Prodotti</p>
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink style={{ textDecoration: "none" }}>
+                        <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
                             <p className="m-0">Cane</p>
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink style={{ textDecoration: "none" }}>
+                        <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
                             <p className="m-0">Gatto</p>
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink style={{ textDecoration: "none" }}>
+                        <NavLink to="/OtherAnimalProducts" style={{ textDecoration: "none" }}>
                             <p className="m-0">Altri animali</p>
                         </NavLink>
                     </li>
@@ -63,12 +63,12 @@ export default function Header() {
                         </button>
                     </li>
                     <li>
-                        <NavLink>
+                        <NavLink to="/">
                             <i className="fa-solid fa-star m-0"></i>
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink>
+                        <NavLink to="/">
                             <i className="fa-solid fa-cart-shopping m-0"></i>
                         </NavLink>
                     </li>
@@ -125,7 +125,7 @@ export default function Header() {
                         aria-labelledby="offcanvasScrollingLabel"
                     >
                         <div className="offcanvas-header">
-                            <NavLink to={"/"}>
+                            <NavLink to="/">
                                 <img
                                     src="DogFaceLogo.png"
                                     className="header-logo-belowLg d-block d-lg-none"
@@ -144,25 +144,25 @@ export default function Header() {
                         <div className="offcanvas-body px-4 bg-light">
                             <ul className="list-unstyled m-0">
                                 <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                                    <NavLink style={{ textDecoration: "none" }}>
+                                    <NavLink to="/" style={{ textDecoration: "none" }}>
                                         <p className="m-0">Prodotti</p>
                                     </NavLink>
                                 </li>
 
                                 <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                                    <NavLink style={{ textDecoration: "none" }}>
+                                    <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
                                         <p className="m-0">Cane</p>
                                     </NavLink>
                                 </li>
 
                                 <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                                    <NavLink style={{ textDecoration: "none" }}>
+                                    <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
                                         <p className="m-0">Gatto</p>
                                     </NavLink>
                                 </li>
 
                                 <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                                    <NavLink style={{ textDecoration: "none" }}>
+                                    <NavLink to="/OtherAnimalProducts" style={{ textDecoration: "none" }}>
                                         <p className="m-0">Altri animali</p>
                                     </NavLink>
                                 </li>
