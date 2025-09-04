@@ -11,7 +11,7 @@ export default function Footer() {
               <ul className="list-unstyled">
                 <h5>
                   Quick links{" "}
-                  <i class="fa-solid fa-arrow-up-right-from-square ps-2"></i>
+                  <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
                   <Link>Chi Siamo</Link>
@@ -54,13 +54,13 @@ export default function Footer() {
                   compagnia. Con Fluffman avrai il segreto della sua felicità a
                   portata di zampa!
                 </strong>{" "}
-                <i class="fa-solid fa-paw"></i>
+                <i className="fa-solid fa-paw"></i>
               </em>
             </div>
           </div>
         </div>
       </footer>
-      <div className="pt-3 d-flex align-content-center justify-content-center text-light copyright">
+      <div className="pt-3 d-flex align-content-center justify-content-center copyright">
         <p>© 2023 Fluffman. All rights reserved.</p>
       </div>
     </>
