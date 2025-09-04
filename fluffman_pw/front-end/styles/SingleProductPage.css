@@ -1,0 +1,34 @@
+/*#region ROOT*/
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.bg {
+  background-color: var(--background);
+}
+.tag {
+  background-color: var(--accent);
+}
+
+.cart-btn {
+  background-color: var(--accent);
+  border: none;
+  border-radius: 3rem;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.cart-btn:hover {
+  transform: scale(1.05);
+}
+
+.cart-btn:active {
+  transform: scale(0.95);
+}
