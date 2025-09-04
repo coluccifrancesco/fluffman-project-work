@@ -71,7 +71,7 @@ export default function NewProducts() {
 
     return (
         <div className="section_container">
-            <button id="arrow_left" className="btn btn-light " onClick={handlePrev}><i className="bi bi-arrow-left-square-fill"></i></button>
+            <button id="arrow_left" className="btn" onClick={handlePrev}><i className="bi bi-arrow-left-square"></i></button>
             <h2 className="my-4">Ultimi Arrivi</h2>
             <div className="row justify-content-space-between g-4">
                 {visibleProducts.map((product) => (
@@ -83,7 +83,7 @@ export default function NewProducts() {
                     />
                 ))}
             </div>
-            <button id="arrow_right" className="btn btn-light " onClick={handleNext}><i className="bi bi-arrow-right-square-fill"></i></button>
+            <button id="arrow_right" className="btn" onClick={handleNext}><i className="bi bi-arrow-right-square"></i></button>
         </div>
     );
 }
