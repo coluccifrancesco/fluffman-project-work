@@ -5,6 +5,9 @@ import DogProductsPage from "../pages/DogProductsPage";
 import CatProductsPage from "../pages/CatProductsPage";
 import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
 import AboutUsPage from '../pages/AboutUsPage'
+import SingleProductPage from "../pages/SingleProductPage";
+
+
 
 function App() {
   return (
@@ -20,6 +23,7 @@ function App() {
               path="/OtherAnimalProducts"
               element={<OtherAnimalProductsPage />}
             />
+            <Route path="/SingleProductPage" element={<SingleProductPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
