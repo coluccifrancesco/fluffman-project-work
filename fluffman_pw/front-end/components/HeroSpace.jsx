@@ -41,10 +41,9 @@ export default function Carousel() {
           src={slides[currentIndex].image}
           alt={`slide-${currentIndex}`}
           style={{
-            minWidth: "100%",
+            minWidth: "600px",
             maxHeight: "500px",
-            objectFit: "cover",
-            margin: "0 auto",
+            objectFit: "scale-down",
           }}
         />
         <div className="caption">{slides[currentIndex].caption}</div>
