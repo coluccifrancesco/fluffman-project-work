@@ -75,9 +75,9 @@ export default function Header() {
                 </ul>
 
 
-                {/* Offcanvas dall'alto per ricerca */}
+                {/* Offcanvas ricerca */}
                 <div className="offcanvas offcanvas-top p-4" tabIndex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
-                    <div className="offcanvas-header">
+                    <div className="offcanvas-header p-0">
                         <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div className="gap-3 d-flex justify-content-center align-items-center flex-column">
