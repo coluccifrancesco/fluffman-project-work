@@ -13,8 +13,7 @@ export default function HomePage() {
       <div className="p-3">
         <div className="container my-4">
           {/*Section - Best Sellers */}
-          <h2 className="mb-3 d-block d-md-none text-center">Nuovi Prodotti</h2>
-          <h2 className="mb-3 d-none d-md-block">Nuovi Prodotti</h2>
+          <h2 className="mb-3 d-none d-md-block text-center">Nuovi Prodotti</h2>
           <div className="row row-cols-1  row-cols-md-2 row-cols-lg-4 g-4 ">
             {[...Array(4)].map((_, idx) => (
               <CardItem key={idx} title={`Prodotto ${idx + 1}`} />
@@ -24,14 +23,14 @@ export default function HomePage() {
           {/* Double mid Banner */}
           <div className="container mid-banner my-5">
             <div className="row g-3">
-              <div className="col-12 col-md-6 text-center p-4 border rounded">
+              <div className="col-12 col-md-6 text-center p-4 rounded">
                 <img
                   className="img-fluid rounded"
                   src="/BCC_placeholder.png"
                   alt="black_cats_coding"
                 />
               </div>
-              <div className="col-12 col-md-6 text-center p-4 border rounded">
+              <div className="col-12 col-md-6 text-center p-4 rounded">
                 <img
                   className="img-fluid rounded"
                   src="/Doggo_placeholder.png"

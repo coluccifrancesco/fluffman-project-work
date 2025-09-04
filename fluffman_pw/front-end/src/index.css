@@ -12,6 +12,10 @@
 
 /*#endregion ROOT */
 
+*{
+    font-family: "Geologica", sans-serif;
+}
+
 #arrow_left {
   position: absolute;
   filter: sepia(2) contrast(2.2);
