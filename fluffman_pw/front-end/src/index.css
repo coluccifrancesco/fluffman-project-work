@@ -14,30 +14,31 @@
 
 #arrow_left {
   position: absolute;
+  filter: sepia(2) contrast(2.2);
   bottom: 150px;
-  left: -20px;
+  left: -75px;
   transform: translateY(-50%);
-  font-size: 2rem;
+  font-size: 3rem;
   color: var(--background);
   cursor: pointer;
-  z-index: 1000;
+  z-index: 100;
 }
 
 #arrow_right {
   position: absolute;
+  filter: sepia(2) contrast(2.2);
   bottom: 150px;
-  right: -12px;
+  right: -70px;
   transform: translateY(-50%);
-  font-size: 2rem;
+  font-size: 3rem;
   color: var(--background);
   cursor: pointer;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .section_container {
   position: relative;
   padding: 2rem 0;
-  overflow: hidden;
 }
 
 .card {
