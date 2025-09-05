@@ -47,7 +47,7 @@ export default function SingleProductPage() {
             <div className="button-container d-flex justify-content-center">
               <button className="cart-btn mt-3 w-50 p-2" type="button">
                 Aggiungi al Carrello{" "}
-                <i class="fa-solid fa-cart-shopping btn-cart"></i>
+                <i className="fa-solid fa-cart-shopping btn-cart"></i>
               </button>
             </div>
           </div>

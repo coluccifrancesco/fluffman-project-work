@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <>
-      <footer>
+      <footer className="container-fluid">
         <div className="container py-3">
           <div className="row pt-3">
             <div className="col">
@@ -34,7 +34,7 @@ export default function Footer() {
                   <Link to={"/aboutUs"}>Chi Siamo</Link>
                 </li>
                 <li className="unstyled">
-                  <Link>Contatti</Link>
+                  <Link to="/Contacts">Contatti</Link>
                 </li>
               </ul>
             </div>
@@ -56,7 +56,7 @@ export default function Footer() {
             </div>
             <div className="col">
               <img
-                className="footer_pic mw-50 img-fluid"
+                className="footer_pic mw-50 img-fluid d-none d-lg-block"
                 src="/happy_dog.jpg"
                 alt="footer_dog_happy"
               />
