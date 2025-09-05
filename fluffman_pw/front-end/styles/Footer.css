@@ -20,6 +20,11 @@ footer a {
 footer a:hover {
   color: var(--accent);
 }
+
+footer img {
+  border-radius: 33rem;
+}
+
 .copyright {
   background-color: var(--accent);
 }
@@ -28,6 +33,19 @@ footer a:hover {
   color: white;
 }
 
-footer img {
-  border-radius: 33rem;
+/* Slogan Text Sizing and Media query*/
+.slogan {
+  font-size: medium;
+}
+
+@media (max-width: 991.98px) {
+  .slogan {
+    font-size: medium;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .slogan {
+    font-size: smaller;
+  }
 }
