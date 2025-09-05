@@ -89,7 +89,7 @@ export default function NewProducts() {
 
   return (
     <div className="section_container">
-      <h2 className="my-4 text-center">Ultimi Arrivi</h2>
+      <h2 className="my-4 text-center">I Consigli di Oggi</h2>
 
       {!isMobile ? (
         // se diverso da mobile => index arrows

@@ -1,7 +1,7 @@
 import "../styles/HomePage.css";
 import { Link } from "react-router-dom";
 import Carousel from "../components/HeroSpace";
-import CardItem from "../components/CardComponent/CardItem";
+import SuggestedProducts from "../components/SuggestedProducts";
 import NewProducts from "../components/NewProducts";
 // import DogProducts from "../components/DogProducts";
 // import CatProducts from "../components/CatProducts";
@@ -13,17 +13,8 @@ export default function HomePage() {
       <Carousel />
       <div className="p-3">
         <div className="container my-4">
-          {/*Section - Best Sellers */}
-          <h2 className="mb-3 d-none d-md-block text-center">
-            I Consigli di Oggi
-          </h2>
-          <div className="row row-cols-1  row-cols-md-2 row-cols-lg-4 g-4 ">
-            {[...Array(4)].map((_, idx) => (
-              <div className="col">
-                <CardItem key={idx} title={`Prodotto ${idx + 1}`} />
-              </div>
-            ))}
-          </div>
+          {/*Section - Suggested Products */}
+          <SuggestedProducts />
 
           {/* Double mid Banner */}
           <div className="container mid-banner my-5">
