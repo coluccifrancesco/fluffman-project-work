@@ -75,7 +75,7 @@ export default function Footer() {
         </div>
       </footer>
       <div className="pt-3 d-flex align-content-center justify-content-center copyright">
-        <p>© 2023 Fluffman. All rights reserved.</p>
+        <p>© 2025 Fluffman. All rights reserved.</p>
       </div>
     </>
   );
