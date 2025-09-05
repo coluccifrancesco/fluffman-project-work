@@ -1,0 +1,10 @@
+/* arrow btns */
+.arrow-btn {
+  background-color: transparent;
+  border: none;
+  transition: opacity 0.15s ease;
+}
+
+.arrow-btn:active {
+  opacity: 0.7;
+}
