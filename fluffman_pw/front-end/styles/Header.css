@@ -70,16 +70,24 @@ i {
 }
 
 .search-bar {
-  border: 3px solid var(--background);
+  border: 4px solid var(--background);
+  font-size: 30px;
   border-radius: 12px;
   padding: 10px 20px;
-  width: 60%;
   color: #3a8376;
   transition: 0.2s;
+  width: 60%;
 
   &:hover {
     box-shadow: 0 0 10px #3a837699;
     width: 62%;
+  }
+
+  .input-bar{
+    border: none;
+    width: 95%;
+    border: 1px solid transparent;
+    outline: none;
   }
 }
 
@@ -101,6 +109,21 @@ i {
 
   &:active {
     box-shadow: none;
+  }
+}
+
+.form-button{
+  background-color: transparent;
+  border: none;
+
+  i{
+    font-size: 35px;
+    transition: 0.2s;
+
+    &:hover{
+      color: var(--accent);
+      font-size: 36px;
+    }
   }
 }
 
