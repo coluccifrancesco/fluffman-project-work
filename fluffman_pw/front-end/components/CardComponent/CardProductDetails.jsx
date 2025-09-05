@@ -1,8 +1,8 @@
-export default function CardProductDetail() {
+export default function CardProductDetail({ product }) {
   return (
     <div className="card p-3 mb-3">
       <div className="card-body text-center">
-        <h5 className="product_name text-dark">Nome del prodotto</h5>
+        <h5 className="product_name text-dark">{/*{product?.name}*/}Nome prodotto</h5>
         <p className="producer text-dark">
           <em>Nome dell'azienda produttrice</em>
         </p>

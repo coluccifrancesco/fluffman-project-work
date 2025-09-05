@@ -1,8 +1,23 @@
 import CardProductDetail from "../components/CardComponent/CardProductDetails";
 import CardItem from "../components/CardComponent/CardItem";
 import "../styles/SingleProductPage.css";
+import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 
 export default function SingleProductPage() {
+
+  const [product, setProduct] = useState();
+  const { id } = useParams()
+  const apiProductUrl = `http://localhost:5173/api/products/${id}`
+
+  useEffect(() => {
+    fetch(apiProductUrl)
+      .then(res => res.json())
+      .then(data => {
+        setProduct(data)
+      })
+  }, [])
+
   return (
     <div className="bg">
       <div className="container p-2">
@@ -13,7 +28,7 @@ export default function SingleProductPage() {
         {/* Sezione Card + Descrizione */}
         <div className="row align-items-start g-4">
           <div className="col-md-6">
-            <CardProductDetail />
+            <CardProductDetail product={product} />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
