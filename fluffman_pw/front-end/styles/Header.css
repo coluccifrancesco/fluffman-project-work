@@ -6,144 +6,146 @@
   --accent: #e7a150;
 }
 
-header{
-    z-index: 1000;
-    background-color:  #f7fffd;
+header {
+  z-index: 1000;
+  background-color: #f7fffd;
 }
 
-.upper-header{
-    background-color: var(--accent);
-    color: white;
+.upper-header {
+  background-color: var(--accent);
+  color: white;
 }
 
-.header-logo-belowLg{
-    height: 70px;
-    transition: 0.15s;
+.header-logo-belowLg {
+  height: 70px;
+  transition: 0.15s;
 }
 
-.header-logo-fromLg{
-    height: 80px;
-    transition: 0.2s;
+.header-logo-fromLg {
+  height: 80px;
+  transition: 0.2s;
 }
 
 .header-logo-belowLg:hover,
-.header-logo-fromLg:hover{
-    margin-left: 6px;
-    cursor: pointer;
+.header-logo-fromLg:hover {
+  margin-left: 6px;
+  cursor: pointer;
 }
 
-.header-logo-belowLg:hover{
-    rotate: 15deg;
+.header-logo-belowLg:hover {
+  rotate: 15deg;
 }
 
-p,i{
-    color: var(--background);
+p,
+i {
+  color: var(--background);
 }
 
-.nav-list-desktop{
-    
-    p,i{
-        font-weight: bold;
-        transition: 0.2s;
-        font-size: 22px;
-
-        &:hover{
-            color: var(--accent);
-        }
-
-        &:active{
-            color: transparent;
-        }
-    }
-
-    button{
-        border: none;
-        background-color: transparent;
-        font-weight: bold;
-    }
-}
-
-.search-title{
-    color: #3a8376;
+.nav-list-desktop {
+  p,
+  i {
     font-weight: bold;
-}
-
-.search-bar{
-    border: 3px solid var(--background);
-    border-radius: 12px;
-    padding: 10px 20px;
-    width: 60%;
-    color: #3a8376;
     transition: 0.2s;
+    font-size: 22px;
 
-    &:hover{
-        box-shadow: 0 0 10px #3a837699;
-        width: 62%;
+    &:hover {
+      color: var(--accent);
     }
-}
 
-.offcanvas-btn{
-    font-size: 25px;
-    border-radius: 10px;
+    &:active {
+      color: transparent;
+    }
+  }
+
+  button {
     border: none;
     background-color: transparent;
-    color: var(--background);
-    transition: 0.2s;
-
-    &:hover{
-        box-shadow: 0 0 5px #e7a150;
-
-        i{
-            color: var(--accent);
-        }
-    }
-    
-    &:active{
-        box-shadow: none;
-    }
+    font-weight: bold;
+  }
 }
 
-.offcanvas-item{
-    width: 100%;
-    font-weight: bold;
-    border-radius: 15px;
-    margin-bottom: 10px;
-    background-color: white;
+.search-title {
+  color: #3a8376;
+  font-weight: bold;
+}
 
-    p{
-        font-size: 25px;
-        transition: 0.2s;
+.search-bar {
+  border: 3px solid var(--background);
+  border-radius: 12px;
+  padding: 10px 20px;
+  width: 60%;
+  color: #3a8376;
+  transition: 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 10px #3a837699;
+    width: 62%;
+  }
+}
+
+.offcanvas-btn {
+  font-size: 25px;
+  border-radius: 10px;
+  border: none;
+  background-color: transparent;
+  color: var(--background);
+  transition: 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 5px #e7a150;
+
+    i {
+      color: var(--accent);
+    }
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+}
+
+.offcanvas-item {
+  width: 100%;
+  font-weight: bold;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  background-color: white;
+
+  p {
+    font-size: 25px;
+    transition: 0.2s;
+  }
+
+  i {
+    font-size: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: 0.2s;
+  }
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0 20px #e7a1504c;
+
+    p {
+      color: var(--accent);
+      font-size: 28px;
     }
 
-    i{
-        font-size: 40px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        transition: 0.2s;
+    i {
+      color: var(--accent);
+      font-size: 50px;
     }
+  }
 
-    &:hover{
-        cursor: pointer;
-        box-shadow: 0 0 20px #e7a1504c;
+  &:active {
+    background-color: var(--background);
+    box-shadow: none;
+    transition: 0.2s;
 
-        p{
-            color: var(--accent);
-            font-size: 28px;
-        }
-
-        i{
-            color:var(--accent);
-            font-size: 50px;
-        }
+    p,
+    i {
+      color: white;
     }
-
-    &:active{
-        background-color: var(--background);
-        box-shadow: none;
-        transition: 0.2s;
-
-        p,i{
-            color: white;
-        }
-    }
+  }
 }

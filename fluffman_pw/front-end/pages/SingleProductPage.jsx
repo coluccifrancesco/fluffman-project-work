@@ -17,8 +17,12 @@ export default function SingleProductPage() {
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
+              <p className="text-dark text-center">
+                {" "}
+                <em>Nome Prodotto</em>
+              </p>
               <p className="text-dark">
-                Descrizione Lunga Prodotto Lorem ipsum dolor, sit amet
+                Descrizione Lunga Prodotto - Lorem ipsum dolor, sit amet
                 consectetur adipisicing elit. Adipisci voluptas fuga provident
                 et laborum sapiente nemo voluptate atque distinctio culpa libero
                 magnam, vel possimus impedit molestias totam doloremque dolorum!
@@ -30,15 +34,20 @@ export default function SingleProductPage() {
               </p>
               <div className="tags">
                 <ul className="list-unstyled d-flex flex-row gap-3 justify-content-center">
-                  <li className="tag text-white p-2  rounded">Tag</li>
-                  <li className="tag text-white p-2  rounded">Tag</li>
-                  <li className="tag text-white p-2  rounded">Tag</li>
+                  <li className="tag text-white p-2 bg-success rounded">Tag</li>
+                  <li className="tag text-white p-2 bg-info bg-gradient rounded">
+                    Tag
+                  </li>
+                  <li className="tag text-white p-2 bg-primary bg-gradient rounded">
+                    Tag
+                  </li>
                 </ul>
               </div>
             </div>
-            <div className="d-flex justify-content-center">
+            <div className="button-container d-flex justify-content-center">
               <button className="cart-btn mt-3 w-50 p-2" type="button">
-                Aggiungi al Carrello
+                Aggiungi al Carrello{" "}
+                <i class="fa-solid fa-cart-shopping btn-cart"></i>
               </button>
             </div>
           </div>

@@ -14,6 +14,7 @@
   background-color: var(--accent);
 }
 
+/*#region cart-btn*/
 .cart-btn {
   background-color: var(--accent);
   border: none;
@@ -32,3 +33,20 @@
 .cart-btn:active {
   transform: scale(0.95);
 }
+
+/*#region cart-icon animation*/
+.cart-btn .fa-cart-shopping {
+  display: inline-block;
+  transform-origin: 50% 60%;
+  transition: transform 160ms ease;
+}
+
+.cart-btn:active .fa-cart-shopping {
+  transform: translateY(-3px) rotate(-10deg);
+}
+.btn-cart {
+  color: inherit;
+}
+/*#endregion cart-icon animation */
+
+/*#endregion cart-btn*/

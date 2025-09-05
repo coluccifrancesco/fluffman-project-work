@@ -3,13 +3,15 @@ export default function CardProductDetail() {
     <div className="card p-3 mb-3">
       <div className="card-body text-center">
         <h5 className="product_name text-dark">Nome del prodotto</h5>
-        <p className="producer text-dark">Nome dell'azienda produttrice</p>
-        <p className="price text-dark">Prezzo del prodotto</p>
+        <p className="producer text-dark">
+          <em>Nome dell'azienda produttrice</em>
+        </p>
+        <p className="price"> 20,90 €</p>
 
         {/* Immagine spostata sotto il titolo */}
         <div className="card-top mx-auto my-3" style={{ width: "100%" }}>
           <img
-            src="/happy_dog.jpg"
+            src="/products/product1.webp"
             className="img-fluid rounded detail_img"
             alt="product_img"
           />
