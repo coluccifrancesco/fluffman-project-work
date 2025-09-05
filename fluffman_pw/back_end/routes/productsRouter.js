@@ -5,6 +5,7 @@ import express from "express";
 // Nota: ho aggiunto 'changePrice' all'import
 import {
     index,
+    show,
     store,
     update,
     destroy,
@@ -18,6 +19,9 @@ const router = express.Router();
 
 // Rotta index
 router.get('/', index);
+
+// Rotta index
+router.get('/:id', show);
 
 // Rotta store
 router.post('/', store);
