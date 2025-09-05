@@ -4,20 +4,20 @@ import HomePage from "../pages/HomePage";
 import DogProductsPage from "../pages/DogProductsPage";
 import CatProductsPage from "../pages/CatProductsPage";
 import OtherAnimalProductsPage from "../pages/OtherAnimalsPage";
-import AboutUsPage from '../pages/AboutUsPage'
+import AboutUsPage from "../pages/AboutUsPage";
 import SingleProductPage from "../pages/SingleProductPage";
 import ContactsPage from "../pages/ContactsPage";
-
-
+import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 
 function App() {
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<DefaultLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/aboutUs" element={<AboutUsPage />} />
+            <Route path="/AboutUs" element={<AboutUsPage />} />
             <Route path="/DogProducts" element={<DogProductsPage />} />
             <Route path="/CatProducts" element={<CatProductsPage />} />
             <Route

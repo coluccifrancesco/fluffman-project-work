@@ -8,9 +8,6 @@ export default function Carousel() {
       image: "/carousel_img/cat_smol.jpg",
     },
     {
-      image: "/carousel_img/couple_dc.jpg",
-    },
-    {
       image: "/carousel_img/border_c.jpg",
     },
     {
@@ -41,9 +38,9 @@ export default function Carousel() {
           src={slides[currentIndex].image}
           alt={`slide-${currentIndex}`}
           style={{
-            minWidth: "600px",
-            maxHeight: "500px",
-            objectFit: "scale-down",
+            minWidth: "100%",
+            maxHeight: "600px",
+            objectFit: "cover",
           }}
         />
         <div className="caption">{slides[currentIndex].caption}</div>

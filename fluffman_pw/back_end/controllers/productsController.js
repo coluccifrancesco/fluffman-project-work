@@ -10,6 +10,20 @@ export async function index(req, res) {
     }
 }
 
+//SHOW
+export async function show(req, res) {
+    const { id } = req.params;
+    try {
+        const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: true, message: "Tipo di prodotto non trovato." });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
 // CREATE (store): Crea un nuovo prodotto
 export async function store(req, res) {
     const { name, description, price, animal_id, brand_id, food_type } = req.body;

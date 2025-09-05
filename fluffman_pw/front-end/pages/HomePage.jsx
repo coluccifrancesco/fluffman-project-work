@@ -1,4 +1,5 @@
 import "../styles/HomePage.css";
+import { Link } from "react-router-dom";
 import Carousel from "../components/HeroSpace";
 import CardItem from "../components/CardComponent/CardItem";
 import NewProducts from "../components/NewProducts";
@@ -24,11 +25,13 @@ export default function HomePage() {
           <div className="container mid-banner my-5">
             <div className="row g-3">
               <div className="col-12 col-md-6 text-center p-4 rounded">
-                <img
-                  className="img-fluid rounded"
-                  src="/BCC_placeholder.png"
-                  alt="black_cats_coding"
-                />
+                <Link to="/Contacts">
+                  <img
+                    className="img-fluid rounded"
+                    src="/BCC_placeholder.png"
+                    alt="black_cats_coding"
+                  />
+                </Link>
               </div>
               <div className="col-12 col-md-6 text-center p-4 rounded">
                 <img

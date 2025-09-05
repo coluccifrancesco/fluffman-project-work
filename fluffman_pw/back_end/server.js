@@ -12,8 +12,8 @@ import productsRouter from './routes/productsRouter.js';
 import imagesRouter from './routes/imagesRouter.js';
 import animalsRouter from './routes/animalsRouter.js';
 import brandsRouter from './routes/brandsRouter.js';
-import purchasesRouter from './routers/purchasesRouter.js';
-import productPurchaseRouter from './routers/productPurchaseRouter.js';
+import purchasesRouter from './routes/purchasesRouter.js';
+import productPurchaseRouter from './routes/productPurchaseRouter.js';
 
 //caricare le variabili da .env
 dotenv.config();
@@ -37,10 +37,10 @@ app.use(express.json());
 app.use(cors());
 
 // Tutte le rotte che iniziano con '/products' verranno gestite da productsRouter
-app.use('/products', productsRouter);
+app.use('/api/products', productsRouter);
 
 // Tutte le rotte che iniziano con '/images' verranno gestite da imagesRouter
-app.use('api/images', imagesRouter);
+app.use('/api/images', imagesRouter);
 
 // Collega il router degli animali all'URL /api/animals
 app.use('/api/animals', animalsRouter);

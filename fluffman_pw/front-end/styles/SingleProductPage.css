@@ -1,0 +1,52 @@
+/*#region ROOT*/
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.bg {
+  background-color: var(--background);
+}
+.tag {
+  background-color: var(--accent);
+}
+
+/*#region cart-btn*/
+.cart-btn {
+  background-color: var(--accent);
+  border: none;
+  border-radius: 3rem;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.cart-btn:hover {
+  transform: scale(1.05);
+}
+
+.cart-btn:active {
+  transform: scale(0.95);
+}
+
+/*#region cart-icon animation*/
+.cart-btn .fa-cart-shopping {
+  display: inline-block;
+  transform-origin: 50% 60%;
+  transition: transform 160ms ease;
+}
+
+.cart-btn:active .fa-cart-shopping {
+  transform: translateY(-3px) rotate(-10deg);
+}
+.btn-cart {
+  color: inherit;
+}
+/*#endregion cart-icon animation */
+
+/*#endregion cart-btn*/
