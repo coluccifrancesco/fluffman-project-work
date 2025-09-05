@@ -1,7 +1,20 @@
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../styles/Header.css";
 
 export default function Header() {
+
+    const [searchValue, setSearchValue] = useState('');
+
+    const handleSubmit = event => {
+        event.preventDefault();
+        console.log('Ricerca eseguita: ' + searchValue);
+    }
+
+    useEffect(() => {
+        console.log('Ricerca aggiornata: ' + searchValue);} ,
+    [searchValue])
+
     return (
         <header className="position-sticky top-0 w-100">
 
@@ -80,9 +93,24 @@ export default function Header() {
                     <div className="offcanvas-header p-0">
                         <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
+                    
                     <div className="gap-3 d-flex justify-content-center align-items-center flex-column">
-                        <label htmlFor='searchBar'><h2 className="p-2 search-title">Ricerca prodotti</h2></label>
-                        <input id='searchBar' type="text" className="search-bar" />
+                        <label htmlFor='searchBar'><h1 className="p-2 search-title">Ricerca prodotti</h1></label>
+                        
+                        <form 
+                            className="search-bar d-flex justify-content-between align-items-center"
+                            onSubmit={handleSubmit}
+                        >
+                            <input 
+                                value={searchValue} 
+                                onChange={e => {setSearchValue(e.target.value)}} 
+                                id='searchBar' 
+                                type="text" 
+                                className="input-bar" 
+                            />
+
+                            <button className="form-button"><i className="fa-solid fa-magnifying-glass"></i></button>
+                        </form>
                     </div>
                 </div>
 
