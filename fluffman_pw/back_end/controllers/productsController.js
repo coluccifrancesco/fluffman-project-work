@@ -1,5 +1,18 @@
 import pool from "../db/connection.js";
 
+/**
+ * Sanifica un campo numerico che potrebbe essere null.
+ * Converte esplicitamente le stringhe vuote, undefined o 'NULL' in un vero valore null.
+ * @param {*} value - Il valore da sanificare.
+ * @returns {number|null} - Il valore numerico o null se non valido.
+ */
+const sanitizeNullableNumberField = (value) => {
+    if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.toUpperCase() === 'NULL')) {
+        return null;
+    }
+    return value;
+};
+
 // READ (index): Ottiene tutti i prodotti
 export async function index(req, res) {
     try {
@@ -26,7 +39,11 @@ export async function show(req, res) {
 
 // CREATE (store): Crea un nuovo prodotto
 export async function store(req, res) {
-    const { name, description, price, animal_id, brand_id, food_type } = req.body;
+    const {
+        name, description, quantity, price, discount_price, age, weight,
+        accessories, food_type, biological, pet_food_necessity, hair,
+        additional_information, product_weight, animal_id, brand_id
+    } = req.body;
 
     if (!name) {
         return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio." });
@@ -36,19 +53,50 @@ export async function store(req, res) {
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
+        // Applica la sanificazione prima di creare la query
+        const finalQuantity = sanitizeNullableNumberField(quantity);
+        const finalDiscountPrice = sanitizeNullableNumberField(discount_price);
+        const finalProductWeight = sanitizeNullableNumberField(product_weight);
+
+        /* Codice PostgreSQL (commentato)
         const { rows: [newProduct] } = await pool.query(
-            `INSERT INTO products (name, description, price, animal_id, brand_id, food_type)
-             VALUES ($1, $2, $3, $4, $5, $6)
+            `INSERT INTO products (
+                name, description, quantity, price, discount_price, age, weight, 
+                accessories, food_type, biological, pet_food_necessity, hair, 
+                additional_information, product_weight, animal_id, brand_id
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
              RETURNING *`,
-            [name.trim(), description ? description.trim() : null, price, animal_id || null, brand_id || null, food_type || null]
+            [name.trim(), description ? description.trim() : null, finalQuantity, price, finalDiscountPrice, age || null, weight || null, accessories || 0, food_type || null, biological || 0, pet_food_necessity || null, hair || null, additional_information || null, finalProductWeight, animal_id || null, brand_id || null]
         );
         res.status(201).json(newProduct);
         */
 
         // Codice MySQL
-        const query = `INSERT INTO products (name, description, price, animal_id, brand_id, food_type) VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [name.trim(), description ? description.trim() : null, price, animal_id || null, brand_id || null, food_type || null];
+        const query = `INSERT INTO products (
+            name, description, quantity, price, discount_price, age, weight, 
+            accessories, food_type, biological, pet_food_necessity, hair, 
+            additional_information, product_weight, animal_id, brand_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        const values = [
+            name.trim(),
+            description ? description.trim() : null,
+            finalQuantity,
+            price,
+            finalDiscountPrice,
+            age || null,
+            weight || null,
+            accessories || 0,
+            food_type || null,
+            biological || 0,
+            pet_food_necessity || null,
+            hair || null,
+            additional_information || null,
+            finalProductWeight,
+            animal_id || null,
+            brand_id || null
+        ];
+
         const [result] = await pool.query(query, values);
 
         const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [result.insertId]);
@@ -68,22 +116,6 @@ export async function changePrice(req, res) {
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const { rows: [updated] } = await pool.query(
-            "UPDATE products SET price = $1 WHERE id = $2 RETURNING *",
-            [new_price, id]
-        );
-        if (!updated) {
-            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
-        }
-        res.status(200).json({
-            success: true,
-            message: `Prezzo del prodotto ${id} aggiornato con successo`,
-            updatedPrice: updated.price
-        });
-        */
-
-        // Codice MySQL
         const [result] = await pool.query("UPDATE products SET price = ? WHERE id = ?", [new_price, id]);
 
         if (result.affectedRows === 0) {
@@ -108,20 +140,31 @@ export async function update(req, res) {
         return res.status(400).json({ error: true, message: "ID non valido" });
     }
 
-    const { name, description, price, animal_id, brand_id, food_type } = req.body;
+    const {
+        name, description, quantity, price, discount_price, age, weight,
+        accessories, food_type, biological, pet_food_necessity, hair,
+        additional_information, product_weight, animal_id, brand_id
+    } = req.body;
 
     if (!name || typeof price !== 'number' || price <= 0) {
         return res.status(400).json({ error: true, message: "Nome e prezzo sono obbligatori e validi." });
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
+        // Applica la sanificazione anche qui
+        const finalQuantity = sanitizeNullableNumberField(quantity);
+        const finalDiscountPrice = sanitizeNullableNumberField(discount_price);
+        const finalProductWeight = sanitizeNullableNumberField(product_weight);
+
+        /* Codice PostgreSQL (commentato)
         const { rows: [product] } = await pool.query(
-            `UPDATE products
-             SET name = $1, description = $2, price = $3, animal_id = $4, brand_id = $5, food_type = $6
-             WHERE id = $7
-             RETURNING *`,
-            [name.trim(), description ? description.trim() : null, price, animal_id || null, brand_id || null, food_type || null, id]
+            `UPDATE products SET 
+                name = $1, description = $2, quantity = $3, price = $4, discount_price = $5, age = $6, weight = $7, 
+                accessories = $8, food_type = $9, biological = $10, pet_food_necessity = $11, hair = $12, 
+                additional_information = $13, product_weight = $14, animal_id = $15, brand_id = $16
+                WHERE id = $17
+                RETURNING *`,
+            [name.trim(), description ? description.trim() : null, finalQuantity, price, finalDiscountPrice, age || null, weight || null, accessories || 0, food_type || null, biological || 0, pet_food_necessity || null, hair || null, additional_information || null, finalProductWeight, animal_id || null, brand_id || null, id]
         );
         if (!product) {
             return res.status(404).json({ error: true, message: "Prodotto non trovato" });
@@ -130,8 +173,30 @@ export async function update(req, res) {
         */
 
         // Codice MySQL
-        const query = `UPDATE products SET name = ?, description = ?, price = ?, animal_id = ?, brand_id = ?, food_type = ? WHERE id = ?`;
-        const values = [name.trim(), description ? description.trim() : null, price, animal_id || null, brand_id || null, food_type || null, id];
+        const query = `UPDATE products SET 
+            name = ?, description = ?, quantity = ?, price = ?, discount_price = ?, age = ?, weight = ?, 
+            accessories = ?, food_type = ?, biological = ?, pet_food_necessity = ?, hair = ?, 
+            additional_information = ?, product_weight = ?, animal_id = ?, brand_id = ?
+            WHERE id = ?`;
+        const values = [
+            name.trim(),
+            description ? description.trim() : null,
+            finalQuantity,
+            price,
+            finalDiscountPrice,
+            age || null,
+            weight || null,
+            accessories || 0,
+            food_type || null,
+            biological || 0,
+            pet_food_necessity || null,
+            hair || null,
+            additional_information || null,
+            finalProductWeight,
+            animal_id || null,
+            brand_id || null,
+            id
+        ];
         const [result] = await pool.query(query, values);
 
         if (result.affectedRows === 0) {
@@ -155,15 +220,6 @@ export async function destroy(req, res) {
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const result = await pool.query("DELETE FROM products WHERE id = $1", [productId]);
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
-        }
-        res.sendStatus(204);
-        */
-
-        // Codice MySQL
         const [result] = await pool.query("DELETE FROM products WHERE id = ?", [productId]);
 
         if (result.affectedRows === 0) {
