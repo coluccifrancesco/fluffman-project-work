@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import HeroSpace from '../components/HeroSpace'
 import '../styles/ContactsPage.css'
 
@@ -63,10 +62,11 @@ export default function ContactsPage() {
 
                         <div className='socials row'>
 
-                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><Link><button><i className="fa-brands fa-instagram"></i></button></Link></div>
-                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><Link><button><i className="fa-brands fa-tiktok"></i></button></Link></div>
-                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><Link><button><i className="fa-brands fa-facebook"></i></button></Link></div>
-                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><Link><button><i className="fa-brands fa-linkedin"></i></button></Link></div>
+                            {/* I link sono fittizi */}
+                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><a href='https://www.instagram.com/'><button><i className="fa-brands fa-instagram"></i></button></a></div>
+                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><a href='https://www.tiktok.com/'><button><i className="fa-brands fa-tiktok"></i></button></a></div>
+                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><a href='https://www.facebook.com/'><button><i className="fa-brands fa-facebook"></i></button></a></div>
+                            <div className='col-3 p-0 i-and-p-hover social-margin-on-hover'><a href='https://www.linkedin.com/'><button><i className="fa-brands fa-linkedin"></i></button></a></div>
 
                         </div>
 
