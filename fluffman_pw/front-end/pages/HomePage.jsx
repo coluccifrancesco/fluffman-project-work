@@ -25,7 +25,7 @@ export default function HomePage() {
           <div className="container mid-banner my-5">
             <div className="row g-3">
               <div className="col-12 col-md-6 text-center p-4 rounded">
-                <Link to="/contacts">
+                <Link to="/Contacts">
                   <img
                     className="img-fluid rounded"
                     src="/BCC_placeholder.png"
