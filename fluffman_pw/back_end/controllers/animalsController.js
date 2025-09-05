@@ -26,23 +26,23 @@ export async function show(req, res) {
 
 // STORE
 export async function store(req, res) {
-    const { type } = req.body;
+    const { animal_type } = req.body;
 
-    if (!type) {
+    if (!animal_type) {
         return res.status(400).json({ error: true, message: "Il tipo è obbligatorio." });
     }
 
     try {
         /* Codice Supabase (PostgreSQL)
         const { rows: [newAnimal] } = await pool.query(
-            "INSERT INTO animals (type) VALUES ($1) RETURNING *",
-            [type.trim()]
+            "INSERT INTO animals (animal_type) VALUES ($1) RETURNING *",
+            [animal_type.trim()]
         );
         res.status(201).json(newAnimal);
         */
 
         // Codice MySQL
-        const [result] = await pool.query("INSERT INTO animals (type) VALUES (?)", [type.trim()]);
+        const [result] = await pool.query("INSERT INTO animals (animal_type) VALUES (?)", [animal_type.trim()]);
 
         const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [result.insertId]);
         res.status(201).json(rows[0]);
@@ -54,17 +54,17 @@ export async function store(req, res) {
 // UPDATE
 export async function update(req, res) {
     const { id } = req.params;
-    const { type } = req.body;
+    const { animal_type } = req.body;
 
-    if (!type) {
+    if (!animal_type) {
         return res.status(400).json({ error: true, message: "Il tipo è obbligatorio." });
     }
 
     try {
         /* Codice Supabase (PostgreSQL)
         const { rows: [updatedAnimal] } = await pool.query(
-            "UPDATE animals SET type = $1 WHERE id = $2 RETURNING *",
-            [type.trim(), id]
+            "UPDATE animals SET animal_type = $1 WHERE id = $2 RETURNING *",
+            [animal_type.trim(), id]
         );
         if (!updatedAnimal) {
             return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
@@ -73,7 +73,7 @@ export async function update(req, res) {
         */
 
         // Codice MySQL
-        const [result] = await pool.query("UPDATE animals SET type = ? WHERE id = ?", [type.trim(), id]);
+        const [result] = await pool.query("UPDATE animals SET animal_type = ? WHERE id = ?", [animal_type.trim(), id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
