@@ -33,6 +33,8 @@ const PORT = process.env.PORT || 3030;
 //Bodyparser
 app.use(express.json());
 
+// Assumi che le tue immagini siano in una cartella 'public'
+app.use(express.static('public'));
 //facciamo si che le cors ci permettano di vedere il sito
 app.use(cors());
 

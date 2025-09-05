@@ -4,52 +4,78 @@ import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 
-export default function SingleProductPage() {
+// Aggiungi questa funzione all'inizio del file
+function sanitizeFilename(filename) {
+  // Rimuove caratteri problematici e li sostituisce con un underscore
+  return filename.replace(/["']+/g, '').replace(/[\s&]+/g, '_');
+}
 
-  const [product, setProduct] = useState();
-  const [brand, setBrand] = useState();
-  const [image, setImage] = useState();
-  const { id } = useParams()
-  const apiProductUrl = `http://localhost:3030/api/products/${id}`
-  const apiBrandUrl = `http://localhost:3030/api/brands/${id}`
-  const apiImageUrl = `http://localhost:3030/api/images/${id}`
+export default function SingleProductPage() {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [brand, setBrand] = useState(null);
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(apiProductUrl)
-      .then(res => res.json())
-      .then(data => {
-        setProduct(data)
+    // Chiamata 1: Fetch dei dati del prodotto
+    fetch(`http://localhost:3030/api/products/${id}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Prodotto non trovato.');
+        }
+        return res.json();
       })
-    fetch(apiBrandUrl)
-      .then(res => res.json())
-      .then(data => {
-        setBrand(data)
+      .then(productData => {
+        setProduct(productData);
+
+        if (!productData || !productData.id) {
+          throw new Error('Dati del prodotto non disponibili.');
+        }
+
+        const brandId = productData.brand_id;
+        const imageId = productData.id;
+
+        // Chiamata 2 & 3: Fetch di brand e immagine in parallelo
+        const brandPromise = fetch(`http://localhost:3030/api/brands/${brandId}`).then(res => res.json());
+        const imagePromise = fetch(`http://localhost:3030/api/images/${imageId}`).then(res => res.json());
+
+        return Promise.all([brandPromise, imagePromise]);
       })
-    fetch(apiBrandUrl)
-      .then(res => res.json())
-      .then(data => {
-        setImage(data)
+      .then(([brandData, imageData]) => {
+        setBrand(brandData);
+        setImage(imageData);
+        console.log('Dati immagine ricevuti:', imageData);
       })
-  }, [])
+      .catch(err => {
+        setError(err.message);
+      });
+  }, [id]);
+
+  if (error) {
+    return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
+  }
+
+  // Ora passiamo il nome del file sanificato al componente
+  const sanitizedImageName = image?.name ? sanitizeFilename(image.name) : null;
 
   return (
     <div className="bg">
       <div className="container p-2">
         <div className="text-center">
-          <h1 className="p-2">Dettagli sul prodotto</h1> {/* product.name */}
+          <h1 className="p-2">{product?.name || "Dettagli sul prodotto"}</h1>
         </div>
 
-        {/* Sezione Card + Descrizione */}
         <div className="row align-items-start g-4">
           <div className="col-md-6">
-            <CardProductDetail product={product} brand={brand} image={image} />
+            <CardProductDetail
+              product={product}
+              brand={brand}
+              image={{ ...image, name: sanitizedImageName }} // Passiamo il nome sanificato
+              apiImageUrl={"http://localhost:3030/products_image/"} />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
-              <p className="text-dark text-center">
-                {" "}
-                <em>Nome Prodotto</em>
-              </p>
               <p className="text-dark">
                 {product?.description}
               </p>
@@ -83,7 +109,6 @@ export default function SingleProductPage() {
           </div>
         </div>
 
-        {/* Prodotti simili */}
         <div className="m-2 p-2">
           <h2>Prodotti simili</h2>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
