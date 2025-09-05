@@ -56,18 +56,24 @@ const products = [
 export default function NewProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   // useState per index in desktop
-  const [desktop, setDesktop] = useState(window.innerWidth >= 768); //set tablet-size breakpoint
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); //set windowWidth useState for dynamic rendering
 
   // useEffect per cambiare logica in atto al cambio di finestra
   useEffect(() => {
     function handleSize() {
-      setDesktop(window.innerWidth >= 768); //breakpoint bootstrap per modalità tablet
+      setWindowWidth(window.innerWidth); //breakpoint bootstrap per modalità tablet
     }
     window.addEventListener("resize", handleSize);
     return () => window.removeEventListener("resize", handleSize);
   }, []); //debugging
 
-  const cardsPerPage = 4;
+  //DYNAMIC CARD RENDERING SECTION per tablet e desktop
+  let cardsPerPage = 4;
+  const isTablet = windowWidth >= 768 && windowWidth < 992;
+  const isMobile = windowWidth < 768;
+
+  if (isTablet) cardsPerPage = 2;
+
   const totalGroups = Math.ceil(products.length / cardsPerPage);
 
   function handleNext() {
@@ -85,8 +91,8 @@ export default function NewProducts() {
     <div className="section_container">
       <h2 className="my-4 text-center">Ultimi Arrivi</h2>
 
-      {desktop ? (
-        // se useState = desktop => index arrows
+      {!isMobile ? (
+        // se diverso da mobile => index arrows
         <div className="position-relative">
           <button
             id="arrow_left"
@@ -98,7 +104,10 @@ export default function NewProducts() {
 
           <div className="row justify-content-center g-4 px-5 mx-3">
             {visibleProducts.map((product) => (
-              <div key={product.id} className="col-12 col-md-3">
+              <div
+                key={product.id}
+                className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
+              >
                 <CardItem
                   title={product.title}
                   image={product.image}
@@ -118,8 +127,7 @@ export default function NewProducts() {
         </div>
       ) : (
         // NON TOCCARE O SI SPACCA
-        // ALTRIMENTI!
-        // se rileva la window.innerWidth del breakpoint mobile/tablet => scroll orizzontale con overflow-auto
+        // if (mobile) => scroll orizzontale con overflow-auto
         <div className="d-flex overflow-auto gap-3 pb-3">
           {products.map((product) => (
             <div
