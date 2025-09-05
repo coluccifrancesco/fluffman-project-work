@@ -7,14 +7,28 @@ import { useParams } from 'react-router-dom';
 export default function SingleProductPage() {
 
   const [product, setProduct] = useState();
+  const [brand, setBrand] = useState();
+  const [image, setImage] = useState();
   const { id } = useParams()
-  const apiProductUrl = `http://localhost:5173/api/products/${id}`
+  const apiProductUrl = `http://localhost:3030/api/products/${id}`
+  const apiBrandUrl = `http://localhost:3030/api/brands/${id}`
+  const apiImageUrl = `http://localhost:3030/api/images/${id}`
 
   useEffect(() => {
     fetch(apiProductUrl)
       .then(res => res.json())
       .then(data => {
         setProduct(data)
+      })
+    fetch(apiBrandUrl)
+      .then(res => res.json())
+      .then(data => {
+        setBrand(data)
+      })
+    fetch(apiBrandUrl)
+      .then(res => res.json())
+      .then(data => {
+        setImage(data)
       })
   }, [])
 
@@ -28,7 +42,7 @@ export default function SingleProductPage() {
         {/* Sezione Card + Descrizione */}
         <div className="row align-items-start g-4">
           <div className="col-md-6">
-            <CardProductDetail product={product} />
+            <CardProductDetail product={product} brand={brand} image={image} />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
@@ -37,15 +51,16 @@ export default function SingleProductPage() {
                 <em>Nome Prodotto</em>
               </p>
               <p className="text-dark">
-                Descrizione Lunga Prodotto - Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Adipisci voluptas fuga provident
-                et laborum sapiente nemo voluptate atque distinctio culpa libero
-                magnam, vel possimus impedit molestias totam doloremque dolorum!
-                Maiores?
+                {product?.description}
               </p>
               <p className="text-dark">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Tempore, molestias!
+                {product?.age}
+              </p>
+              <p className="text-dark">
+                {product?.food_type}
+              </p>
+              <p className="text-dark">
+                {product?.pet_food_necessity}
               </p>
               <div className="tags">
                 <ul className="list-unstyled d-flex flex-row gap-3 justify-content-center">

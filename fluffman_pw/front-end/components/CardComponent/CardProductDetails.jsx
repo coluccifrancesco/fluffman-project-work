@@ -1,28 +1,26 @@
-export default function CardProductDetail({ product }) {
+export default function CardProductDetail({ product, brand, image }) {
   return (
     <div className="card p-3 mb-3">
       <div className="card-body text-center">
-        <h5 className="product_name text-dark">{/*{product?.name}*/}Nome prodotto</h5>
+        <h5 className="product_name text-dark">{product?.name}</h5>
         <p className="producer text-dark">
-          <em>Nome dell'azienda produttrice</em>
+          <em>{brand?.name}</em>
         </p>
-        <p className="price"> 20,90 €</p>
+        <p className="price">{product?.price} $</p>
 
         {/* Immagine spostata sotto il titolo */}
         <div className="card-top mx-auto my-3" style={{ width: "100%" }}>
           <img
-            src="/products/product1.webp"
+            src={image?.name}
             className="img-fluid rounded detail_img"
-            alt="product_img"
+            alt={image?.name}
           />
         </div>
 
-        <div className="card_bottom">Lorem ipsum dolor sit amet.</div>
-        <p className="text-dark">Breve Descrizione Prodotto</p>
         <p className="text-dark">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque,
-          exercitationem.
+          {product?.additional_information}
         </p>
+        <p className="text-dark">{product?.product_weight} Kg</p>
       </div>
     </div>
   );
