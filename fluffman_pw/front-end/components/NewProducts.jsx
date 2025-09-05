@@ -2,61 +2,26 @@ import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/NewProducts.css";
 
-const products = [
-  {
-    id: 1,
-    title: "Prodotto 1",
-    price: 10.99,
-    image: "product1.webp",
-  },
-  {
-    id: 2,
-    title: "Prodotto 2",
-    price: 12.99,
-    image: "product2.webp",
-  },
-  {
-    id: 3,
-    title: "Prodotto 3",
-    price: 15.99,
-    image: "product3.webp",
-  },
-  {
-    id: 4,
-    title: "Prodotto 4",
-    price: 18.99,
-    image: "product4.webp",
-  },
-  {
-    id: 5,
-    title: "Prodotto 5",
-    price: 21.99,
-    image: "product5.webp",
-  },
-  {
-    id: 6,
-    title: "Prodotto 6",
-    price: 24.99,
-    image: "product6.webp",
-  },
-  {
-    id: 7,
-    title: "Prodotto 7",
-    price: 27.99,
-    image: "product7.webp",
-  },
-  {
-    id: 8,
-    title: "Prodotto 8",
-    price: 30.99,
-    image: "product8.webp",
-  },
-];
+
 
 export default function NewProducts() {
+  const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   // useState per index in desktop
   const [windowWidth, setWindowWidth] = useState(window.innerWidth); //set windowWidth useState for dynamic rendering
+
+  // useEffect per fetchare i prodotti
+  useEffect(() => {
+    fetch("http://localhost:3306/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        const shuffled = data.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 16);
+        setProducts(selected);
+      })
+      .catch((err) => console.error("Errore fetch:", err));
+  }, []);
+
 
   // useEffect per cambiare logica in atto al cambio di finestra
   useEffect(() => {
