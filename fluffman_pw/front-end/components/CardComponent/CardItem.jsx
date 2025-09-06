@@ -1,4 +1,3 @@
-import { sanitizeFilename } from "../../utils/stringUtils";
 import { useNavigate } from "react-router-dom";
 
 export default function CardItem({ product }) {
@@ -8,10 +7,9 @@ export default function CardItem({ product }) {
     navigate(`/products/${product.id}`);
   };
 
-  // Costruisci l'URL dell'immagine in modo sicuro
-  const imageUrl = product?.image
-    ? `http://localhost:3030/products_image/${sanitizeFilename(product.image)}`
-    : null;
+  // L'URL dell'immagine è già stato costruito in NewProducts.jsx,
+  // quindi lo usiamo direttamente.
+  const imageUrl = product?.image;
 
   return (
     <div className="card product_card text-center" onClick={handleCardClick}>

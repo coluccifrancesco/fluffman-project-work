@@ -10,16 +10,25 @@ export default function NewProducts() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const resProd = await fetch("http://localhost:3030/api/products");
+        // Fetch products and images with a cache-busting query parameter
+        // Questo parametro forza il browser a non usare la cache per questa richiesta
+        const resProd = await fetch(`http://localhost:3030/api/products?t=${Date.now()}`);
         const products = await resProd.json();
 
-        const resImg = await fetch("http://localhost:3030/api/images");
+        const resImg = await fetch(`http://localhost:3030/api/images?t=${Date.now()}`);
         const images = await resImg.json();
 
-        // unisci immagini ai prodotti
+        // LOGGING: Controlla i dati che arrivano dal backend
+        console.log("Dati dei prodotti:", products);
+        console.log("Dati delle immagini:", images);
+
+        // unisci immagini ai prodotti e costruisci l'URL completo
         const merged = products.map(p => {
           const img = images.find(i => i.product_id === p.id);
-          return { ...p, image: img ? img.url : "/images/default.jpg" };
+          // Se un'immagine è trovata, costruisci l'URL completo usando la proprietà 'name'
+          const imageUrl = img ? `http://localhost:3030/products_image/${img.name}` : "/images/default.jpg";
+          console.log(`Prodotto ID: ${p.id} - URL Immagine: ${imageUrl}`);
+          return { ...p, image: imageUrl };
         });
 
         setProducts(merged.sort(() => 0.5 - Math.random()).slice(0, 16));
@@ -30,7 +39,6 @@ export default function NewProducts() {
 
     fetchData();
   }, []);
-
 
   useEffect(() => {
     function handleSize() {
