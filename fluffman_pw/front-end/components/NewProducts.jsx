@@ -2,37 +2,44 @@ import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/NewProducts.css";
 
-
-
 export default function NewProducts() {
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // useState per index in desktop
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth); //set windowWidth useState for dynamic rendering
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // useEffect per fetchare i prodotti
   useEffect(() => {
-    fetch("http://localhost:3306/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffled = data.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 16);
-        setProducts(selected);
-      })
-      .catch((err) => console.error("Errore fetch:", err));
+    async function fetchData() {
+      try {
+        const resProd = await fetch("http://localhost:3030/api/products");
+        const products = await resProd.json();
+
+        const resImg = await fetch("http://localhost:3030/api/images");
+        const images = await resImg.json();
+
+        // unisci immagini ai prodotti
+        const merged = products.map(p => {
+          const img = images.find(i => i.product_id === p.id);
+          return { ...p, image: img ? img.url : "/images/default.jpg" };
+        });
+
+        setProducts(merged.sort(() => 0.5 - Math.random()).slice(0, 16));
+      } catch (err) {
+        console.error("Errore fetch:", err);
+      }
+    }
+
+    fetchData();
   }, []);
 
 
-  // useEffect per cambiare logica in atto al cambio di finestra
   useEffect(() => {
     function handleSize() {
-      setWindowWidth(window.innerWidth); //breakpoint bootstrap per modalità tablet
+      setWindowWidth(window.innerWidth);
     }
     window.addEventListener("resize", handleSize);
     return () => window.removeEventListener("resize", handleSize);
-  }, []); //debugging
+  }, []);
 
-  //DYNAMIC CARD RENDERING SECTION per tablet e desktop
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
   const isMobile = windowWidth < 768;
@@ -57,7 +64,6 @@ export default function NewProducts() {
       <h2 className="my-4 text-center">Ultimi Arrivi</h2>
 
       {!isMobile ? (
-        // se diverso da mobile => index arrows
         <div className="position-relative">
           <button
             id="arrow_left"
@@ -73,11 +79,7 @@ export default function NewProducts() {
                 key={product.id}
                 className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
               >
-                <CardItem
-                  title={product.title}
-                  image={product.image}
-                  price={product.price}
-                />
+                <CardItem product={product} />
               </div>
             ))}
           </div>
@@ -91,20 +93,14 @@ export default function NewProducts() {
           </button>
         </div>
       ) : (
-        // NON TOCCARE O SI SPACCA
-        // if (mobile) => scroll orizzontale con overflow-auto
         <div className="d-flex overflow-auto gap-3 pb-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0" //impedisce alla card di restringersi, se mettete a flex-shrink-1 torna al comportamento di default
-              style={{ width: "80%", maxWidth: "250px" }} //forziamo lo stile, testing purpose
+              className="flex-shrink-0"
+              style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem
-                title={product.title}
-                image={product.image}
-                price={product.price}
-              />
+              <CardItem product={product} />
             </div>
           ))}
         </div>

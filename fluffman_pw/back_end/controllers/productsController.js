@@ -13,10 +13,18 @@ const sanitizeNullableNumberField = (value) => {
     return value;
 };
 
-// READ (index): Ottiene tutti i prodotti
+// La funzione INDEX del tuo controller dei prodotti
 export async function index(req, res) {
     try {
-        const [rows] = await pool.query("SELECT * FROM products ORDER BY id ASC");
+        // Usiamo una JOIN per unire le due tabelle
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            ORDER BY p.id ASC
+        `);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
@@ -27,9 +35,18 @@ export async function index(req, res) {
 export async function show(req, res) {
     const { id } = req.params;
     try {
-        const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+        // JOIN con la tabella images per ottenere il nome dell'immagine
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            WHERE p.id = ?
+        `, [id]);
+
         if (rows.length === 0) {
-            return res.status(404).json({ error: true, message: "Tipo di prodotto non trovato." });
+            return res.status(404).json({ error: true, message: "Prodotto non trovato." });
         }
         res.json(rows[0]);
     } catch (err) {
