@@ -4,12 +4,6 @@ import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 
-// Aggiungi questa funzione all'inizio del file
-function sanitizeFilename(filename) {
-  // Rimuove caratteri problematici e li sostituisce con un underscore
-  return filename.replace(/["']+/g, '').replace(/[\s&]+/g, '_');
-}
-
 export default function SingleProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -56,9 +50,6 @@ export default function SingleProductPage() {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
   }
 
-  // Ora passiamo il nome del file sanificato al componente
-  const sanitizedImageName = image?.name ? sanitizeFilename(image.name) : null;
-
   return (
     <div className="bg">
       <div className="container p-2">
@@ -71,7 +62,7 @@ export default function SingleProductPage() {
             <CardProductDetail
               product={product}
               brand={brand}
-              image={{ ...image, name: sanitizedImageName }} // Passiamo il nome sanificato
+              image={image} // Passa l'oggetto 'image' non modificato
               apiImageUrl={"http://localhost:3030/products_image/"} />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">

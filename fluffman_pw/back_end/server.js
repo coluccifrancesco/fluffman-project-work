@@ -1,11 +1,12 @@
-//importo express
 import express from "express";
-
-//importo cors
 import cors from "cors";
-
-//importo dotenv
 import dotenv from "dotenv";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Correggi l'errore `__dirname is not defined`
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //importo le routes
 import productsRouter from './routes/productsRouter.js';
@@ -34,7 +35,8 @@ const PORT = process.env.PORT || 3030;
 app.use(express.json());
 
 // Assumi che le tue immagini siano in una cartella 'public'
-app.use(express.static('public'));
+app.use('/products_image', express.static(path.join(__dirname, 'public/products_image')));
+
 //facciamo si che le cors ci permettano di vedere il sito
 app.use(cors());
 
