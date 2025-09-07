@@ -12,10 +12,14 @@ export default function NewProducts() {
       try {
         // Fetch products and images with a cache-busting query parameter
         // Questo parametro forza il browser a non usare la cache per questa richiesta
-        const resProd = await fetch(`http://localhost:3030/api/products?t=${Date.now()}`);
+        const resProd = await fetch(
+          `http://localhost:3030/api/products?t=${Date.now()}`
+        );
         const products = await resProd.json();
 
-        const resImg = await fetch(`http://localhost:3030/api/images?t=${Date.now()}`);
+        const resImg = await fetch(
+          `http://localhost:3030/api/images?t=${Date.now()}`
+        );
         const images = await resImg.json();
 
         // LOGGING: Controlla i dati che arrivano dal backend
@@ -23,10 +27,12 @@ export default function NewProducts() {
         console.log("Dati delle immagini:", images);
 
         // unisci immagini ai prodotti e costruisci l'URL completo
-        const merged = products.map(p => {
-          const img = images.find(i => i.product_id === p.id);
+        const merged = products.map((p) => {
+          const img = images.find((i) => i.product_id === p.id);
           // Se un'immagine è trovata, costruisci l'URL completo usando la proprietà 'name'
-          const imageUrl = img ? `http://localhost:3030/products_image/${img.name}` : "/images/default.jpg";
+          const imageUrl = img
+            ? `http://localhost:3030/products_image/${img.name}`
+            : "/images/default.jpg";
           console.log(`Prodotto ID: ${p.id} - URL Immagine: ${imageUrl}`);
           return { ...p, image: imageUrl };
         });
@@ -81,7 +87,7 @@ export default function NewProducts() {
             <i className="bi bi-arrow-left-square"></i>
           </button>
 
-          <div className="row justify-content-center g-0 px-2 mx-5">
+          <div className="row justify-content-center g-3 px-2 mx-5">
             {visibleProducts.map((product) => (
               <div
                 key={product.id}
