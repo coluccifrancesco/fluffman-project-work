@@ -91,14 +91,17 @@ export default function NewProducts() {
               </div>
             ))}
           </div>
+          <div className="arrow" onClick={handleNext}></div>
 
-          <button
+          {/* <span class="arrowAni">up</span> */}
+
+          {/* <button
             id="arrow_right"
             className="arrow-btn position-absolute top-50 end-0 translate-middle-y"
             onClick={handleNext}
           >
             <i className="bi bi-arrow-right-square"></i>
-          </button>
+          </button> */}
         </div>
       ) : (
         <div className="d-flex overflow-auto gap-3 pb-3">

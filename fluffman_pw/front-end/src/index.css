@@ -16,7 +16,7 @@
   font-family: "Geologica", sans-serif;
 }
 
-#arrow_left {
+/* #arrow_left {
   position: absolute;
   filter: sepia(2) contrast(2.2);
   bottom: 150px;
@@ -38,7 +38,7 @@
   color: var(--background);
   cursor: pointer;
   z-index: 100;
-}
+} */
 
 .section_container {
   position: relative;
@@ -62,3 +62,96 @@
 .card:hover {
   transform: scale(1.05);
 }
+<<<<<<< HEAD
+=======
+
+.arrow {
+  position: absolute;
+  bottom: 250px;
+  left: -30px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border: solid 3px white;
+  transition: 0.5s;
+  overflow: hidden;
+}
+
+.arrow:hover {
+  /*  animation:borderAni 5s cubic-bezier(0, 0.6, 1, 0.4); */
+  border: solid 3px white;
+  border-radius: 50%;
+}
+
+.arrow:after {
+  position: absolute;
+  bottom: 22px;
+  left: 5px;
+  display: block;
+  content: "";
+  color: white;
+  width: 30px;
+  height: 15px;
+  /*   border:solid 1px;  */
+  border-bottom: solid 3px;
+  transform: translatex(4px);
+}
+
+.arrow:before {
+  position: absolute;
+  display: block;
+  content: "";
+  width: 20px;
+  height: 20px;
+  color: white;
+  border-top: solid 3px;
+  border-left: solid 3px;
+  top: 50%;
+  left: 6px;
+  /*   border:solid 1px;  */
+  transform-origin: 0% 0%;
+  transform: rotatez(-45deg);
+
+}
+
+.arrow:hover:before {
+  animation: aniArrow01 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+.arrow:hover:after {
+  animation: aniArrow02 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+
+@keyframes aniArrow01 {
+  0% {
+    transform: rotatez(-45deg) translateY(30px) translateX(30px);
+  }
+
+  100% {
+    transform: rotatez(-45deg) translateY(-35px) translateX(-35px);
+  }
+}
+
+
+@keyframes aniArrow02 {
+  0% {
+    transform: translateX(45px);
+  }
+
+  100% {
+    transform: translateX(-44px);
+  }
+}
+
+@keyframes borderAni {
+  0% {
+    border: solid 2px white;
+  }
+
+  100% {
+    border: solid 2px white;
+    border-radius: 50%;
+  }
+}
+>>>>>>> 5174f35 (Add arrow navigation for product carousel and enhance styles)
