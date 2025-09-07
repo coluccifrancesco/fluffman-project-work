@@ -67,26 +67,24 @@ export default function SingleProductPage() {
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
-              <p className="text-dark">
+              <p className="text-dark my-5 mx-3">
                 {product?.description}
               </p>
-              <p className="text-dark">
-                {product?.age}
-              </p>
-              <p className="text-dark">
-                {product?.food_type}
-              </p>
-              <p className="text-dark">
-                {product?.pet_food_necessity}
-              </p>
               <div className="tags">
-                <ul className="list-unstyled d-flex flex-row gap-3 justify-content-center">
-                  <li className="tag text-white p-2 bg-success rounded">Tag</li>
-                  <li className="tag text-white p-2 bg-info bg-gradient rounded">
-                    Tag
+                <ul className="list-unstyled d-flex flex-row gap-4 justify-content-evenly">
+                  <li className="tag p-2 bg-body-secondary rounded">
+                    <p className="text-success my-1">
+                      {product?.pet_food_necessity}
+                    </p></li>
+                  <li className="tag text-center p-2 bg-body-secondary bg-gradient rounded">
+                    <p className="text-success my-1">
+                      {product?.food_type}
+                    </p>
                   </li>
-                  <li className="tag text-white p-2 bg-primary bg-gradient rounded">
-                    Tag
+                  <li className="tag p-2 bg-body-secondary bg-gradient rounded">
+                    <p className="text-success my-1">
+                      {product?.age}
+                    </p>
                   </li>
                 </ul>
               </div>
