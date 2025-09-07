@@ -1,0 +1,166 @@
+.arrow_left {
+    position: absolute;
+    bottom: 150px;
+    left: -15px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow_right {
+    position: absolute;
+    bottom: 150px;
+    right: -15px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow_left,
+.arrow_right {
+    cursor: pointer;
+    border: solid 3px white;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.arrow_left:hover,
+.arrow_right:hover {
+    /*  animation:borderAni 5s cubic-bezier(0, 0.6, 1, 0.4); */
+    border: solid 3px white;
+    border-radius: 50%;
+}
+
+
+.arrow_left:after {
+    position: absolute;
+    bottom: 22px;
+    left: 5px;
+    display: block;
+    content: "";
+    color: white;
+    width: 30px;
+    height: 15px;
+    border-bottom: solid 3px;
+    transform: translateX(4px);
+}
+
+.arrow_right:after {
+    position: absolute;
+    bottom: 22px;
+    right: 5px;
+    display: block;
+    content: "";
+    color: white;
+    width: 30px;
+    height: 15px;
+    border-bottom: solid 3px;
+    transform: translateX(-4px);
+}
+
+
+.arrow_left:before {
+    position: absolute;
+    display: block;
+    content: "";
+    width: 20px;
+    height: 20px;
+    color: white;
+    border-top: solid 3px;
+    border-left: solid 3px;
+    top: 22px;
+    left: 6px;
+    transform-origin: 0% 0%;
+    transform: rotateZ(-45deg);
+}
+
+.arrow_right:before {
+    position: absolute;
+    display: block;
+    content: "";
+    width: 20px;
+    height: 20px;
+    color: white;
+    border-top: solid 3px;
+    border-right: solid 3px;
+    top: 22px;
+    right: 6px;
+    transform-origin: 100% 0%;
+    transform: rotateZ(45deg);
+}
+
+
+.arrow_left:hover:before {
+    animation: aniArrow01 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+.arrow_right:hover:before {
+    animation: aniArrow01-right 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+.arrow_left:hover:after {
+    animation: aniArrow02 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+.arrow_right:hover:after {
+    animation: aniArrow02-right 1s cubic-bezier(0, 0.6, 1, 0.4) infinite 0.5s;
+}
+
+/* animation arrow:before */
+
+@keyframes aniArrow01 {
+    0% {
+        transform: rotatez(-45deg) translateY(30px) translateX(30px);
+    }
+
+    100% {
+        transform: rotatez(-45deg) translateY(-35px) translateX(-35px);
+    }
+}
+
+@keyframes aniArrow01-right {
+    0% {
+        transform: rotatez(45deg) translateY(30px) translateX(-30px);
+    }
+
+    100% {
+        transform: rotatez(45deg) translateY(-35px) translateX(35px);
+    }
+}
+
+/* animation arrow:after */
+@keyframes aniArrow02 {
+    0% {
+        transform: translateX(45px);
+    }
+
+    100% {
+        transform: translateX(-44px);
+    }
+}
+
+@keyframes aniArrow02-right {
+    0% {
+        transform: translateX(-45px);
+    }
+
+    100% {
+        transform: translateX(44px);
+    }
+}
+
+/* animation arrow border */
+@keyframes borderAni {
+    0% {
+        border: solid 2px white;
+    }
+
+    100% {
+        border: solid 2px white;
+        border-radius: 50%;
+    }
+}
