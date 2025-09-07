@@ -81,7 +81,7 @@ export default function NewProducts() {
             <i className="bi bi-arrow-left-square"></i>
           </button>
 
-          <div className="row justify-content-center g-4 px-5 mx-3">
+          <div className="row justify-content-center g-0 px-2 mx-5">
             {visibleProducts.map((product) => (
               <div
                 key={product.id}
