@@ -1,6 +1,7 @@
 import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/NewProducts.css";
+import "../styles/Arrows.css";
 
 export default function NewProducts() {
   const [products, setProducts] = useState([]);

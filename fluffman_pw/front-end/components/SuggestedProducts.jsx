@@ -2,6 +2,7 @@ import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/SuggestedProducts.css";
 import "../styles/NewProducts.css";
+import "../styles/Arrows.css";
 
 export default function SuggestedProducts() {
   const [products, setProducts] = useState([]);

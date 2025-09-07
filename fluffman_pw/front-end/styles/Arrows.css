@@ -1,6 +1,6 @@
 .arrow_left {
     position: absolute;
-    bottom: 150px;
+    bottom: 170px;
     left: -15px;
     width: 50px;
     height: 50px;
@@ -11,7 +11,7 @@
 
 .arrow_right {
     position: absolute;
-    bottom: 150px;
+    bottom: 170px;
     right: -15px;
     width: 50px;
     height: 50px;
