@@ -1,73 +1,55 @@
 import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/SuggestedProducts.css";
+import "../styles/NewProducts.css";
 
-const products = [
-  {
-    id: 1,
-    title: "Prodotto 1",
-    price: 10.99,
-    image: "product1.webp",
-  },
-  {
-    id: 2,
-    title: "Prodotto 2",
-    price: 12.99,
-    image: "product2.webp",
-  },
-  {
-    id: 3,
-    title: "Prodotto 3",
-    price: 15.99,
-    image: "product3.webp",
-  },
-  {
-    id: 4,
-    title: "Prodotto 4",
-    price: 18.99,
-    image: "product4.webp",
-  },
-  {
-    id: 5,
-    title: "Prodotto 5",
-    price: 21.99,
-    image: "product5.webp",
-  },
-  {
-    id: 6,
-    title: "Prodotto 6",
-    price: 24.99,
-    image: "product6.webp",
-  },
-  {
-    id: 7,
-    title: "Prodotto 7",
-    price: 27.99,
-    image: "product7.webp",
-  },
-  {
-    id: 8,
-    title: "Prodotto 8",
-    price: 30.99,
-    image: "product8.webp",
-  },
-];
-
-export default function NewProducts() {
+export default function SuggestedProducts() {
+  const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // useState per index in desktop
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth); //set windowWidth useState for dynamic rendering
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect per cambiare logica in atto al cambio di finestra
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const productsResponse = await fetch("http://localhost:3030/api/products");
+        const productsData = await productsResponse.json();
+
+        const imagesResponse = await fetch("http://localhost:3030/api/images");
+        const imagesData = await imagesResponse.json();
+
+        const mergedProducts = productsData.map(p => {
+          const img = imagesData.find(i => i.product_id === p.id);
+          const imageUrl = img ? `http://localhost:3030/products_image/${img.name}` : "/images/default.jpg";
+          return {
+            ...p,
+            image: imageUrl,
+          };
+        });
+
+        // Mescola i prodotti e ne seleziona 16
+        const shuffledProducts = mergedProducts.sort(() => 0.5 - Math.random());
+        const finalProducts = shuffledProducts.slice(0, 16);
+        setProducts(finalProducts);
+
+      } catch (err) {
+        console.error("Errore fetch:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   useEffect(() => {
     function handleSize() {
-      setWindowWidth(window.innerWidth); //breakpoint bootstrap per modalità tablet
+      setWindowWidth(window.innerWidth);
     }
     window.addEventListener("resize", handleSize);
     return () => window.removeEventListener("resize", handleSize);
-  }, []); //debugging
+  }, []);
 
-  //DYNAMIC CARD RENDERING SECTION per tablet e desktop
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
   const isMobile = windowWidth < 768;
@@ -87,12 +69,15 @@ export default function NewProducts() {
   const start = currentIndex * cardsPerPage;
   const visibleProducts = products.slice(start, start + cardsPerPage);
 
+  if (isLoading) {
+    return <div className="text-center mt-5">Caricamento in corso...</div>;
+  }
+
   return (
     <div className="section_container">
       <h2 className="my-4 text-center">I Consigli di Oggi</h2>
 
       {!isMobile ? (
-        // se diverso da mobile => index arrows
         <div className="position-relative">
           <button
             id="arrow_left"
@@ -108,11 +93,7 @@ export default function NewProducts() {
                 key={product.id}
                 className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
               >
-                <CardItem
-                  title={product.title}
-                  image={product.image}
-                  price={product.price}
-                />
+                <CardItem product={product} />
               </div>
             ))}
           </div>
@@ -126,20 +107,14 @@ export default function NewProducts() {
           </button>
         </div>
       ) : (
-        // NON TOCCARE O SI SPACCA
-        // if (mobile) => scroll orizzontale con overflow-auto
         <div className="d-flex overflow-auto gap-3 pb-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0" //impedisce alla card di restringersi, se mettete a flex-shrink-1 torna al comportamento di default
-              style={{ width: "80%", maxWidth: "250px" }} //forziamo lo stile, testing purpose
+              className="flex-shrink-0"
+              style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem
-                title={product.title}
-                image={product.image}
-                price={product.price}
-              />
+              <CardItem product={product} />
             </div>
           ))}
         </div>
