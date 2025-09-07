@@ -48,7 +48,9 @@ export default function CardProductDetail({
         )}
         {product?.product_weight && (
           <p className="text-dark">
-            {Number(product?.product_weight).toFixed(0)} Kg
+            {Number(product.product_weight) < 1
+              ? Number(product.product_weight).toFixed(2) + " Kg"
+              : Number(product.product_weight).toFixed(0) + " Kg"}
           </p>
         )}
       </div>

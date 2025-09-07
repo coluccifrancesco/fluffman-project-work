@@ -130,7 +130,11 @@ export default function SingleProductPage() {
                       {product?.product_weight && (
                         <li className="tag p-2 bg-body-secondary rounded">
                           <p className="text-success my-1">
-                            {Number(product.product_weight).toFixed(0)} kg
+                            {Number(product.product_weight) < 1
+                              ? Number(product.product_weight).toFixed(2) +
+                                " kg"
+                              : Number(product.product_weight).toFixed(0) +
+                                " kg"}
                           </p>
                         </li>
                       )}
