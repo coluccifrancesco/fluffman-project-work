@@ -61,16 +61,6 @@ export default function Footer() {
                 alt="footer_dog_happy"
               />
             </div>
-            <div className="slogan col text-dark">
-              <em>
-                <strong>
-                  Scopri il nuovo modo di vivere la cura del tuo animale da
-                  compagnia. Con Fluffman avrai il segreto della sua felicità a
-                  portata di zampa!
-                </strong>{" "}
-                <i className="fa-solid fa-paw"></i>
-              </em>
-            </div>
           </div>
         </div>
       </footer>

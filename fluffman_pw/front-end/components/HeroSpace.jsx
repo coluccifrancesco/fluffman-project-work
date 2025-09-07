@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "../styles/HeroSpace.css";
 
 export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,7 +32,8 @@ export default function Carousel() {
   };
 
   return (
-    <div className="carosello" style={{ textAlign: "center" }}>
+    <div className="carosello-container">
+      {" "}
       <div className="slide" onClick={nextSlide}>
         <img
           className="img-fluid"
@@ -43,7 +45,16 @@ export default function Carousel() {
             objectFit: "cover",
           }}
         />
-        <div className="caption">{slides[currentIndex].caption}</div>
+        <div className="slogan col text-white">
+          <em>
+            <strong>
+              Scopri il nuovo modo di vivere la cura del tuo animale da
+              compagnia. Con Fluffman avrai il segreto della sua felicità a
+              portata di zampa!
+            </strong>{" "}
+            <i className="fa-solid fa-paw"></i>
+          </em>
+        </div>
       </div>
     </div>
   );
