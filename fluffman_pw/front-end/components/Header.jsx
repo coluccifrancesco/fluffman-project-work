@@ -82,7 +82,7 @@ export default function Header() {
             </button>
           </li>
           <li>
-            <NavLink to="/">
+            <NavLink to="/Wishlist">
               <i className="fa-solid fa-star m-0"></i>
             </NavLink>
           </li>
