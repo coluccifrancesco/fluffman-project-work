@@ -2,7 +2,7 @@ import CardProductDetail from "../components/CardComponent/CardProductDetails";
 import CardItem from "../components/CardComponent/CardItem";
 import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 export default function SingleProductPage() {
   const { id } = useParams();
@@ -14,34 +14,38 @@ export default function SingleProductPage() {
   useEffect(() => {
     // Chiamata 1: Fetch dei dati del prodotto
     fetch(`http://localhost:3030/api/products/${id}`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
-          throw new Error('Prodotto non trovato.');
+          throw new Error("Prodotto non trovato.");
         }
         return res.json();
       })
-      .then(productData => {
+      .then((productData) => {
         setProduct(productData);
 
         if (!productData || !productData.id) {
-          throw new Error('Dati del prodotto non disponibili.');
+          throw new Error("Dati del prodotto non disponibili.");
         }
 
         const brandId = productData.brand_id;
         const imageId = productData.id;
 
         // Chiamata 2 & 3: Fetch di brand e immagine in parallelo
-        const brandPromise = fetch(`http://localhost:3030/api/brands/${brandId}`).then(res => res.json());
-        const imagePromise = fetch(`http://localhost:3030/api/images/${imageId}`).then(res => res.json());
+        const brandPromise = fetch(
+          `http://localhost:3030/api/brands/${brandId}`
+        ).then((res) => res.json());
+        const imagePromise = fetch(
+          `http://localhost:3030/api/images/${imageId}`
+        ).then((res) => res.json());
 
         return Promise.all([brandPromise, imagePromise]);
       })
       .then(([brandData, imageData]) => {
         setBrand(brandData);
         setImage(imageData);
-        console.log('Dati immagine ricevuti:', imageData);
+        console.log("Dati immagine ricevuti:", imageData);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err.message);
       });
   }, [id]);
@@ -63,30 +67,86 @@ export default function SingleProductPage() {
               product={product}
               brand={brand}
               image={image} // Passa l'oggetto 'image' non modificato
-              apiImageUrl={"http://localhost:3030/products_image/"} />
+              apiImageUrl={"http://localhost:3030/products_image/"}
+            />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
             <div className="p-3 border rounded h-100 bg-light">
-              <p className="text-dark my-5 mx-3">
-                {product?.description}
-              </p>
-              <div className="tags">
-                <ul className="list-unstyled d-flex flex-row gap-4 justify-content-evenly">
-                  <li className="tag p-2 bg-body-secondary rounded">
-                    <p className="text-success my-1">
-                      {product?.pet_food_necessity}
-                    </p></li>
-                  <li className="tag text-center p-2 bg-body-secondary bg-gradient rounded">
-                    <p className="text-success my-1">
-                      {product?.food_type}
-                    </p>
-                  </li>
-                  <li className="tag p-2 bg-body-secondary bg-gradient rounded">
-                    <p className="text-success my-1">
-                      {product?.age}
-                    </p>
-                  </li>
-                </ul>
+              <b>
+                <p className="mt-3 mb-0 text-dark fs-5">
+                  {" "}
+                  Descrizione Prodotto{" "}
+                </p>
+              </b>
+              <p className="text-dark ">{product?.description}</p>
+              <b>
+                <p className="mt-3 mb-0 text-dark fs-5">
+                  {" "}
+                  Informazioni Aggiuntive{" "}
+                </p>
+              </b>
+              <p className="text-dark ">{product?.additional_information}</p>
+
+              <div className="mt-5 d-flex flex-wrap justify-content-center">
+                {(product?.pet_food_necessity ||
+                  product?.food_type ||
+                  product?.age ||
+                  product?.weight ||
+                  product?.hair ||
+                  product?.product_weight ||
+                  product?.biological ||
+                  product?.accessories) && (
+                  <div className="tags">
+                    <ul className="list-unstyled d-flex flex-row gap-4 justify-content-evenly">
+                      {product?.pet_food_necessity && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">
+                            {product.pet_food_necessity}
+                          </p>
+                        </li>
+                      )}
+                      {product?.food_type && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">
+                            {product.food_type}
+                          </p>
+                        </li>
+                      )}
+                      {product?.age && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">{product.age}</p>
+                        </li>
+                      )}
+                      {product?.weight && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">{product.weight}</p>
+                        </li>
+                      )}
+                      {product?.hair && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">{product.hair}</p>
+                        </li>
+                      )}
+                      {product?.product_weight && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">
+                            {product.product_weight}
+                          </p>
+                        </li>
+                      )}
+                      {product?.biological === 1 && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">Biologico</p>
+                        </li>
+                      )}
+                      {product?.accessories === 1 && (
+                        <li className="tag p-2 bg-body-secondary rounded">
+                          <p className="text-success my-1">Accessori</p>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
             <div className="button-container d-flex justify-content-center">

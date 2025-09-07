@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 
-export default function CardProductDetail({ product, brand, image, apiImageUrl }) {
+export default function CardProductDetail({
+  product,
+  brand,
+  image,
+  apiImageUrl,
+}) {
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -17,7 +22,9 @@ export default function CardProductDetail({ product, brand, image, apiImageUrl }
     }
   }, [image, apiImageUrl]);
 
-  const altText = product?.name ? `Immagine del prodotto: ${product.name}` : "Immagine del prodotto";
+  const altText = product?.name
+    ? `Immagine del prodotto: ${product.name}`
+    : "Immagine del prodotto";
 
   return (
     <div className="card p-3 mb-3">
@@ -39,11 +46,9 @@ export default function CardProductDetail({ product, brand, image, apiImageUrl }
         ) : (
           <div>Caricamento immagine...</div>
         )}
-
-        <p className="text-dark">
-          {product?.additional_information}
-        </p>
-        <p className="text-dark">{product?.product_weight} Kg</p>
+        {product?.product_weight && (
+          <p className="text-dark">{product?.product_weight} Kg</p>
+        )}
       </div>
     </div>
   );
