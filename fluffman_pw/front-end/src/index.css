@@ -27,11 +27,11 @@
   border-radius: 0.5rem;
   overflow: hidden;
   transition: transform 0.2s;
-  height: 100% !important;
+  /* height: 110% !important; */
 }
 
 .card-title {
-  height: 60% !important;
+  height: 100px !important;
 }
 
 .card-img-top {
