@@ -87,7 +87,7 @@ export default function SingleProductPage() {
               </b>
               <p className="text-dark ">{product?.additional_information}</p>
 
-              <div className="mt-5 d-flex flex-wrap justify-content-center">
+              <div className="mt-5">
                 {(product?.pet_food_necessity ||
                   product?.food_type ||
                   product?.age ||
@@ -97,7 +97,7 @@ export default function SingleProductPage() {
                   product?.biological ||
                   product?.accessories) && (
                   <div className="tags">
-                    <ul className="list-unstyled d-flex flex-row gap-4 justify-content-evenly">
+                    <ul className="list-unstyled d-flex flex-row gap-4 flex-wrap justify-content-center">
                       {product?.pet_food_necessity && (
                         <li className="tag p-2 bg-body-secondary rounded">
                           <p className="text-success my-1">
@@ -130,13 +130,13 @@ export default function SingleProductPage() {
                       {product?.product_weight && (
                         <li className="tag p-2 bg-body-secondary rounded">
                           <p className="text-success my-1">
-                            {product.product_weight}
+                            {Number(product.product_weight).toFixed(0)} kg
                           </p>
                         </li>
                       )}
                       {product?.biological === 1 && (
                         <li className="tag p-2 bg-body-secondary rounded">
-                          <p className="text-success my-1">Biologico</p>
+                          <p className="text-success my-1">Bio</p>
                         </li>
                       )}
                       {product?.accessories === 1 && (

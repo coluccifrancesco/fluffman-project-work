@@ -47,7 +47,9 @@ export default function CardProductDetail({
           <div>Caricamento immagine...</div>
         )}
         {product?.product_weight && (
-          <p className="text-dark">{product?.product_weight} Kg</p>
+          <p className="text-dark">
+            {Number(product?.product_weight).toFixed(0)} Kg
+          </p>
         )}
       </div>
     </div>
