@@ -79,14 +79,7 @@ export default function SuggestedProducts() {
 
       {!isMobile ? (
         <div className="position-relative">
-          <button
-            id="arrow_left"
-            className="arrow-btn position-absolute top-50 start-0 translate-middle-y"
-            onClick={handlePrev}
-          >
-            <i className="bi bi-arrow-left-square"></i>
-          </button>
-
+          <div className="arrow_left" onClick={handlePrev}></div>
           <div className="row justify-content-center g-4 px-5 mx-3">
             {visibleProducts.map((product) => (
               <div
@@ -98,13 +91,7 @@ export default function SuggestedProducts() {
             ))}
           </div>
 
-          <button
-            id="arrow_right"
-            className="arrow-btn position-absolute top-50 end-0 translate-middle-y"
-            onClick={handleNext}
-          >
-            <i className="bi bi-arrow-right-square"></i>
-          </button>
+          <div className="arrow_right" onClick={handleNext}></div>
         </div>
       ) : (
         <div className="d-flex overflow-auto gap-3 pb-3">
