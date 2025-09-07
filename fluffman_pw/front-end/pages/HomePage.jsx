@@ -39,6 +39,7 @@ export default function HomePage() {
           </div>
 
           {/* Section - Ultimi Arrivi */}
+          <h2 className="my-4 text-center">Ultimi Arrivi</h2>
           <NewProducts />
           {/* <DogProducts />
           <CatProducts /> */}

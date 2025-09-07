@@ -75,8 +75,6 @@ export default function NewProducts() {
 
   return (
     <div className="section_container">
-      <h2 className="my-4 text-center">Ultimi Arrivi</h2>
-
       {!isMobile ? (
         <div className="position-relative">
           <div className="arrow_left" onClick={handlePrev}></div>
