@@ -162,6 +162,7 @@ export default function SingleProductPage() {
                       </ul>
                     </div>
                   )}
+
               </div>
             </div>
             <div className="button-container d-flex justify-content-center">
