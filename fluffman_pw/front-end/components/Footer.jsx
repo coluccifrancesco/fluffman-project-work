@@ -6,8 +6,8 @@ export default function Footer() {
     <>
       <footer className="container-fluid">
         <div className="container py-3">
-          <div className="row pt-3">
-            <div className="col">
+          <div className="row pt-3 justify-content-center">
+            <div className="col-6 col-sm-3 col-xs-3 col-md-3">
               <ul className="list-unstyled">
                 <h5>
                   Info Utili{" "}
@@ -24,7 +24,7 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-            <div className="col">
+            <div className="col-6 col-sm-3 col-xs-3 col-md-3">
               <ul className="list-unstyled">
                 <h5>
                   Chi Siamo{" "}
@@ -38,7 +38,7 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-            <div className="col">
+            <div className="col-6 col-sm-3 col-xs-3 col-md-3">
               <ul className="list-unstyled">
                 <h5>
                   Spedizioni <i className="fa-solid fa-truck-fast ps-2"></i>
@@ -54,9 +54,9 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-            <div className="col">
+            <div className="col-md-3 d-none d-lg-block">
               <img
-                className="footer_pic mw-50 img-fluid d-none d-lg-block"
+                className="footer_pic mw-50 img-fluid"
                 src="/happy_dog.jpg"
                 alt="footer_dog_happy"
               />

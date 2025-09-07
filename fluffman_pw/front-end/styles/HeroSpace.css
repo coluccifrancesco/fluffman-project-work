@@ -23,7 +23,7 @@
 }
 
 /* Media query per schermi piccoli*/
-@media (max-width: 400px) {
+@media (max-width: 410px) {
   .slogan {
     font-size: 0.9rem;
     width: 70%;
