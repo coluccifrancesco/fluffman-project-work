@@ -27,15 +27,22 @@
   border-radius: 0.5rem;
   overflow: hidden;
   transition: transform 0.2s;
-  height: 100%;
+  height: 100% !important;
+}
+
+.card-title {
+  height: 60% !important;
 }
 
 .card-img-top {
-  width: 100%;
-  height: 300px;
   object-fit: cover;
 }
 
 .card:hover {
   transform: scale(1.05);
+}
+
+.bi-star:hover,
+.bi-cart3:hover {
+  color: green;
 }
