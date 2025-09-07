@@ -2,25 +2,33 @@ import pool from "../db/connection.js";
 
 // STORE
 export async function store(req, res) {
-    const { user_id } = req.body;
-    if (!user_id) {
-        return res.status(400).json({ error: true, message: "ID utente obbligatorio." });
+    const {
+        user_id,
+        date,
+        card_number,
+        total_price,
+        name,
+        last_name,
+        email,
+        phone_number,
+        address,
+        state,
+        cap,
+        shipping,
+        invoice,
+        status,
+        shipping_invoice
+    } = req.body;
+
+    // Verifico i campi obbligatori, escludendo 'shipping_invoice' che ha un valore di default
+    if (!user_id || !date || !card_number || !total_price || !name || !last_name || !email || !phone_number || !address || !state || !cap || !shipping || !invoice || !status) {
+        return res.status(400).json({ error: true, message: "Mancano campi obbligatori." });
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const status = 'pending';
-        const { rows: [newPurchase] } = await pool.query(
-            `INSERT INTO purchases (user_id, status) VALUES ($1, $2) RETURNING *`,
-            [user_id, status]
-        );
-        res.status(201).json(newPurchase);
-        */
-
         // Codice MySQL
-        const status = 'pending';
-        const query = `INSERT INTO purchases (user_id, status) VALUES (?, ?)`;
-        const values = [user_id, status];
+        const query = `INSERT INTO purchases (user_id, date, card_number, total_price, name, last_name, email, phone_number, address, state, cap, shipping, invoice, status, shipping_invoice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const values = [user_id, date, card_number, total_price, name, last_name, email, phone_number, address, state, cap, shipping, invoice, status, shipping_invoice];
         const [result] = await pool.query(query, values);
 
         const [rows] = await pool.query("SELECT * FROM purchases WHERE id = ?", [result.insertId]);
@@ -33,7 +41,8 @@ export async function store(req, res) {
 // INDEX
 export async function index(req, res) {
     try {
-        const [rows] = await pool.query("SELECT * FROM purchases ORDER BY created_at DESC");
+        // Ho cambiato l'ordinamento in base alla nuova colonna 'date'.
+        const [rows] = await pool.query("SELECT * FROM purchases ORDER BY date DESC");
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
