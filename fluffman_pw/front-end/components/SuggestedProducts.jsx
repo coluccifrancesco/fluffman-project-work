@@ -81,7 +81,7 @@ export default function SuggestedProducts() {
       {!isMobile ? (
         <div className="position-relative">
           <div className="arrow_left" onClick={handlePrev}></div>
-          <div className="row justify-content-center g-4 px-5 mx-3">
+          <div className="row justify-content-center g-3 px-2 mx-5">
             {visibleProducts.map((product) => (
               <div
                 key={product.id}
