@@ -1,9 +1,44 @@
 import pool from "../db/connection.js";
 
-// INDEX
+/**
+ * Sanifica e valida un campo numerico che potrebbe essere null.
+ * Converte esplicitamente stringhe vuote, undefined o 'NULL' in un valore null.
+ * Inoltre, verifica che il valore, se presente, sia un numero valido e positivo.
+ * @param {*} value - Il valore da sanificare.
+ * @param {boolean} isRequiredAndPositive - Se il campo deve essere obbligatorio e positivo.
+ * @returns {number|null|object} - Il valore numerico, null o un oggetto di errore.
+ */
+const sanitizeAndValidateNumberField = (value, isRequiredAndPositive = false) => {
+    if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.toUpperCase() === 'NULL')) {
+        if (isRequiredAndPositive) {
+            return { error: true, message: "Il campo 'quantity' deve essere un numero intero non negativo." };
+        }
+        return null;
+    }
+
+    const numberValue = Number(value);
+    if (isNaN(numberValue)) {
+        return { error: true, message: "Il campo 'quantity' deve essere un numero valido." };
+    }
+
+    if (isRequiredAndPositive && (!Number.isInteger(numberValue) || numberValue < 0)) {
+        return { error: true, message: "Il campo 'quantity' deve essere un numero intero non negativo." };
+    }
+
+    return numberValue;
+};
+
+// La funzione INDEX del tuo controller dei prodotti
 export async function index(req, res) {
     try {
-        const [rows] = await pool.query("SELECT * FROM animals ORDER BY id ASC");
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            ORDER BY p.id ASC
+        `);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
@@ -14,9 +49,17 @@ export async function index(req, res) {
 export async function show(req, res) {
     const { id } = req.params;
     try {
-        const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [id]);
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            WHERE p.id = ?
+        `, [id]);
+
         if (rows.length === 0) {
-            return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
+            return res.status(404).json({ error: true, message: "Prodotto non trovato." });
         }
         res.json(rows[0]);
     } catch (err) {
@@ -24,28 +67,92 @@ export async function show(req, res) {
     }
 }
 
-// STORE
+// CREATE (store): Crea un nuovo prodotto
 export async function store(req, res) {
-    const { animal_type } = req.body;
+    const {
+        name, description, quantity, price, discount_price, age, weight,
+        accessories, food_type, biological, pet_food_necessity, hair,
+        additional_information, product_weight, animal_id, brand_id
+    } = req.body;
 
-    if (!animal_type) {
-        return res.status(400).json({ error: true, message: "Il tipo è obbligatorio." });
+    // Controllo avanzato per il nome: deve essere una stringa non vuota
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio e non può essere vuoto." });
+    }
+
+    // Validazione del prezzo
+    const finalPrice = Number(price);
+    if (isNaN(finalPrice) || finalPrice <= 0) {
+        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
+    }
+
+    // Validazione della quantità
+    const finalQuantity = sanitizeAndValidateNumberField(quantity, true);
+    if (finalQuantity && finalQuantity.error) {
+        return res.status(400).json(finalQuantity);
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const { rows: [newAnimal] } = await pool.query(
-            "INSERT INTO animals (animal_type) VALUES ($1) RETURNING *",
-            [animal_type.trim()]
-        );
-        res.status(201).json(newAnimal);
-        */
+        const finalDiscountPrice = sanitizeAndValidateNumberField(discount_price);
+        const finalProductWeight = sanitizeAndValidateNumberField(product_weight);
 
-        // Codice MySQL
-        const [result] = await pool.query("INSERT INTO animals (animal_type) VALUES (?)", [animal_type.trim()]);
+        const query = `INSERT INTO products (
+            name, description, quantity, price, discount_price, age, weight, 
+            accessories, food_type, biological, pet_food_necessity, hair, 
+            additional_information, product_weight, animal_id, brand_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [result.insertId]);
+        const values = [
+            name.trim(),
+            description ? description.trim() : null,
+            finalQuantity,
+            finalPrice,
+            finalDiscountPrice,
+            age || null,
+            weight || null,
+            accessories || 0,
+            food_type || null,
+            biological || 0,
+            pet_food_necessity || null,
+            hair || null,
+            additional_information || null,
+            finalProductWeight,
+            animal_id || null,
+            brand_id || null
+        ];
+
+        const [result] = await pool.query(query, values);
+
+        const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [result.insertId]);
         res.status(201).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
+// UPDATE: Aggiorna il prezzo
+export async function changePrice(req, res) {
+    const { id } = req.params;
+    const { new_price } = req.body;
+
+    const finalNewPrice = Number(new_price);
+    if (isNaN(finalNewPrice) || finalNewPrice <= 0) {
+        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
+    }
+
+    try {
+        const [result] = await pool.query("UPDATE products SET price = ? WHERE id = ?", [finalNewPrice, id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
+        }
+
+        const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+        res.status(200).json({
+            success: true,
+            message: `Prezzo del prodotto ${id} aggiornato con successo`,
+            updatedProduct: rows[0]
+        });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -54,33 +161,69 @@ export async function store(req, res) {
 // UPDATE
 export async function update(req, res) {
     const { id } = req.params;
-    const { animal_type } = req.body;
+    if (!id || isNaN(parseInt(id))) {
+        return res.status(400).json({ error: true, message: "ID del prodotto non valido." });
+    }
 
-    if (!animal_type) {
-        return res.status(400).json({ error: true, message: "Il tipo è obbligatorio." });
+    const {
+        name, description, quantity, price, discount_price, age, weight,
+        accessories, food_type, biological, pet_food_necessity, hair,
+        additional_information, product_weight, animal_id, brand_id
+    } = req.body;
+
+    // Controllo avanzato per il nome: deve essere una stringa non vuota
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio e non può essere vuoto." });
+    }
+
+    // Validazione del prezzo
+    const finalPrice = Number(price);
+    if (isNaN(finalPrice) || finalPrice <= 0) {
+        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
+    }
+
+    // Validazione della quantità
+    const finalQuantity = sanitizeAndValidateNumberField(quantity, true);
+    if (finalQuantity && finalQuantity.error) {
+        return res.status(400).json(finalQuantity);
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const { rows: [updatedAnimal] } = await pool.query(
-            "UPDATE animals SET animal_type = $1 WHERE id = $2 RETURNING *",
-            [animal_type.trim(), id]
-        );
-        if (!updatedAnimal) {
-            return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
-        }
-        res.status(200).json(updatedAnimal);
-        */
+        const finalDiscountPrice = sanitizeAndValidateNumberField(discount_price);
+        const finalProductWeight = sanitizeAndValidateNumberField(product_weight);
 
-        // Codice MySQL
-        const [result] = await pool.query("UPDATE animals SET animal_type = ? WHERE id = ?", [animal_type.trim(), id]);
+        const query = `UPDATE products SET 
+            name = ?, description = ?, quantity = ?, price = ?, discount_price = ?, age = ?, weight = ?, 
+            accessories = ?, food_type = ?, biological = ?, pet_food_necessity = ?, hair = ?, 
+            additional_information = ?, product_weight = ?, animal_id = ?, brand_id = ?
+            WHERE id = ?`;
+        const values = [
+            name.trim(),
+            description ? description.trim() : null,
+            finalQuantity,
+            finalPrice,
+            finalDiscountPrice,
+            age || null,
+            weight || null,
+            accessories || 0,
+            food_type || null,
+            biological || 0,
+            pet_food_necessity || null,
+            hair || null,
+            additional_information || null,
+            finalProductWeight,
+            animal_id || null,
+            brand_id || null,
+            id
+        ];
+        const [result] = await pool.query(query, values);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
+            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
         }
 
-        const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [id]);
-        res.status(200).json(rows[0]);
+        const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+        res.json({ success: true, message: "Prodotto aggiornato con successo", product: rows[0] });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -89,26 +232,17 @@ export async function update(req, res) {
 // DESTROY
 export async function destroy(req, res) {
     const { id } = req.params;
-    const animalId = parseInt(id);
+    const productId = parseInt(id);
 
-    if (isNaN(animalId)) {
-        return res.status(400).json({ error: true, message: "ID non valido." });
+    if (isNaN(productId)) {
+        return res.status(400).json({ error: true, message: "ID non valido" });
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const result = await pool.query("DELETE FROM animals WHERE id = $1", [animalId]);
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
-        }
-        res.sendStatus(204);
-        */
-
-        // Codice MySQL
-        const [result] = await pool.query("DELETE FROM animals WHERE id = ?", [animalId]);
+        const [result] = await pool.query("DELETE FROM products WHERE id = ?", [productId]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: true, message: "Tipo di animale non trovato." });
+            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
         }
 
         res.sendStatus(204);

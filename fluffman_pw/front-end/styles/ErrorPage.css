@@ -1,0 +1,156 @@
+/*#region ROOT*/
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+/*#endregion ROOT */
+
+.error-bg {
+  background: var(--background);
+  color: #fff;
+  max-height: 700px;
+  overflow: hidden;
+  position: relative; /*!NON TOCCARE*/
+}
+
+.c {
+  text-align: center;
+  width: 80%;
+  margin: 100px auto;
+  position: relative;
+  z-index: 10;
+}
+
+._404 {
+  font-size: 220px;
+  display: block;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  height: 250px;
+  letter-spacing: 15px;
+  margin: 0 auto;
+}
+._1 {
+  font-size: 4em;
+  letter-spacing: 12px;
+  margin-top: 0;
+  position: relative;
+}
+._2 {
+  font-size: 20px;
+  margin-top: 0;
+  position: relative;
+}
+
+.btn-404-home {
+  display: inline-block;
+  width: 358px;
+  padding: 10px 0;
+  margin: 20px auto 0;
+  background-color: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+}
+
+#clouds {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.cloud {
+  width: 350px;
+  height: 120px;
+  background: #fff;
+  border-radius: 100px;
+  position: absolute;
+}
+
+.cloud:after,
+.cloud:before {
+  content: "";
+  position: absolute;
+  background: #fff;
+}
+.cloud:after {
+  width: 100px;
+  height: 100px;
+  top: -50px;
+  left: 50px;
+  border-radius: 100px;
+}
+.cloud:before {
+  width: 180px;
+  height: 180px;
+  top: -90px;
+  right: 50px;
+  border-radius: 200px;
+}
+
+/*! Posizione e animazione Nuvole */
+.x1 {
+  top: -50px;
+  left: 100px;
+  transform: scale(0.3);
+  opacity: 0.9;
+  animation: moveclouds 15s linear infinite;
+}
+.x1_5 {
+  top: -80px;
+  left: 250px;
+  transform: scale(0.3);
+  animation: moveclouds 17s linear infinite;
+}
+.x2 {
+  top: 30px;
+  left: 250px;
+  transform: scale(0.6);
+  opacity: 0.6;
+  animation: moveclouds 25s linear infinite;
+}
+.x3 {
+  bottom: -70px;
+  left: 250px;
+  transform: scale(0.6);
+  opacity: 0.8;
+  animation: moveclouds 25s linear infinite;
+}
+.x4 {
+  bottom: 20px;
+  left: 470px;
+  transform: scale(0.75);
+  opacity: 0.75;
+  animation: moveclouds 18s linear infinite;
+}
+.x5 {
+  top: 300px;
+  left: 200px;
+  transform: scale(0.5);
+  opacity: 0.8;
+  animation: moveclouds 20s linear infinite;
+}
+
+/*! Animazione nuvole */
+@keyframes moveclouds {
+  0% {
+    transform: translateX(1000px);
+  }
+  100% {
+    transform: translateX(-1000px);
+  }
+}

@@ -11,6 +11,8 @@ import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import WishlistPage from "../pages/WishlistPage";
 import CartPage from "../pages/CartPage";
 import ProductsPage from "../pages/ProductsPage";
+import CheckOutPage from "../pages/CheckOutPage";
+import ErrorPage from '../pages/ErrorPage';
 
 function App() {
   return (

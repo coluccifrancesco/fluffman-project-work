@@ -29,21 +29,28 @@ export async function show(req, res) {
 export async function store(req, res) {
     const { name, product_id } = req.body;
 
-    if (!name || !product_id) {
-        return res.status(400).json({ error: true, message: "Nome dell'immagine e ID del prodotto sono obbligatori." });
+    // Aggiungi un controllo esplicito per il nome dell'immagine
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome dell'immagine è obbligatorio e non può essere vuoto." });
+    }
+
+    // Controlla che product_id sia un numero valido
+    const finalProductId = parseInt(product_id);
+    if (isNaN(finalProductId)) {
+        return res.status(400).json({ error: true, message: "L'ID del prodotto non è valido." });
     }
 
     try {
         /* Codice Supabase (PostgreSQL)
         const { rows: [newImage] } = await pool.query(
             "INSERT INTO images (name, product_id) VALUES ($1, $2) RETURNING *",
-            [name, product_id]
+            [name.trim(), finalProductId]
         );
         res.status(201).json(newImage);
         */
 
         // Codice MySQL
-        const [result] = await pool.query("INSERT INTO images (name, product_id) VALUES (?, ?)", [name, product_id]);
+        const [result] = await pool.query("INSERT INTO images (name, product_id) VALUES (?, ?)", [name.trim(), finalProductId]);
 
         const [rows] = await pool.query("SELECT * FROM images WHERE id = ?", [result.insertId]);
         res.status(201).json(rows[0]);
@@ -57,15 +64,16 @@ export async function update(req, res) {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: true, message: "Il nuovo nome dell'immagine è obbligatorio." });
+    // Aggiungi un controllo esplicito per il tipo e la lunghezza della stringa
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nuovo nome dell'immagine è obbligatorio e non può essere vuoto." });
     }
 
     try {
         /* Codice Supabase (PostgreSQL)
         const { rows: [updatedImage] } = await pool.query(
             "UPDATE images SET name = $1 WHERE id = $2 RETURNING *",
-            [name, id]
+            [name.trim(), id]
         );
         if (!updatedImage) {
             return res.status(404).json({ error: true, message: "Immagine non trovata." });
@@ -74,7 +82,7 @@ export async function update(req, res) {
         */
 
         // Codice MySQL
-        const [result] = await pool.query("UPDATE images SET name = ? WHERE id = ?", [name, id]);
+        const [result] = await pool.query("UPDATE images SET name = ? WHERE id = ?", [name.trim(), id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Immagine non trovata." });

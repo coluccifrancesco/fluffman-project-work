@@ -1,24 +1,38 @@
 import pool from "../db/connection.js";
 
 /**
- * Sanifica un campo numerico che potrebbe essere null.
- * Converte esplicitamente le stringhe vuote, undefined o 'NULL' in un vero valore null.
+ * Sanifica e valida un campo numerico che potrebbe essere null.
+ * Converte esplicitamente stringhe vuote, undefined o 'NULL' in un valore null.
+ * Inoltre, verifica che il valore, se presente, sia un numero valido e positivo.
  * @param {*} value - Il valore da sanificare.
- * @returns {number|null} - Il valore numerico o null se non valido.
+ * @param {boolean} isRequiredAndPositive - Se il campo deve essere obbligatorio e positivo.
+ * @returns {number|null|object} - Il valore numerico, null o un oggetto di errore.
  */
-const sanitizeNullableNumberField = (value) => {
+const sanitizeAndValidateNumberField = (value, isRequiredAndPositive = false) => {
     if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.toUpperCase() === 'NULL')) {
+        if (isRequiredAndPositive) {
+            return { error: true, message: "Il campo 'quantity' deve essere un numero intero non negativo." };
+        }
         return null;
     }
-    return value;
+
+    const numberValue = Number(value);
+    if (isNaN(numberValue)) {
+        return { error: true, message: "Il campo 'quantity' deve essere un numero valido." };
+    }
+
+    if (isRequiredAndPositive && (!Number.isInteger(numberValue) || numberValue < 0)) {
+        return { error: true, message: "Il campo 'quantity' deve essere un numero intero non negativo." };
+    }
+
+    return numberValue;
 };
 
-// La funzione INDEX del tuo controller dei prodotti
+//INDEX
 export async function index(req, res) {
     try {
-        // Usiamo una JOIN per unire le due tabelle
         const [rows] = await pool.query(`
-            SELECT 
+            SELECT
                 p.*,
                 i.name AS image_name
             FROM products AS p
@@ -31,19 +45,44 @@ export async function index(req, res) {
     }
 }
 
-//SHOW
+// SHOW
 export async function show(req, res) {
     const { id } = req.params;
     try {
-        // JOIN con la tabella images per ottenere il nome dell'immagine
         const [rows] = await pool.query(`
             SELECT 
                 p.*,
-                i.name AS image_name
+                i.name AS image_name,
+                b.name AS brand_name  -- Aggiungi il nome del brand
             FROM products AS p
             JOIN images AS i ON p.id = i.product_id
+            JOIN brands AS b ON p.brand_id = b.id -- NUOVO: Aggiungi il JOIN per il brand
             WHERE p.id = ?
         `, [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: true, message: "Prodotto non trovato." });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
+// showBySlug (NUOVA FUNZIONE)
+export async function showBySlug(req, res) {
+    const { slug } = req.params;
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name,
+                b.name AS brand_name  -- Aggiungi il nome del brand
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            JOIN brands AS b ON p.brand_id = b.id -- NUOVO: Aggiungi il JOIN per il brand
+            WHERE p.slug = ?
+        `, [slug]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "Prodotto non trovato." });
@@ -62,33 +101,27 @@ export async function store(req, res) {
         additional_information, product_weight, animal_id, brand_id
     } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio." });
+    // Controllo avanzato per il nome: deve essere una stringa non vuota
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio e non può essere vuoto." });
     }
-    if (typeof price !== 'number' || price <= 0) {
+
+    // Validazione del prezzo
+    const finalPrice = Number(price);
+    if (isNaN(finalPrice) || finalPrice <= 0) {
         return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
     }
 
+    // Validazione della quantità
+    const finalQuantity = sanitizeAndValidateNumberField(quantity, true);
+    if (finalQuantity && finalQuantity.error) {
+        return res.status(400).json(finalQuantity);
+    }
+
     try {
-        // Applica la sanificazione prima di creare la query
-        const finalQuantity = sanitizeNullableNumberField(quantity);
-        const finalDiscountPrice = sanitizeNullableNumberField(discount_price);
-        const finalProductWeight = sanitizeNullableNumberField(product_weight);
+        const finalDiscountPrice = sanitizeAndValidateNumberField(discount_price);
+        const finalProductWeight = sanitizeAndValidateNumberField(product_weight);
 
-        /* Codice PostgreSQL (commentato)
-        const { rows: [newProduct] } = await pool.query(
-            `INSERT INTO products (
-                name, description, quantity, price, discount_price, age, weight, 
-                accessories, food_type, biological, pet_food_necessity, hair, 
-                additional_information, product_weight, animal_id, brand_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-             RETURNING *`,
-            [name.trim(), description ? description.trim() : null, finalQuantity, price, finalDiscountPrice, age || null, weight || null, accessories || 0, food_type || null, biological || 0, pet_food_necessity || null, hair || null, additional_information || null, finalProductWeight, animal_id || null, brand_id || null]
-        );
-        res.status(201).json(newProduct);
-        */
-
-        // Codice MySQL
         const query = `INSERT INTO products (
             name, description, quantity, price, discount_price, age, weight, 
             accessories, food_type, biological, pet_food_necessity, hair, 
@@ -99,7 +132,7 @@ export async function store(req, res) {
             name.trim(),
             description ? description.trim() : null,
             finalQuantity,
-            price,
+            finalPrice,
             finalDiscountPrice,
             age || null,
             weight || null,
@@ -128,12 +161,13 @@ export async function changePrice(req, res) {
     const { id } = req.params;
     const { new_price } = req.body;
 
-    if (typeof new_price !== 'number' || new_price <= 0) {
-        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido." });
+    const finalNewPrice = Number(new_price);
+    if (isNaN(finalNewPrice) || finalNewPrice <= 0) {
+        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
     }
 
     try {
-        const [result] = await pool.query("UPDATE products SET price = ? WHERE id = ?", [new_price, id]);
+        const [result] = await pool.query("UPDATE products SET price = ? WHERE id = ?", [finalNewPrice, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Prodotto non trovato" });
@@ -143,7 +177,7 @@ export async function changePrice(req, res) {
         res.status(200).json({
             success: true,
             message: `Prezzo del prodotto ${id} aggiornato con successo`,
-            updatedPrice: rows[0].price
+            updatedProduct: rows[0]
         });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
@@ -154,7 +188,7 @@ export async function changePrice(req, res) {
 export async function update(req, res) {
     const { id } = req.params;
     if (!id || isNaN(parseInt(id))) {
-        return res.status(400).json({ error: true, message: "ID non valido" });
+        return res.status(400).json({ error: true, message: "ID del prodotto non valido." });
     }
 
     const {
@@ -163,33 +197,27 @@ export async function update(req, res) {
         additional_information, product_weight, animal_id, brand_id
     } = req.body;
 
-    if (!name || typeof price !== 'number' || price <= 0) {
-        return res.status(400).json({ error: true, message: "Nome e prezzo sono obbligatori e validi." });
+    // Controllo avanzato per il nome: deve essere una stringa non vuota
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del prodotto è obbligatorio e non può essere vuoto." });
+    }
+
+    // Validazione del prezzo
+    const finalPrice = Number(price);
+    if (isNaN(finalPrice) || finalPrice <= 0) {
+        return res.status(400).json({ error: true, message: "Il prezzo deve essere un numero valido e maggiore di zero." });
+    }
+
+    // Validazione della quantità
+    const finalQuantity = sanitizeAndValidateNumberField(quantity, true);
+    if (finalQuantity && finalQuantity.error) {
+        return res.status(400).json(finalQuantity);
     }
 
     try {
-        // Applica la sanificazione anche qui
-        const finalQuantity = sanitizeNullableNumberField(quantity);
-        const finalDiscountPrice = sanitizeNullableNumberField(discount_price);
-        const finalProductWeight = sanitizeNullableNumberField(product_weight);
+        const finalDiscountPrice = sanitizeAndValidateNumberField(discount_price);
+        const finalProductWeight = sanitizeAndValidateNumberField(product_weight);
 
-        /* Codice PostgreSQL (commentato)
-        const { rows: [product] } = await pool.query(
-            `UPDATE products SET 
-                name = $1, description = $2, quantity = $3, price = $4, discount_price = $5, age = $6, weight = $7, 
-                accessories = $8, food_type = $9, biological = $10, pet_food_necessity = $11, hair = $12, 
-                additional_information = $13, product_weight = $14, animal_id = $15, brand_id = $16
-                WHERE id = $17
-                RETURNING *`,
-            [name.trim(), description ? description.trim() : null, finalQuantity, price, finalDiscountPrice, age || null, weight || null, accessories || 0, food_type || null, biological || 0, pet_food_necessity || null, hair || null, additional_information || null, finalProductWeight, animal_id || null, brand_id || null, id]
-        );
-        if (!product) {
-            return res.status(404).json({ error: true, message: "Prodotto non trovato" });
-        }
-        res.json({ success: true, message: "Prodotto aggiornato con successo", product });
-        */
-
-        // Codice MySQL
         const query = `UPDATE products SET 
             name = ?, description = ?, quantity = ?, price = ?, discount_price = ?, age = ?, weight = ?, 
             accessories = ?, food_type = ?, biological = ?, pet_food_necessity = ?, hair = ?, 
@@ -199,7 +227,7 @@ export async function update(req, res) {
             name.trim(),
             description ? description.trim() : null,
             finalQuantity,
-            price,
+            finalPrice,
             finalDiscountPrice,
             age || null,
             weight || null,
