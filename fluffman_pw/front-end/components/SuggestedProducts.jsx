@@ -1,7 +1,6 @@
 import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
 import "../styles/SuggestedProducts.css";
-import "../styles/NewProducts.css";
 import "../styles/Arrows.css";
 
 export default function SuggestedProducts() {
@@ -13,15 +12,19 @@ export default function SuggestedProducts() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const productsResponse = await fetch("http://localhost:3030/api/products");
+        const productsResponse = await fetch(
+          "http://localhost:3030/api/products"
+        );
         const productsData = await productsResponse.json();
 
         const imagesResponse = await fetch("http://localhost:3030/api/images");
         const imagesData = await imagesResponse.json();
 
-        const mergedProducts = productsData.map(p => {
-          const img = imagesData.find(i => i.product_id === p.id);
-          const imageUrl = img ? `http://localhost:3030/products_image/${img.name}` : "/images/default.jpg";
+        const mergedProducts = productsData.map((p) => {
+          const img = imagesData.find((i) => i.product_id === p.id);
+          const imageUrl = img
+            ? `http://localhost:3030/products_image/${img.name}`
+            : "/images/default.jpg";
           return {
             ...p,
             image: imageUrl,
@@ -32,7 +35,6 @@ export default function SuggestedProducts() {
         const shuffledProducts = mergedProducts.sort(() => 0.5 - Math.random());
         const finalProducts = shuffledProducts.slice(0, 16);
         setProducts(finalProducts);
-
       } catch (err) {
         console.error("Errore fetch:", err);
       } finally {
