@@ -27,6 +27,8 @@ function App() {
             <Route path="/dogproducts" element={<DogProductsPage />} />
             <Route path="/catproducts" element={<CatProductsPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/404" element={<ErrorPage />} />
+            <Route path="/checkout" element={<CheckOutPage />} />
             <Route
               path="/otheranimalproducts"
               element={<OtherAnimalProductsPage />}
