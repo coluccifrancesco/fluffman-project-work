@@ -1,0 +1,106 @@
+:root {
+    --text: #f3f1ec;
+    --background: #5fbbaae1;
+    --primary: #daf6e3;
+    --secondary: #af6818;
+    --accent: #e7a150;
+}
+
+.quantity-container {
+    border-radius: 5px;
+}
+
+.quantity-btn {
+    box-shadow: 2px 2px 5px transparent;
+    border: none;
+    border-radius: 5px;
+    padding: 0 12px;
+    background-color: transparent;
+    font-size: 24px;
+    transition: 0.2s;
+
+    &:hover {
+        box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.235);
+        color: var(--accent);
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+
+    &:active {
+        box-shadow: none;
+        margin-bottom: 0;
+        color: transparent;
+    }
+}
+
+.trash-btn {
+    transition: 0.2s;
+    border: none;
+    background-color: transparent;
+    box-shadow: 2px 2px 5px transparent;
+    padding: 5px 10px;
+
+    i {
+        transition: 0.2s;
+    }
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.235);
+        margin-bottom: 5px;
+
+        i{
+            color: red;
+        }
+    }
+
+    &:active {
+        box-shadow: none;
+        margin-bottom: 0;
+
+        i{
+            color: transparent;
+        }
+    }
+}
+
+.sub-text{
+    color: var(--accent);
+}
+
+.check-cont{
+    margin: 30px 0;
+    transition: 0.2ss;
+}
+
+.check-btn{
+    padding: 15px 50px;
+    background-color: var(--background);
+    color: var(--text);
+    border: 3px solid var(--background);
+    border-radius: 10px;
+    transition: 0.2s;
+
+    i{
+        margin-left: 15px;
+        color: var(--text);
+        transition: 0.2s;
+    }
+
+    &:hover{
+        background-color: var(--accent);
+        border: 3px solid var(--accent);
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.189);
+    }
+
+    &:active{
+        box-shadow: none;
+        border: 3px solid var(--accent);
+        color: var(--accent);
+        background-color: transparent;
+
+        i{
+            color: var(--accent);
+        }
+    }
+}

@@ -9,9 +9,10 @@ import SingleProductPage from "../pages/SingleProductPage";
 import ContactsPage from "../pages/ContactsPage";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import WishlistPage from "../pages/WishlistPage";
+import CartPage from "../pages/CartPage";
+import ProductsPage from "../pages/ProductsPage";
 import CheckOutPage from "../pages/CheckOutPage";
 import ErrorPage from '../pages/ErrorPage';
-
 
 function App() {
   return (
@@ -21,18 +22,18 @@ function App() {
         <Routes>
           <Route path="/" element={<DefaultLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/AboutUs" element={<AboutUsPage />} />
-            <Route path="/DogProducts" element={<DogProductsPage />} />
-            <Route path="/CatProducts" element={<CatProductsPage />} />
-            <Route path="/Wishlist" element={<WishlistPage />} />
-            <Route path="/404" element={< ErrorPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/aboutUs" element={<AboutUsPage />} />
+            <Route path="/dogproducts" element={<DogProductsPage />} />
+            <Route path="/catproducts" element={<CatProductsPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
             <Route
-              path="/OtherAnimalProducts"
+              path="/otheranimalproducts"
               element={<OtherAnimalProductsPage />}
             />
-            <Route path="/SingleProductPage/:slug" element={<SingleProductPage />} />
-            <Route path="/Contacts" element={<ContactsPage />} />
-            <Route path="checkout" element={<CheckOutPage />} />
+            <Route path="/products/:slug" element={<SingleProductPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
+            <Route path="/cart" element={<CartPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
