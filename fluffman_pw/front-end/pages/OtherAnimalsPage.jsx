@@ -1,4 +1,4 @@
-import CardItem from "../components/CardComponent/CardItem";
+import ProductsSlider from "../components/ProductsSlider";
 import { useEffect, useState } from "react";
 import "../styles/ProductPages.css";
 
@@ -48,44 +48,26 @@ export default function OtherAnimalProductsPage() {
 
       {/* Sezione Pesci */}
       {fishProducts.length > 0 && (
-        <div className="m-2 p-2">
-          <h2 className="p-2">Tutto per il tuo acquario</h2>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
-            {fishProducts.map((product) => (
-              <div key={product.id} className="col">
-                <CardItem product={product} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProductsSlider
+          title="Tutto per il tuo acquario"
+          products={fishProducts}
+        />
       )}
 
       {/* Sezione Roditori */}
       {rodentProducts.length > 0 && (
-        <div className="m-2 p-2">
-          <h2 className="p-2">Cibo e accessori per roditori</h2>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
-            {rodentProducts.map((product) => (
-              <div key={product.id} className="col">
-                <CardItem product={product} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProductsSlider
+          title="Cibo e accessori per roditori"
+          products={rodentProducts}
+        />
       )}
 
       {/* Sezione Uccelli */}
       {birdProducts.length > 0 && (
-        <div className="m-2 p-2">
-          <h2 className="p-2">Semi, gabbie e giochi per i tuoi uccelli</h2>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
-            {birdProducts.map((product) => (
-              <div key={product.id} className="col">
-                <CardItem product={product} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProductsSlider
+          title="Semi, gabbie e giochi per i tuoi uccelli"
+          products={birdProducts}
+        />
       )}
     </div>
   );
