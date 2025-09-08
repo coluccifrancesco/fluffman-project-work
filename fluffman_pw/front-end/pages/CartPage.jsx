@@ -54,7 +54,7 @@ export default function CartPage() {
                         <button className="quantity-btn">+</button>
                     </div>
 
-                    <button className="trash-btn"><i class="fa-solid fa-trash-can"></i></button>
+                    <button className="trash-btn"><i className="fa-solid fa-trash-can"></i></button>
                 </div>
 
                 {/* Prezzo del prodotto */}

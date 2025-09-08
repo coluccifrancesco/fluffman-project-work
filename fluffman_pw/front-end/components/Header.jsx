@@ -9,7 +9,7 @@ export default function Header() {
     fetch("http://localhost:3030/api/products/search")
     .then((res) => res.json)
     .then(data => {
-      console.log(json);
+      console.log(data);
     });
   };
 
