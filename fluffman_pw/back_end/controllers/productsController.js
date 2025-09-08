@@ -77,10 +77,10 @@ export async function showBySlug(req, res) {
             SELECT 
                 p.*,
                 i.name AS image_name,
-                b.name AS brand_name  -- Aggiungi il nome del brand
+                b.name AS brand_name
             FROM products AS p
             JOIN images AS i ON p.id = i.product_id
-            JOIN brands AS b ON p.brand_id = b.id -- NUOVO: Aggiungi il JOIN per il brand
+            LEFT JOIN brands AS b ON p.brand_id = b.id  -- Usa LEFT JOIN qui
             WHERE p.slug = ?
         `, [slug]);
 
