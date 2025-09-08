@@ -1,45 +1,42 @@
-// importo express
+// Importo express
 import express from "express";
 
-// Importa i controller che abbiamo creato in precedenza
+// Importa i controller che abbiamo creato
 import {
     index,
     show,
     store,
     update,
     destroy,
-    changePrice,
     showBySlug,
-    search // <-- Importa la funzione di ricerca
+    search
 } from '../controllers/productsController.js';
 
-//inizializzo il router
+// Inizializzo il router
 const router = express.Router();
 
-// --- ROTTE SPECIFICHE ---
+// --- ROTTE SPECIFICHE (Vanno messe prima di quelle generiche) ---
 
-// Rotta per la ricerca e il filtro (la più specifica)
+// Rotta per la ricerca e il filtro
 router.get('/search', search);
 
-// Rotta per aggiornare solo il prezzo (PATCH)
-router.patch('/:id/price', changePrice);
-
 // Rotta per cercare un prodotto usando il suo slug.
-// Questa rotta DEVE venire PRIMA di quella per l'ID per evitare conflitti.
+// Questa rotta DEVE venire PRIMA delle altre GET con parametri.
 router.get('/:slug', showBySlug);
+
+// Rotta show (cerca per ID)
+// Abbiamo reso il percorso più specifico per evitare conflitti con lo slug
+router.get('/id/:id', show);
 
 // --- ROTTE CRUD BASE ---
 
 // Rotta index (non ha parametri, va bene così)
 router.get('/', index);
 
-// Rotta show (cerca per ID)
-router.get('/:id', show);
-
-// Rotta store (non ha parametri, va bene così)
+// Rotta store
 router.post('/', store);
 
-// Rotta update
+// Rotta update (gestisce tutte le modifiche, anche del prezzo)
 router.put('/:id', update);
 
 // Rotta destroy

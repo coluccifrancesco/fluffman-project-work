@@ -15,7 +15,6 @@ export default function SingleProductPage() {
       return;
     }
 
-    // Unica chiamata API: il backend ora restituisce tutti i dati uniti
     fetch(`http://localhost:3030/api/products/${slug}`)
       .then((res) => {
         if (!res.ok) {
@@ -54,8 +53,8 @@ export default function SingleProductPage() {
             <CardProductDetail
               product={product}
               brand={{ name: product.brand_name }}
-              image={{ name: product.image_name }}
-              apiImageUrl={"http://localhost:3030/products_image/"}
+              // Passa direttamente il percorso completo che ricevi dall'API
+              imagePath={product.image_path}
             />
           </div>
           <div className="col-md-6 d-flex flex-column justify-content-around">
