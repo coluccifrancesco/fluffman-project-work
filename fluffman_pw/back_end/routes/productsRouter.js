@@ -9,25 +9,34 @@ import {
     update,
     destroy,
     changePrice,
-    showBySlug // <-- La funzione per cercare per slug
+    showBySlug,
+    search // <-- Importa la funzione di ricerca
 } from '../controllers/productsController.js';
 
 //inizializzo il router
 const router = express.Router();
 
-// --- ROTTE CRUD BASE ---
+// --- ROTTE SPECIFICHE ---
+
+// Rotta per la ricerca e il filtro (la più specifica)
+router.get('/search', search);
+
+// Rotta per aggiornare solo il prezzo (PATCH)
+router.patch('/:id/price', changePrice);
 
 // Rotta per cercare un prodotto usando il suo slug.
 // Questa rotta DEVE venire PRIMA di quella per l'ID per evitare conflitti.
 router.get('/:slug', showBySlug);
 
-// Rotta index
+// --- ROTTE CRUD BASE ---
+
+// Rotta index (non ha parametri, va bene così)
 router.get('/', index);
 
 // Rotta show (cerca per ID)
 router.get('/:id', show);
 
-// Rotta store
+// Rotta store (non ha parametri, va bene così)
 router.post('/', store);
 
 // Rotta update
@@ -35,11 +44,5 @@ router.put('/:id', update);
 
 // Rotta destroy
 router.delete('/:id', destroy);
-
-// --- ROTTA SPECIFICA ---
-
-// Rotta per aggiornare solo il prezzo di un prodotto (UPDATE)
-// Usiamo PATCH perché stiamo modificando solo un campo specifico.
-router.patch('/:id/price', changePrice);
 
 export default router;
