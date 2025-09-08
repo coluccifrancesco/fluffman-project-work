@@ -26,8 +26,8 @@ export default function Header() {
           return product.name.toLowerCase().includes(value)
         });
 
-        setSearchResults(results);
-      })
+      setSearchResults(results);
+    })
   }
 
   const handleChange = (value) => {
@@ -35,7 +35,13 @@ export default function Header() {
     fetchData(value)
   };
 
-
+  const handleOffCanvasCLick = () => {
+    const closeButton = document.getElementById('search-bar-close-btn');
+    
+    if(closeButton){
+      closeButton.click();
+    }
+  }
 
   return (
     <header className="position-sticky top-0 w-100">
@@ -125,6 +131,7 @@ export default function Header() {
               className="btn-close "
               data-bs-dismiss="offcanvas"
               aria-label="Close"
+              id="search-bar-close-btn"
             ></button>
           </div>
 
@@ -159,7 +166,7 @@ export default function Header() {
               searchResults.map((result) => {
                 return <div key={result.id} className="bg-white px-5 py-3 col-12">
 
-                  <Link style={{ textDecoration: "none" }} to={`/products/${result.slug}`}>
+                  <Link onClick={handleOffCanvasCLick} style={{ textDecoration: "none" }} to={`/products/${result.slug}`}>
                     <div className="py-4 d-flex justify-content-between align-items-center container container-sm search-card">
                       <h5 className="m-0">{result.name}</h5>
                       <h5 className="ms-5 mb-0">€{result.price}</h5>
