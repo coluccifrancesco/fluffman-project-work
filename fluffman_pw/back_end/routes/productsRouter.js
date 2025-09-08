@@ -2,14 +2,15 @@
 import express from "express";
 
 // Importa i controller che abbiamo creato in precedenza
-// Nota: ho aggiunto 'changePrice' all'import
+// Nota: ho aggiunto 'showBySlug'
 import {
     index,
     show,
     store,
     update,
     destroy,
-    changePrice
+    changePrice,
+    showBySlug // <-- NUOVO: La funzione per cercare per slug
 } from '../controllers/productsController.js';
 
 //inizializzo il router
@@ -17,10 +18,14 @@ const router = express.Router();
 
 // --- ROTTE CRUD BASE ---
 
+// NUOVO: Rotta per cercare un prodotto usando il suo slug
+// Questa rotta DEVE venire prima di router.get('/:id', show);
+router.get('/slug/:slug', showBySlug);
+
 // Rotta index
 router.get('/', index);
 
-// Rotta index
+// Rotta index (cerca per ID)
 router.get('/:id', show);
 
 // Rotta store
