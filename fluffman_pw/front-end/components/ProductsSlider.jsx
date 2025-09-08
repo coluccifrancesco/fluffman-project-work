@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
-import "../styles/Arrows.css";
+import "../styles/ProductsSlider.css";
 
 export default function ProductsSlider({ title, products }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -44,7 +44,7 @@ export default function ProductsSlider({ title, products }) {
       {/* logica di rendering delle frecce e dello slider in mobile */}
       {!isMobile ? (
         <div className="position-relative">
-          <div className="arrow_left" onClick={handlePrev}></div>
+          <div className="arrow_left_slider" onClick={handlePrev}></div>
           <div className="row justify-content-center g-3 px-2 mx-5">
             {visibleProducts.map((product) => (
               <div
@@ -55,7 +55,7 @@ export default function ProductsSlider({ title, products }) {
               </div>
             ))}
           </div>
-          <div className="arrow_right" onClick={handleNext}></div>
+          <div className="arrow_right_slider" onClick={handleNext}></div>
         </div>
       ) : (
         <div className="d-flex overflow-auto gap-3 pb-3">
