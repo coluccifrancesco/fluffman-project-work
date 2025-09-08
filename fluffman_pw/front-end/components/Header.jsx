@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "../styles/Header.css";
 
@@ -26,7 +26,7 @@ export default function Header() {
         return product.name.toLowerCase().includes(value)
       });
       
-      console.log(results);
+    console.log(results);
   })
 }
 
@@ -34,7 +34,6 @@ const handleChange = (value) => {
   setSearchValue(value);
   fetchData(value)
 };
-
 
 
 
