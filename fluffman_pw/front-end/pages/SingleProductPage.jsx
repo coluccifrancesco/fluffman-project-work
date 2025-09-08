@@ -20,7 +20,7 @@ export default function SingleProductPage() {
     }
 
     // Unica chiamata API: il backend ora restituisce tutti i dati uniti
-    fetch(`http://localhost:3030/api/products/slug/${slug}`) // <-- Usa la rotta per slug
+    fetch(`http://localhost:3030/api/products/${slug}`) // <-- Usa la rotta per slug
       .then((res) => {
         if (!res.ok) {
           throw new Error("Prodotto non trovato.");
