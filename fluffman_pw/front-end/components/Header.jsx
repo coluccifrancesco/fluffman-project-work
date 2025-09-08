@@ -87,7 +87,7 @@ export default function Header() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/">
+            <NavLink to={"/cart"}>
               <i className="fa-solid fa-cart-shopping m-0"></i>
             </NavLink>
           </li>
@@ -229,7 +229,7 @@ export default function Header() {
                 </li>
 
                 <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink>
+                  <NavLink to={"/cart"}>
                     <i className="fa-solid fa-cart-shopping m-0"></i>
                   </NavLink>
                 </li>
