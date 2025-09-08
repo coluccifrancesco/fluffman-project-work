@@ -3,19 +3,19 @@ import "../styles/CatLoading.css";
 export default function CatLoading() {
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <div class="loading-cat">
-        <div class="body"></div>
-        <div class="head">
-          <div class="face"></div>
+      <div className="loading-cat">
+        <div className="body"></div>
+        <div className="head">
+          <div className="face"></div>
         </div>
-        <div class="foot">
-          <div class="tummy-end"></div>
-          <div class="bottom"></div>
-          <div class="legs left"></div>
-          <div class="legs right"></div>
+        <div className="foot">
+          <div className="tummy-end"></div>
+          <div className="bottom"></div>
+          <div className="legs left"></div>
+          <div className="legs right"></div>
         </div>
-        <div class="hands left"></div>
-        <div class="hands right"></div>
+        <div className="hands left"></div>
+        <div className="hands right"></div>
       </div>
     </div>
   );
