@@ -28,8 +28,9 @@ export async function show(req, res) {
 export async function store(req, res) {
     const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: true, message: "Il nome del marchio è obbligatorio." });
+    // Aggiungi un controllo esplicito per il tipo e la lunghezza della stringa
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del marchio è obbligatorio e non può essere vuoto." });
     }
 
     try {
@@ -56,8 +57,9 @@ export async function update(req, res) {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: true, message: "Il nome è obbligatorio." });
+    // Aggiungi un controllo esplicito per il tipo e la lunghezza della stringa
+    if (typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: true, message: "Il nome del marchio è obbligatorio e non può essere vuoto." });
     }
 
     try {
