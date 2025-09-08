@@ -35,8 +35,10 @@ const PORT = process.env.PORT || 3030;
 //Bodyparser
 app.use(express.json());
 
-// Assumi che le tue immagini siano in una cartella 'public'
-app.use('/products_image', express.static(path.join(__dirname, 'public/products_image')));
+// Aggiungi questa riga per servire i file statici correttamente.
+// Mappa il percorso dell'URL '/api/images' alla cartella fisica 'public/products_image'.
+app.use('/api/images', express.static(path.join(__dirname, 'public/products_image')));
+
 
 //facciamo si che le cors ci permettano di vedere il sito
 app.use(cors());

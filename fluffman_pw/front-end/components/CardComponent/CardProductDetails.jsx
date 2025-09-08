@@ -1,58 +1,45 @@
-import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 
-export default function CardProductDetail({
-  product,
-  brand,
-  image,
-  apiImageUrl,
-}) {
-  const [imageUrl, setImageUrl] = useState(null);
-
-  useEffect(() => {
-    if (image?.name) {
-      // NON codificare il nome. Usa direttamente il nome dell'immagine
-      // che ti arriva dal backend.
-
-      const url = `${apiImageUrl}${image.name}`;
-
-      setImageUrl(url);
-
-      // DEBUG: controlla l'URL. Dovrebbe essere senza %25.
-      console.log("URL immagine finale:", url);
-    }
-  }, [image, apiImageUrl]);
-
-  const altText = product?.name
-    ? `Immagine del prodotto: ${product.name}`
-    : "Immagine del prodotto";
-
+export default function CardProductDetail({ product, brand, imagePath }) {
   return (
-    <div className="card p-3 mb-3">
-      <div className="card-body text-center">
-        <h5 className="product_name text-dark">{product?.name}</h5>
-        <p className="producer text-dark">
-          <em>{brand?.name}</em>
-        </p>
-        <p className="price">{product?.price} $</p>
-
-        {imageUrl ? (
-          <div className="card-top mx-auto my-3 card-image-container">
-            <img
-              src={imageUrl}
-              className="img-fluid rounded detail_img"
-              alt={altText}
-            />
+    <div className="card product-card h-100 shadow-sm">
+      <div className="product-image-container">
+        {/* Usa direttamente la prop 'imagePath' come src */}
+        <img
+          src={imagePath}
+          className="img-fluid"
+          alt={product.name}
+        />
+      </div>
+      <div className="card-body d-flex flex-column">
+        <h5 className="card-title text-center text-dark fw-bold mb-3">{product.name}</h5>
+        <div className="mt-auto">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <span className="text-secondary fw-bold">
+              <FontAwesomeIcon icon={faTag} className="me-2" />
+              {brand.name}
+            </span>
           </div>
-        ) : (
-          <div>Caricamento immagine...</div>
-        )}
-        {product?.product_weight && (
-          <p className="text-dark">
-            {Number(product.product_weight) < 1
-              ? Number(product.product_weight).toFixed(2) + " Kg"
-              : Number(product.product_weight).toFixed(0) + " Kg"}
-          </p>
-        )}
+          <div className="d-flex justify-content-between align-items-center">
+            {product.discount_price ? (
+              <>
+                <div className="price-container">
+                  <span className="text-decoration-line-through text-muted me-2">
+                    <FontAwesomeIcon icon={faEuroSign} /> {product.price}
+                  </span>
+                  <span className="text-danger fw-bold fs-5">
+                    <FontAwesomeIcon icon={faEuroSign} /> {product.discount_price}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <span className="price text-dark fw-bold fs-5">
+                <FontAwesomeIcon icon={faEuroSign} /> {product.price}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
