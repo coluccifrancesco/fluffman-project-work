@@ -5,11 +5,10 @@ export default function CardItem({ product }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/SingleProductPage/${product.id}`);
+    // Naviga al percorso corretto, usando lo slug del prodotto
+    navigate(`/products/slug/${product.slug}`);
   };
 
-  // L'URL dell'immagine è già stato costruito in NewProducts.jsx,
-  // quindi lo usiamo direttamente.
   const imageUrl = product?.image;
 
   return (
@@ -31,13 +30,12 @@ export default function CardItem({ product }) {
           <p className="card-text fs-5 pt-1 product_price">{product?.price} $</p>
           <div className="card-buttons d-flex align-items-start">
             <NavLink to="/">
-              <i class="bi bi-star fs-4 me-3"></i>
+              <i className="bi bi-star fs-4 me-3"></i>
             </NavLink>
             <NavLink to="/">
-              <i class="bi bi-cart3 fs-4"></i>
+              <i className="bi bi-cart3 fs-4"></i>
             </NavLink>
           </div>
-
         </div>
       </div>
     </div>

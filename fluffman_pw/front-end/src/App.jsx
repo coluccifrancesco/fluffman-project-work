@@ -26,7 +26,7 @@ function App() {
               path="/OtherAnimalProducts"
               element={<OtherAnimalProductsPage />}
             />
-            <Route path="/SingleProductPage/:id" element={<SingleProductPage />} />
+            <Route path="/SingleProductPage/slug/:slug" element={<SingleProductPage />} />
             <Route path="/Contacts" element={<ContactsPage />} />
           </Route>
         </Routes>

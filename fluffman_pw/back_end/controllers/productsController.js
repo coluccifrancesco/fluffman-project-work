@@ -28,11 +28,11 @@ const sanitizeAndValidateNumberField = (value, isRequiredAndPositive = false) =>
     return numberValue;
 };
 
-// La funzione INDEX del tuo controller dei prodotti
+//INDEX
 export async function index(req, res) {
     try {
         const [rows] = await pool.query(`
-            SELECT 
+            SELECT
                 p.*,
                 i.name AS image_name
             FROM products AS p
@@ -52,11 +52,37 @@ export async function show(req, res) {
         const [rows] = await pool.query(`
             SELECT 
                 p.*,
-                i.name AS image_name
+                i.name AS image_name,
+                b.name AS brand_name  -- Aggiungi il nome del brand
             FROM products AS p
             JOIN images AS i ON p.id = i.product_id
+            JOIN brands AS b ON p.brand_id = b.id -- NUOVO: Aggiungi il JOIN per il brand
             WHERE p.id = ?
         `, [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: true, message: "Prodotto non trovato." });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
+// showBySlug (NUOVA FUNZIONE)
+export async function showBySlug(req, res) {
+    const { slug } = req.params;
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                i.name AS image_name,
+                b.name AS brand_name  -- Aggiungi il nome del brand
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            JOIN brands AS b ON p.brand_id = b.id -- NUOVO: Aggiungi il JOIN per il brand
+            WHERE p.slug = ?
+        `, [slug]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "Prodotto non trovato." });
