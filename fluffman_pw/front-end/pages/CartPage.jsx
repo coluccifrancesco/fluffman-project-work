@@ -95,7 +95,7 @@ export default function CartPage() {
                 
                 {/* Logica da inserire qui */}
                 <div className="col-md-2 text-end">
-                    <p className="m-0 sub-text">€00.00</p>
+                    <h5 className="m-0 sub-text">€00.00</h5>
                 </div>
             
             </div>
