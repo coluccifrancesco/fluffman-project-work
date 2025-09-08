@@ -9,6 +9,7 @@ import SingleProductPage from "../pages/SingleProductPage";
 import ContactsPage from "../pages/ContactsPage";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import WishlistPage from "../pages/WishlistPage";
+import ErrorPage from '../pages/ErrorPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/DogProducts" element={<DogProductsPage />} />
             <Route path="/CatProducts" element={<CatProductsPage />} />
             <Route path="/Wishlist" element={<WishlistPage />} />
+            <Route path="/404" element={< ErrorPage />} />
             <Route
               path="/OtherAnimalProducts"
               element={<OtherAnimalProductsPage />}
