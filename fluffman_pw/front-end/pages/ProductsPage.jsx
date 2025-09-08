@@ -58,7 +58,7 @@ export default function ProductsPage() {
                                 ))}
                             </div>
                             <div className="text-center mt-4">
-                                <Link to="/products/dogs" className="btn btn-outline-primary">Vedi tutti i prodotti per cani</Link>
+                                <Link to="/dogproducts" className="btn btn-outline-primary">Vedi tutti i prodotti per cani</Link>
                             </div>
                         </div>
                     )}
@@ -75,7 +75,7 @@ export default function ProductsPage() {
                                 ))}
                             </div>
                             <div className="text-center mt-4">
-                                <Link to="/products/cats" className="btn btn-outline-primary">Vedi tutti i prodotti per gatti</Link>
+                                <Link to="/catproducts" className="btn btn-outline-primary">Vedi tutti i prodotti per gatti</Link>
                             </div>
                         </div>
                     )}
@@ -92,7 +92,7 @@ export default function ProductsPage() {
                                 ))}
                             </div>
                             <div className="text-center mt-4">
-                                <Link to="/products/others" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
+                                <Link to="/otheranimalproducts" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
                             </div>
                         </div>
                     )}
@@ -109,7 +109,7 @@ export default function ProductsPage() {
                                 ))}
                             </div>
                             <div className="text-center mt-4">
-                                <Link to="/products/others" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
+                                <Link to="/otheranimalproducts" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
                             </div>
                         </div>
                     )}
@@ -126,7 +126,7 @@ export default function ProductsPage() {
                                 ))}
                             </div>
                             <div className="text-center mt-4">
-                                <Link to="/products/others" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
+                                <Link to="/otheranimalproducts" className="btn btn-outline-primary">Vedi tutti gli altri prodotti</Link>
                             </div>
                         </div>
                     )}

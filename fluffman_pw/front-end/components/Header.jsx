@@ -48,7 +48,7 @@ export default function Header() {
         {/* Voci menù */}
         <ul className="d-none d-lg-flex list-unstyled m-0 gap-4 align-items-center nav-list-desktop">
           <li>
-            <NavLink to="/" style={{ textDecoration: "none" }}>
+            <NavLink to="/products" style={{ textDecoration: "none" }}>
               <p className="m-0">Prodotti</p>
             </NavLink>
           </li>
