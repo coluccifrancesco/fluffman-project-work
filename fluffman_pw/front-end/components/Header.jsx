@@ -195,44 +195,44 @@ export default function Header() {
             {/* Voci menù */}
             <div className="offcanvas-body px-4 bg-light">
               <ul className="list-unstyled m-0">
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink to="/" style={{ textDecoration: "none" }}>
+                <NavLink to="/" style={{ textDecoration: "none" }}>
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Prodotti</p>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
 
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Cane</p>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
 
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Gatto</p>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
 
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink
-                    to="/OtherAnimalProducts"
-                    style={{ textDecoration: "none" }}
-                  >
+                <NavLink
+                  to="/OtherAnimalProducts"
+                  style={{ textDecoration: "none" }}
+                >
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Altri animali</p>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
 
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink style={{ textDecoration: "none" }}>
+                <NavLink style={{ textDecoration: "none" }}>
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Wishlist</p>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
 
-                <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
-                  <NavLink to={"/cart"}>
+                <NavLink to={"/cart"} style={{ textDecoration: "none" }}>
+                  <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <i className="fa-solid fa-cart-shopping m-0"></i>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
               </ul>
             </div>
           </div>
