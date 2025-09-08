@@ -101,7 +101,7 @@ export default function CartPage() {
             </div>
 
             <div className="d-flex justify-content-end align-items-center check-cont">
-                <Link><button className="check-btn">Checkout<i class="fa-solid fa-cart-shopping"></i></button></Link>
+                <Link><button className="check-btn">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
             </div>
 
         </section>
