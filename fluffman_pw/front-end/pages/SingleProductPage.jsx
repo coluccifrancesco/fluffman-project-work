@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function SingleProductPage() {
-  const { slug } = useParams(); // <-- Usa 'slug' invece di 'id'
+  const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
 
@@ -14,13 +14,12 @@ export default function SingleProductPage() {
   };
 
   useEffect(() => {
-    // Esci se lo slug non è presente per evitare l'errore 404
     if (!slug) {
       return;
     }
 
     // Unica chiamata API: il backend ora restituisce tutti i dati uniti
-    fetch(`http://localhost:3030/api/products/${slug}`) // <-- Usa la rotta per slug
+    fetch(`http://localhost:3030/api/products/${slug}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Prodotto non trovato.");
@@ -36,7 +35,7 @@ export default function SingleProductPage() {
       .catch((err) => {
         setError(err.message);
       });
-  }, [slug]); // <-- Dipendenza aggiornata a 'slug'
+  }, [slug]);
 
   if (error) {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
