@@ -6,7 +6,7 @@ export default function CardItem({ product }) {
 
   const handleCardClick = () => {
     // Naviga al percorso corretto, usando lo slug del prodotto
-    navigate(`/products/slug/${product.slug}`);
+    navigate(`/products/${product.slug}`);
   };
 
   const imageUrl = product?.image;
