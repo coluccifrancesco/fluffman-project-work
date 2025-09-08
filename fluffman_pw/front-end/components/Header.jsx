@@ -5,14 +5,23 @@ import "../styles/Header.css";
 export default function Header() {
   const [searchValue, setSearchValue] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Ricerca eseguita: " + searchValue);
+  const fetchData = (value) => {
+    fetch("http://localhost:3030/api/products/search")
+    .then((res) => res.json)
+    .then(data => {
+      console.log(json);
+    });
   };
 
-  useEffect(() => {
-    console.log("Ricerca aggiornata: " + searchValue);
-  }, [searchValue]);
+  const handleChange = (value) => {
+    setSearchValue(value);
+    fetchData(value)
+  };
+
+  // useEffect(() => {
+  //   console.log("Ricerca aggiornata: " + searchValue);
+  // }, [searchValue]);
+
 
   return (
     <header className="position-sticky top-0 w-100">
@@ -114,14 +123,11 @@ export default function Header() {
               <h1 className="p-2 search-title">Ricerca prodotti</h1>
             </label>
 
-            <form
-              className="search-bar d-flex justify-content-between align-items-center"
-              onSubmit={handleSubmit}
-            >
+            <div className="search-bar d-flex justify-content-between align-items-center">
               <input
                 value={searchValue}
                 onChange={(e) => {
-                  setSearchValue(e.target.value);
+                  handleChange(e.target.value);
                 }}
                 id="searchBar"
                 type="text"
@@ -131,7 +137,7 @@ export default function Header() {
               <button className="form-button">
                 <i className="fa-solid fa-magnifying-glass"></i>
               </button>
-            </form>
+            </div>
           </div>
         </div>
 
