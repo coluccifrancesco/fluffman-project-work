@@ -54,7 +54,7 @@ export default function CartPage() {
                         <button className="quantity-btn">+</button>
                     </div>
 
-                    <button className="trash-btn"><i class="fa-solid fa-trash-can"></i></button>
+                    <button className="trash-btn"><i className="fa-solid fa-trash-can"></i></button>
                 </div>
 
                 {/* Prezzo del prodotto */}
@@ -101,7 +101,7 @@ export default function CartPage() {
             </div>
 
             <div className="d-flex justify-content-end align-items-center check-cont">
-                <Link><button className="check-btn">Checkout<i class="fa-solid fa-cart-shopping"></i></button></Link>
+                <Link><button className="check-btn">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
             </div>
 
         </section>
