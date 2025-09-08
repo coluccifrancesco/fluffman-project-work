@@ -3,15 +3,12 @@ import NewProducts from "../components/NewProducts";
 import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import TagsComponent from "../components/TagsComponent";
 
 export default function SingleProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
-
-  const animalTypes = {
-    1: 'cane', 2: 'gatto', 3: 'pesce', 4: 'roditore', 5: 'uccello'
-  };
 
   useEffect(() => {
     if (!slug) {
@@ -68,75 +65,17 @@ export default function SingleProductPage() {
               </b>
               <p className="text-dark ">{product?.description}</p>
               <b>
-                <p className="mt-3 mb-0 text-dark fs-5">Informazioni Aggiuntive</p>
+                <p className="mt-3 mb-0 text-dark fs-5">
+                  Informazioni Aggiuntive
+                </p>
               </b>
               <p className="text-dark ">{product?.additional_information}</p>
-
-              <div className="mt-5">
-                {(product?.animal_id ||
-                  product?.pet_food_necessity ||
-                  product?.food_type ||
-                  product?.age ||
-                  product?.weight ||
-                  product?.hair ||
-                  product?.product_weight ||
-                  product?.biological ||
-                  product?.accessories) && (
-                    <div className="tags">
-                      <ul className="list-unstyled d-flex flex-row gap-4 flex-wrap justify-content-center">
-                        {product?.animal_id && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{animalTypes[product.animal_id]}</p>
-                          </li>
-                        )}
-                        {product?.pet_food_necessity && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{product.pet_food_necessity}</p>
-                          </li>
-                        )}
-                        {product?.food_type && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{product.food_type}</p>
-                          </li>
-                        )}
-                        {product?.age && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{product.age}</p>
-                          </li>
-                        )}
-                        {product?.weight && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{product.weight}</p>
-                          </li>
-                        )}
-                        {product?.hair && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{product.hair}</p>
-                          </li>
-                        )}
-                        {product?.product_weight && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">{Number(product.product_weight).toFixed(0)} kg</p>
-                          </li>
-                        )}
-                        {product?.biological === 1 && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">Bio</p>
-                          </li>
-                        )}
-                        {product?.accessories === 1 && (
-                          <li className="tag p-2 bg-body-secondary rounded">
-                            <p className="text-success my-1">Accessori</p>
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-              </div>
+              <TagsComponent product={product} />
             </div>
             <div className="button-container d-flex justify-content-center">
               <button className="cart-btn mt-3 w-50 p-2" type="button">
-                Aggiungi al Carrello <i className="fa-solid fa-cart-shopping btn-cart"></i>
+                Aggiungi al Carrello{" "}
+                <i className="fa-solid fa-cart-shopping btn-cart"></i>
               </button>
             </div>
           </div>

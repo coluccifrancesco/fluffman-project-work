@@ -10,9 +10,9 @@
 .bg {
   background-color: var(--background);
 }
-.tag {
+/* .tag {
   background-color: var(--accent);
-}
+} */
 
 /*#region cart-btn*/
 .cart-btn {
