@@ -15,6 +15,7 @@ import animalsRouter from './routes/animalsRouter.js';
 import brandsRouter from './routes/brandsRouter.js';
 import purchasesRouter from './routes/purchasesRouter.js';
 import productPurchaseRouter from './routes/productPurchaseRouter.js';
+import cartRouter from "./routes/cartRouter.js";
 
 //caricare le variabili da .env
 dotenv.config();
@@ -57,6 +58,8 @@ app.use('/api/purchases', purchasesRouter);
 
 // Collega il router dei product_purchase all'URL /api/product_purchase
 app.use('/api/product_purchase', productPurchaseRouter);
+// Collega il nuovo router
+app.use('/api/cart', cartRouter);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
