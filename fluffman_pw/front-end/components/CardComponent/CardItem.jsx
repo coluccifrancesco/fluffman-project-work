@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 
 function CardItem({ product, onToggleFavorite, isFavorite, onAddToCart, isInCart }) {
   const navigate = useNavigate();
@@ -40,7 +42,7 @@ function CardItem({ product, onToggleFavorite, isFavorite, onAddToCart, isInCart
   };
 
   return (
-    <div className="card product_card text-center">
+    <div className="card product_card text-center h-100">
       <div className="card-top mx-auto my-3 card-image-container">
         {imageUrl ? (
           <>
@@ -78,10 +80,23 @@ function CardItem({ product, onToggleFavorite, isFavorite, onAddToCart, isInCart
           {product?.name}
         </h5>
 
-        <div className="card-bottom d-flex justify-content-around">
-          <p className="card-text fs-5 pt-1 product_price">
-            {product?.price} $
-          </p>
+        <div className="card-bottom d-flex justify-content-around align-items-center">
+          {product.discount_price ? (
+            <>
+              <div className="price-container">
+                <span className="text-decoration-line-through text-muted me-1">
+                  <FontAwesomeIcon icon={faEuroSign} />{product.price}
+                </span>
+                <span className="text-danger fw-bold fs-5">
+                  <FontAwesomeIcon icon={faEuroSign} />{product.discount_price}
+                </span>
+              </div>
+            </>
+          ) : (
+            <span className="price text-dark fw-bold fs-5">
+              <FontAwesomeIcon icon={faEuroSign} />{product.price}
+            </span>
+          )}
 
           <div className="card-buttons d-flex align-items-start">
             <button
