@@ -8,6 +8,9 @@ export default function NewProducts() {
   const [wishlistIds, setWishlistIds] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
+  const [cartIds, setCartIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  });
 
   useEffect(() => {
     async function fetchData() {
@@ -47,9 +50,22 @@ export default function NewProducts() {
     return () => window.removeEventListener("resize", handleSize);
   }, []);
 
+
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartIds));
+  }, [cartIds]);
+
+  const onToggleCart = (productId) => {
+    if (cartIds.includes(productId)) {
+      setCartIds(cartIds.filter(id => id !== productId));
+    } else {
+      setCartIds([...cartIds, productId]);
+    }
+  };
 
   const onToggleFavorite = (productId) => {
     if (wishlistIds.includes(productId)) {
@@ -93,6 +109,8 @@ export default function NewProducts() {
                   product={product}
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
+                  isInCart={cartIds.includes(product.id)}
+                  onToggleCart={onToggleCart}
                 />
               </div>
             ))}
@@ -111,6 +129,8 @@ export default function NewProducts() {
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
+                isInCart={cartIds.includes(product.id)}
+                onToggleCart={onToggleCart}
               />
             </div>
           ))}

@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 
 export default function CardItem({ product, isFavorite, onToggleFavorite, onToggleAddToCart }) {
+
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -40,7 +43,7 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
   };
 
   return (
-    <div className="card product_card text-center">
+    <div className="card product_card text-center h-100">
       <div className="card-top mx-auto my-3 card-image-container">
         {imageUrl ? (
           <>
@@ -78,14 +81,27 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
           {product?.name}
         </h5>
 
-        <div className="card-bottom d-flex justify-content-around">
-          <p className="card-text fs-5 pt-1 product_price">
-            {product?.price} $
-          </p>
+        <div className="card-bottom d-flex justify-content-around align-items-center">
+          {product.discount_price ? (
+            <>
+              <div className="price-container">
+                <span className="text-decoration-line-through text-muted me-1">
+                  <FontAwesomeIcon icon={faEuroSign} />{product.price}
+                </span>
+                <span className="text-danger fw-bold fs-5">
+                  <FontAwesomeIcon icon={faEuroSign} />{product.discount_price}
+                </span>
+              </div>
+            </>
+          ) : (
+            <span className="price text-dark fw-bold fs-5">
+              <FontAwesomeIcon icon={faEuroSign} />{product.price}
+            </span>
+          )}
 
           <div className="card-buttons d-flex align-items-start">
             <button
-              className="btn"
+              className="btn p-0"
               type="button"
               onClick={() => onToggleFavorite(product.id)}
               title={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
@@ -94,12 +110,14 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
             </button>
 
             <button
-              className="btn"
+              className="btn p-0"
               type="button"
+
               onClick={() => onToggleAddToCart(product.id)}
               title="Aggiungi al carrello"
+              title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
-              <i className="bi fs-4 me-3 bi-cart"></i>
+              <i className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"}`}></i>
             </button>
           </div>
         </div>
@@ -107,3 +125,5 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
     </div>
   );
 }
+
+export default CardItem;
