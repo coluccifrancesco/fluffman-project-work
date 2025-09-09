@@ -6,6 +6,10 @@
     --accent: #e7a150;
 }
 
+.max-width-img{
+    max-width: 115px;
+}
+
 .quantity-container {
     border-radius: 5px;
 }
@@ -16,7 +20,7 @@
     border-radius: 5px;
     padding: 0 12px;
     background-color: transparent;
-    font-size: 24px;
+    font-size: 30px;
     transition: 0.2s;
 
     &:hover {
@@ -30,6 +34,17 @@
         box-shadow: none;
         margin-bottom: 0;
         color: transparent;
+    }
+}
+
+.quantity-btn-mobile {
+    border: none;
+    background-color: transparent;
+    font-size: 30px;
+    transition: 0.2s;
+
+    &:active {
+        color: var(--accent);
     }
 }
 
@@ -65,13 +80,32 @@
     }
 }
 
+.trash-btn-mobile {
+    transition: 0.2s;
+    border: none;
+    background-color: transparent;
+    font-size: 15px;
+
+    i {
+        transition: 0.2s;
+        color: var(--accent);
+    }
+
+    &:active {
+        
+        i{
+            color: red;
+        }
+    }
+}
+
 .sub-text{
     color: var(--accent);
 }
 
 .check-cont{
     margin: 30px 0;
-    transition: 0.2ss;
+    transition: 0.2s;
 }
 
 .check-btn{
@@ -91,6 +125,32 @@
     &:hover{
         background-color: var(--accent);
         border: 3px solid var(--accent);
+    }
+
+    &:active{
+        box-shadow: none;
+        border: 3px solid var(--accent);
+        color: var(--accent);
+        background-color: transparent;
+
+        i{
+            color: var(--accent);
+        }
+    }
+}
+
+.check-btn-mobile{
+    padding: 15px 50px;
+    background-color: var(--background);
+    color: var(--text);
+    border: 3px solid var(--background);
+    border-radius: 10px;
+    transition: 0.2s;
+
+    i{
+        margin-left: 15px;
+        color: var(--text);
+        transition: 0.2s;
     }
 
     &:active{
