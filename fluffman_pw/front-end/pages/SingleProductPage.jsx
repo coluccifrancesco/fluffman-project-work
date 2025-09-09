@@ -9,6 +9,8 @@ export default function SingleProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  // Stato per la quantità selezionata dall'utente, inizializzato a 1.
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (!slug) {
@@ -33,6 +35,39 @@ export default function SingleProductPage() {
       });
   }, [slug]);
 
+  // Funzione per incrementare la quantità, con un limite massimo
+  const handleIncreaseQuantity = () => {
+    if (product?.quantity && quantity < product.quantity) {
+      setQuantity((prevQuantity) => prevQuantity + 1);
+    }
+  };
+
+  // Funzione per decrementare la quantità, con un minimo di 1
+  const handleDecreaseQuantity = () => {
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
+  };
+
+  // Funzione per gestire l'input manuale nel campo di testo
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value >= 1) {
+      if (product?.quantity) {
+        setQuantity(Math.min(value, product.quantity));
+      } else {
+        setQuantity(value);
+      }
+    } else if (e.target.value === "") {
+      setQuantity("");
+    }
+  };
+
+  const handleAddToCart = () => {
+    // Logica per aggiungere il prodotto con la quantità selezionata al carrello
+    console.log(`Aggiunto al carrello: ${quantity} x ${product.name}`);
+    // Chiamata alla funzione per aggiungere al carrello
+  };
+
+
   if (error) {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
   }
@@ -40,6 +75,9 @@ export default function SingleProductPage() {
   if (!product) {
     return <div className="text-center mt-5">Caricamento...</div>;
   }
+
+  // Controlla se la quantità del prodotto è bassa (tra 1 e 19)
+  const isLowOnStock = product.quantity && product.quantity > 0 && product.quantity < 50;
 
   return (
     <div className="bg">
@@ -53,7 +91,6 @@ export default function SingleProductPage() {
             <CardProductDetail
               product={product}
               brand={{ name: product.brand_name }}
-              // Passa direttamente il percorso completo che ricevi dall'API
               imagePath={product.image_path}
             />
           </div>
@@ -70,10 +107,50 @@ export default function SingleProductPage() {
               </b>
               <p className="text-dark ">{product?.additional_information}</p>
               <TagsComponent product={product} />
+
+              <div className="quantity-container d-flex align-items-center mt-4">
+                <p className="me-3 mb-0">Quantità:</p>
+                <div className="d-flex align-items-center">
+                  <button
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={handleDecreaseQuantity}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="text"
+                    className="form-control text-center mx-2"
+                    style={{ width: "60px" }}
+                    value={quantity}
+                    onChange={handleQuantityChange}
+                  />
+                  <button
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={handleIncreaseQuantity}
+                    disabled={quantity >= product.quantity}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Messaggio di scorte limitate, visibile solo se la quantità è bassa */}
+              {isLowOnStock && (
+                <div className="mt-3 text-danger fw-bold">
+                  Affrettati! Rimangono solo {product.quantity} pezzi!
+                </div>
+              )}
             </div>
+
             <div className="button-container d-flex justify-content-center">
-              <button className="cart-btn mt-3 w-50 p-2" type="button">
-                Aggiungi al Carrello{" "}
+              <button
+                className="cart-btn mt-3 w-50 p-2"
+                type="button"
+                onClick={handleAddToCart}
+                disabled={product.quantity === 0}
+              >
+                {product.quantity === 0 ? "Non disponibile" : `Aggiungi al Carrello (${quantity})`}
                 <i className="fa-solid fa-cart-shopping btn-cart"></i>
               </button>
             </div>
