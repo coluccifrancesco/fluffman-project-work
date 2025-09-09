@@ -26,7 +26,7 @@ export default function CatProductsPage() {
 
   // Ogni volta che cambiano gli id nel carrello, salva in local storage
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartListId));
+    localStorage.setItem("cartlist", JSON.stringify(cartListId));
   }, [cartListId]);
 
   // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti

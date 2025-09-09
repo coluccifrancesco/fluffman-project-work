@@ -68,6 +68,7 @@ export default function ProductsSlider({ title, products, wishlistIds, onToggleF
               <CardItem
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
+                isInCart={cartListId.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
                 onToggleAddToCart={onToggleAddToCart}
               />
