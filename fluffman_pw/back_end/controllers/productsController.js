@@ -58,7 +58,34 @@ export async function search(req, res) {
     const values = [];
     const conditions = [];
 
-    // ... (il resto della logica di ricerca)
+    // --- LOGICA DI FILTRAGGIO MANCANTE ---
+
+    if (name) {
+        conditions.push(`p.name LIKE ?`);
+        values.push(`%${name}%`);
+    }
+
+    if (brand_id) {
+        conditions.push(`p.brand_id = ?`);
+        values.push(brand_id);
+    }
+
+    if (animal_id) {
+        conditions.push(`p.animal_id = ?`);
+        values.push(animal_id);
+    }
+
+    if (price_min) {
+        conditions.push(`p.price >= ?`);
+        values.push(price_min);
+    }
+
+    if (price_max) {
+        conditions.push(`p.price <= ?`);
+        values.push(price_max);
+    }
+
+    // --- FINE LOGICA DI FILTRAGGIO MANCANTE ---
 
     if (conditions.length > 0) {
         query += ` WHERE ` + conditions.join(` AND `);
