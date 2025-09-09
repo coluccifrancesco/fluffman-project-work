@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
 import { useState, useEffect } from "react";
 
@@ -84,7 +85,7 @@ export default function WishlistPage() {
             ) : (
                 <div className="text-center mt-5">
                     <p className="text-danger">La tua lista dei desideri è vuota.</p>
-                    <button className="btn btn-info text-black my-5">Visualizza i nostri prodotti</button>
+                    <Link to="/products"><button className="btn btn-info text-black my-5">Visualizza i nostri prodotti</button></Link>
                 </div>
             )}
         </div>
