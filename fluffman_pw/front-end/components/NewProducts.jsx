@@ -114,7 +114,7 @@ export default function NewProducts() {
                   product={product}
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
-                  isInCart={cartIds.includes(product.id)}
+                  isInCart={cartListId.includes(product.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
@@ -134,7 +134,7 @@ export default function NewProducts() {
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
-                isInCart={cartIds.includes(product.id)}
+                isInCart={cartListId.includes(product.id)}
                 onToggleAddToCart={onToggleAddToCart}
               />
             </div>
