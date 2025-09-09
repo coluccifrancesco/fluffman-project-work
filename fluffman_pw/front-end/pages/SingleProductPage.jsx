@@ -12,6 +12,13 @@ export default function SingleProductPage() {
   // Stato per la quantità selezionata dall'utente, inizializzato a 1.
   const [quantity, setQuantity] = useState(1);
 
+
+  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+  // se esiste la trasforma in JSON ed in array, altrimenti []
+  const [cartListId, setCartListId] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
+  });
+
   useEffect(() => {
     if (!slug) {
       return;
@@ -34,6 +41,11 @@ export default function SingleProductPage() {
         setError(err.message);
       });
   }, [slug]);
+
+  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  useEffect(() => {
+    localStorage.setItem("cartlist", JSON.stringify(cartListId));
+  }, [cartListId]);
 
   // Funzione per incrementare la quantità, con un limite massimo
   const handleIncreaseQuantity = () => {
@@ -67,6 +79,15 @@ export default function SingleProductPage() {
     // Chiamata alla funzione per aggiungere al carrello
   };
 
+  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  const onToggleAddToCart = (productId) => {
+    if (cartListId.includes(productId)) {
+      setCartListId(cartListId.filter(id => id !== productId)
+    )
+    } else {
+      setCartListId([...cartListId, productId])
+    }
+  }
 
   if (error) {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
@@ -147,7 +168,7 @@ export default function SingleProductPage() {
               <button
                 className="cart-btn mt-3 w-50 p-2"
                 type="button"
-                onClick={handleAddToCart}
+                onClick={() => onToggleAddToCart(product.id)}
                 disabled={product.quantity === 0}
               >
                 {product.quantity === 0 ? "Non disponibile" : `Aggiungi al Carrello (${quantity})`}
@@ -158,7 +179,9 @@ export default function SingleProductPage() {
         </div>
         <div className="container m-2 p-2">
           <h2 className="my-4 text-center">Prodotti Simili</h2>
-          <NewProducts />
+          <NewProducts 
+            onToggleAddToCart={onToggleAddToCart}
+          />
         </div>
       </div>
     </div>
