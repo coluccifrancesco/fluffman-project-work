@@ -35,13 +35,13 @@ const PORT = process.env.PORT || 3030;
 //Bodyparser
 app.use(express.json());
 
+//facciamo si che le cors ci permettano di vedere il sito
+app.use(cors());
+
 // Aggiungi questa riga per servire i file statici correttamente.
 // Mappa il percorso dell'URL '/api/images' alla cartella fisica 'public/products_image'.
 app.use('/api/images', express.static(path.join(__dirname, 'public/products_image')));
 
-
-//facciamo si che le cors ci permettano di vedere il sito
-app.use(cors());
 
 // Tutte le rotte che iniziano con '/products' verranno gestite da productsRouter
 app.use('/api/products', productsRouter);
