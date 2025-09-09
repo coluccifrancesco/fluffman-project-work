@@ -12,28 +12,34 @@ export default function SuggestedProducts() {
   useEffect(() => {
     async function fetchData() {
       try {
+        // Fetch dei prodotti
         const productsResponse = await fetch(
           "http://localhost:3030/api/products"
         );
         const productsData = await productsResponse.json();
 
-        const imagesResponse = await fetch("http://localhost:3030/api/images");
-        const imagesData = await imagesResponse.json();
+        const mergedProducts = await Promise.all(
+          productsData.map(async (p) => {
+            const imagesResponse = await fetch(
+              `http://localhost:3030/api/images?productId=${p.id}`
+            );
+            const imagesData = await imagesResponse.json();
 
-        const mergedProducts = productsData.map((p) => {
-          const img = imagesData.find((i) => i.product_id === p.id);
-          const imageUrl = img
-            ? `http://localhost:3030/products_image/${img.name}`
-            : "/images/default.jpg";
-          return {
-            ...p,
-            image: imageUrl,
-          };
-        });
+            const imageUrl = imagesData.length
+              ? `http://localhost:3030/uploads/${imagesData[0].name}`
+              : "/images/default.jpg";
 
-        // Mescola i prodotti e ne seleziona 16
+            return {
+              ...p,
+              image: imageUrl,
+            };
+          })
+        );
+
+        // Mescola e seleziona i primi 16
         const shuffledProducts = mergedProducts.sort(() => 0.5 - Math.random());
         const finalProducts = shuffledProducts.slice(0, 16);
+
         setProducts(finalProducts);
       } catch (err) {
         console.error("Errore fetch:", err);
@@ -56,7 +62,6 @@ export default function SuggestedProducts() {
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
   const isMobile = windowWidth < 768;
-
   if (isTablet) cardsPerPage = 2;
 
   const totalGroups = Math.ceil(products.length / cardsPerPage);
@@ -93,7 +98,6 @@ export default function SuggestedProducts() {
               </div>
             ))}
           </div>
-
           <div className="arrow_right" onClick={handleNext}></div>
         </div>
       ) : (
