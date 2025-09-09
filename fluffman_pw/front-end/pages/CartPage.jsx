@@ -109,6 +109,14 @@ export default function CartPage() {
 
             </div>
 
+
+            {/* {products.length === 0 ? 
+            
+            :
+            
+            } */}
+            
+
             {/* Checkout da sm in sù */}
             <div className="d-none d-sm-flex justify-content-end align-items-center check-cont">
                 <Link to="/checkout"><button className="check-btn">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
