@@ -58,8 +58,6 @@ export async function search(req, res) {
     const values = [];
     const conditions = [];
 
-    // --- LOGICA DI FILTRAGGIO MANCANTE ---
-
     if (name) {
         conditions.push(`p.name LIKE ?`);
         values.push(`%${name}%`);
@@ -84,8 +82,6 @@ export async function search(req, res) {
         conditions.push(`p.price <= ?`);
         values.push(price_max);
     }
-
-    // --- FINE LOGICA DI FILTRAGGIO MANCANTE ---
 
     if (conditions.length > 0) {
         query += ` WHERE ` + conditions.join(` AND `);
