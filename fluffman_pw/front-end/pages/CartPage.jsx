@@ -93,7 +93,7 @@ export default function CartPage() {
                     {/* Quantità da sm in sù */}
                     <div className="col-4 col-md-3 d-none d-sm-flex justify-content-start align-items-center gap-2">
                         <button className="quantity-btn">-</button>
-                        <p className="fs-2 m-0 px-2">0</p>
+                        <p className="fs-2 m-0 px-2">1</p>
                         <button className="quantity-btn">+</button>
                         <button className="trash-btn" onClick={onToggleRemove}><i className="fa-solid fa-trash-can"></i></button>
                     </div>
@@ -102,11 +102,11 @@ export default function CartPage() {
                     <div className="col-4 d-flex d-sm-none justify-content-start align-items-center">
                         <div className="d-flex justify-content-start align-items-center gap-1 flex-column">
                             <button className="quantity-btn-mobile">+</button>
-                            <p className="fs-4 m-0 px-2">0</p>
+                            <p className="fs-4 m-0 px-2">1</p>
                             <button className="quantity-btn-mobile">-</button>
                         </div>
 
-                        <button className="trash-btn-mobile fs-5"><i className="fa-solid fa-trash-can"></i></button>
+                        <button className="trash-btn-mobile fs-5" onClick={onToggleRemove}><i className="fa-solid fa-trash-can"></i></button>
                     </div>
 
                     {/* Prezzo del prodotto */}
@@ -152,13 +152,6 @@ export default function CartPage() {
                 </div>
 
             </div>
-
-
-            {/* {products.length === 0 ? 
-            
-            :
-            
-            } */}
 
 
             {/* Checkout da sm in sù */}
