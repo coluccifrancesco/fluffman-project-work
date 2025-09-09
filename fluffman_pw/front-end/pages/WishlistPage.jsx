@@ -2,70 +2,83 @@ import CardItem from "../components/CardComponent/CardItem";
 import { useState, useEffect } from "react";
 
 export default function WishlistPage() {
-    const [wishlistProducts, setWishlistProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Simula i prodotti nella wishlist (sostituisci con dati reali dal backend se/quando disponibili)
-    const simulatedWishlistIds = [1, 5, 10, 15, 20, 25];
+  // Simula i prodotti nella wishlist (puoi sostituire con dati reali dal backend)
+  const simulatedWishlistIds = [1, 5, 10, 15, 20, 25];
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const productsResponse = await fetch("http://localhost:3030/api/products");
-                const productsData = await productsResponse.json();
+  useEffect(() => {
+    async function fetchWishlist() {
+      try {
+        // Fetch dei prodotti dal backend
+        const productsResponse = await fetch(
+          "http://localhost:3030/api/products"
+        );
+        const productsData = await productsResponse.json();
 
-                const imagesResponse = await fetch("http://localhost:3030/api/images");
-                const imagesData = await imagesResponse.json();
+        // Filtra solo i prodotti presenti nella "wishlist"
+        const wishlistProductsData = productsData.filter((p) =>
+          simulatedWishlistIds.includes(p.id)
+        );
 
-                // Combina i dati e filtra solo i prodotti della wishlist
-                const wishlistData = productsData
-                    .filter(p => simulatedWishlistIds.includes(p.id))
-                    .map(p => {
-                        const img = imagesData.find(i => i.product_id === p.id);
-                        const imageUrl = img ? `http://localhost:3030/products_image/${img?.name}` : "/images/default.jpg";
-                        return {
-                            ...p,
-                            image: imageUrl,
-                        };
-                    });
+        // Aggiungi le immagini a ciascun prodotto
+        const mergedProducts = await Promise.all(
+          wishlistProductsData.map(async (p) => {
+            const imagesResponse = await fetch(
+              `http://localhost:3030/api/images?productId=${p.id}`
+            );
+            const imagesData = await imagesResponse.json();
 
-                setWishlistProducts(wishlistData);
-            } catch (error) {
-                console.error("Errore durante il recupero dei dati:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
+            const imageUrl = imagesData.length
+              ? `http://localhost:3030/uploads/${imagesData[0].name}`
+              : "/images/default.jpg";
 
-        fetchData();
-    }, [simulatedWishlistIds]);
+            return {
+              ...p,
+              image: imageUrl,
+            };
+          })
+        );
 
-    if (isLoading) {
-        return <div className="text-center mt-5">Caricamento in corso...</div>;
+        // Aggiorna lo stato corretto
+        setWishlistProducts(mergedProducts);
+      } catch (err) {
+        console.error("Errore fetch wishlist:", err);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    return (
-        <div className="wishlist-page container p-2">
-            <div className="m-2 p-2 text-center">
-                <h1>La tua lista dei desideri</h1>
-                <p className="text-success">
-                    Qui trovi tutti i prodotti che hai salvato per un acquisto futuro.
-                </p>
-            </div>
+    fetchWishlist();
+  }, []);
 
-            {wishlistProducts.length > 0 ? (
-                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                    {wishlistProducts.map((product) => (
-                        <div className="col" key={product.id}>
-                            <CardItem product={product} />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center mt-5">
-                    <p className="text-light">La tua lista dei desideri è vuota.</p>
-                </div>
-            )}
+  if (isLoading) {
+    return <div className="text-center mt-5">Caricamento in corso...</div>;
+  }
+
+  return (
+    <div className="wishlist-page container p-2">
+      <div className="m-2 p-2 text-center">
+        <h1>La tua lista dei desideri</h1>
+        <p className="text-success">
+          Qui trovi tutti i prodotti che hai salvato per un acquisto futuro.
+        </p>
+      </div>
+
+      {wishlistProducts.length > 0 ? (
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          {wishlistProducts.map((product) => (
+            <div className="col" key={product.id}>
+              <CardItem product={product} />
+            </div>
+          ))}
         </div>
-    );
+      ) : (
+        <div className="text-center mt-5">
+          <p className="text-light">La tua lista dei desideri è vuota.</p>
+        </div>
+      )}
+    </div>
+  );
 }
