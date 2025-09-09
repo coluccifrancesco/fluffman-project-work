@@ -9,34 +9,45 @@ export default function SuggestedProducts() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Gestione wishlist (stessa logica di NewProducts)
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
+
+  // Gestione carrello (se necessario)
+  const [cartIds, setCartIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  });
+
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch dei prodotti
-        const productsResponse = await fetch(
-          "http://localhost:3030/api/products"
+        // Usa la stessa logica di NewProducts per coerenza
+        const resProd = await fetch(
+          `http://localhost:3030/api/products?t=${Date.now()}`
         );
-        const productsData = await productsResponse.json();
+        const productsData = await resProd.json();
 
-        const mergedProducts = await Promise.all(
-          productsData.map(async (p) => {
-            const imagesResponse = await fetch(
-              `http://localhost:3030/api/images?productId=${p.id}`
-            );
-            const imagesData = await imagesResponse.json();
-
-            const imageUrl = imagesData.length
-              ? `http://localhost:3030/uploads/${imagesData[0].name}`
-              : "/images/default.jpg";
-
-            return {
-              ...p,
-              image: imageUrl,
-            };
-          })
+        const resImg = await fetch(
+          `http://localhost:3030/api/images?t=${Date.now()}`
         );
+        const imagesData = await resImg.json();
 
-        // Mescola e seleziona i primi 16
+        // Merge dei dati come in NewProducts
+        const mergedProducts = productsData.map((p) => {
+          const img = imagesData.find((i) => i.product_id === p.id);
+          const imageUrl = img
+            ? `http://localhost:3030/products_image/${img.name}`
+            : "/images/default.jpg";
+          return {
+            ...p,
+            image: imageUrl,
+            // Assicurati che image_path sia disponibile per CardItem
+            image_path: img?.name || null
+          };
+        });
+
+        // Mescola e seleziona i primi 16 (o il numero che preferisci)
         const shuffledProducts = mergedProducts.sort(() => 0.5 - Math.random());
         const finalProducts = shuffledProducts.slice(0, 16);
 
@@ -59,6 +70,36 @@ export default function SuggestedProducts() {
     return () => window.removeEventListener("resize", handleSize);
   }, []);
 
+  // Salva wishlist nel localStorage quando cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  // Salva carrello nel localStorage quando cambia
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartIds));
+  }, [cartIds]);
+
+  // Funzione per gestire i preferiti (stessa logica di NewProducts)
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
+
+  // Funzione per gestire il carrello
+  const onAddToCart = (productId) => {
+    if (!cartIds.includes(productId)) {
+      setCartIds([...cartIds, productId]);
+      // Opzionale: mostra un messaggio di conferma
+      console.log("Prodotto aggiunto al carrello!");
+    } else {
+      console.log("Prodotto già nel carrello!");
+    }
+  };
+
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
   const isMobile = windowWidth < 768;
@@ -78,7 +119,13 @@ export default function SuggestedProducts() {
   const visibleProducts = products.slice(start, start + cardsPerPage);
 
   if (isLoading) {
-    return <div className="text-center mt-5">Caricamento in corso...</div>;
+    return (
+      <div className="text-center mt-5">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Caricamento in corso...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -94,7 +141,12 @@ export default function SuggestedProducts() {
                 key={product.id}
                 className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
               >
-                <CardItem product={product} />
+                <CardItem
+                  product={product}
+                  isFavorite={wishlistIds.includes(product.id)}
+                  onToggleFavorite={onToggleFavorite}
+                  onAddToCart={onAddToCart}
+                />
               </div>
             ))}
           </div>
@@ -108,7 +160,12 @@ export default function SuggestedProducts() {
               className="flex-shrink-0"
               style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem product={product} onToggleFavorite={onToggleFavorite} onAddToCart={onAddToCart} />
+              <CardItem
+                product={product}
+                isFavorite={wishlistIds.includes(product.id)}
+                onToggleFavorite={onToggleFavorite}
+                onAddToCart={onAddToCart}
+              />
             </div>
           ))}
         </div>

@@ -63,7 +63,7 @@ export default function WishlistPage() {
         <div className="wishlist-page container p-2">
             <div className="m-2 p-2 text-center">
                 <h1>La tua lista dei desideri</h1>
-                <p className="text-success">
+                <p className="text-success my-4">
                     Qui trovi tutti i prodotti che hai salvato per un acquisto futuro.
                 </p>
             </div>
@@ -83,7 +83,8 @@ export default function WishlistPage() {
                 </div>
             ) : (
                 <div className="text-center mt-5">
-                    <p className="text-light">La tua lista dei desideri è vuota.</p>
+                    <p className="text-danger">La tua lista dei desideri è vuota.</p>
+                    <button className="btn btn-info text-black my-5">Visualizza i nostri prodotti</button>
                 </div>
             )}
         </div>
