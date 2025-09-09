@@ -12,10 +12,21 @@ export default function OtherAnimalProductsPage() {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
 
+  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+  // se esiste la trasforma in JSON ed in array, altrimenti []
+  const [cartListId, setCartListId] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
+  });
+
   // Salva la wishlist nel localStorage ogni volta che cambia
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
+
+  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  useEffect(() => {
+    localStorage.setItem("cartlist", JSON.stringify(cartListId));
+  }, [cartListId]);
 
   // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
   const onToggleFavorite = (productId) => {
@@ -25,6 +36,15 @@ export default function OtherAnimalProductsPage() {
       setWishlistIds([...wishlistIds, productId]);
     }
   };
+
+  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  const onToggleAddToCart = (productId) => {
+    if (cartListId.includes(productId)) {
+      setCartListId(cartListId.filter(id => id !== productId))
+    } else {
+      setCartListId([...cartListId, productId])
+    }
+  }
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -72,6 +92,7 @@ export default function OtherAnimalProductsPage() {
           products={fishProducts}
           wishlistIds={wishlistIds}
           onToggleFavorite={onToggleFavorite}
+          onToggleAddToCart={onToggleAddToCart}
         />
       )}
 
@@ -82,6 +103,7 @@ export default function OtherAnimalProductsPage() {
           products={rodentProducts}
           wishlistIds={wishlistIds}
           onToggleFavorite={onToggleFavorite}
+          onToggleAddToCart={onToggleAddToCart}
         />
       )}
 
@@ -92,6 +114,7 @@ export default function OtherAnimalProductsPage() {
           products={birdProducts}
           wishlistIds={wishlistIds}
           onToggleFavorite={onToggleFavorite}
+          onToggleAddToCart={onToggleAddToCart}
         />
       )}
     </div>

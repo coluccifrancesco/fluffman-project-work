@@ -43,16 +43,14 @@ export default function CartPage() {
                 setCartProducts(cartListData);
             } catch (error) {
                 console.error("Errore durante il recupero dei dati:", error);
-            } // finally {
-            //     setIsLoading(false);
-            // }
+            }
         }
         fetchData();
     }, [cartListId]);
 
     // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
-    const onToggleRemove = (productId) => {
-        setCartListId(cartListId.filter(id => id !== productId))
+    const onToggleRemove = (product) => {
+        setCartListId(cartListId.filter(id => id !== product.id))
     }
 
     return <>
@@ -77,7 +75,7 @@ export default function CartPage() {
             {/* TEMPLATE */}
             {/* ↓ Da inserire ed adattare in un map */}
             {cartProducts.map((product) => (
-                <div className="row py-3 border-top">
+                <div className="row py-3 border-top" key={product.id}>
 
                     {/* Immagine */}
                     <div className="d-none d-md-block col-md-2 col-xxl-1">
@@ -87,7 +85,7 @@ export default function CartPage() {
                     {/* Nome prodotto e peso */}
                     <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
                         <h5 className="m-0">{product.name}</h5>
-                        <p className="m-0 d-none d-sm-block">Peso: {product.product_weight}</p>
+                        <p className="m-0 d-none d-sm-block">Peso: {product.product_weight}kg</p>
                     </div>
 
                     {/* Quantità da sm in sù */}
@@ -95,7 +93,7 @@ export default function CartPage() {
                         <button className="quantity-btn">-</button>
                         <p className="fs-2 m-0 px-2">1</p>
                         <button className="quantity-btn">+</button>
-                        <button className="trash-btn" onClick={onToggleRemove}><i className="fa-solid fa-trash-can"></i></button>
+                        <button className="trash-btn" onClick={() => onToggleRemove(product)}><i className="fa-solid fa-trash-can"></i></button>
                     </div>
 
                     {/* Quantità da sm in giù */}
@@ -106,7 +104,7 @@ export default function CartPage() {
                             <button className="quantity-btn-mobile">-</button>
                         </div>
 
-                        <button className="trash-btn-mobile fs-5" onClick={onToggleRemove}><i className="fa-solid fa-trash-can"></i></button>
+                        <button className="trash-btn-mobile fs-5" onClick={() => onToggleRemove(product)}><i className="fa-solid fa-trash-can"></i></button>
                     </div>
 
                     {/* Prezzo del prodotto */}
