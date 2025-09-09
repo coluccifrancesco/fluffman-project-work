@@ -87,7 +87,7 @@ export default function CartPage() {
                     {/* Nome prodotto e peso */}
                     <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
                         <h5 className="m-0">{product.name}</h5>
-                        <p className="m-0 d-none d-sm-block">Peso: {product.weight}</p>
+                        <p className="m-0 d-none d-sm-block">Peso: {product.product_weight}</p>
                     </div>
 
                     {/* Quantità da sm in sù */}
