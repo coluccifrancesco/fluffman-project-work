@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export default function CardItem({ product, isFavorite, onToggleFavorite, onAddToCart }) {
+function CardItem({ product, onToggleFavorite, isFavorite, onAddToCart, isInCart }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -85,7 +85,7 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onAddT
 
           <div className="card-buttons d-flex align-items-start">
             <button
-              className="btn"
+              className="btn p-0"
               type="button"
               onClick={() => onToggleFavorite(product.id)}
               title={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
@@ -94,12 +94,12 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onAddT
             </button>
 
             <button
-              className="btn"
+              className="btn p-0"
               type="button"
               onClick={() => onAddToCart(product.id)}
-              title="Aggiungi al carrello"
+              title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
-              <i className="bi fs-4 me-3 bi-cart"></i>
+              <i className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"}`}></i>
             </button>
           </div>
         </div>
@@ -107,3 +107,5 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onAddT
     </div>
   );
 }
+
+export default CardItem;
