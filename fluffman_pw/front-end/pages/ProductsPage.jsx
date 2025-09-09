@@ -11,6 +11,17 @@ export default function ProductsPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+  // se esiste la trasforma in JSON ed in array, altrimenti []
+  const [cartListId, setCartListId] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
+  });
+
+  // Aggiungi lo stato per la wishlist, leggendo dal localStorage
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
+
   const [filters, setFilters] = useState({
     animal_id: searchParams.get("animal_id") || "all",
     brand_id: searchParams.get("brand_id") || "",
@@ -59,6 +70,34 @@ export default function ProductsPage() {
       .then((data) => setBrands(data))
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
+
+  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  useEffect(() => {
+    localStorage.setItem("cartlist", JSON.stringify(cartListId));
+  }, [cartListId]);
+
+  // Salva la wishlist nel localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  const onToggleAddToCart = (productId) => {
+    if (cartListId.includes(productId)) {
+      setCartListId(cartListId.filter(id => id !== productId))
+    } else {
+      setCartListId([...cartListId, productId])
+    }
+  }
+
+  // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
 
   if (loading) return <div className="text-center mt-5">Caricamento...</div>;
   if (error)
@@ -156,7 +195,11 @@ export default function ProductsPage() {
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             {allProducts.map((product) => (
               <div key={product.id} className="col">
-                <CardItem product={product} />
+                <CardItem
+                  product={product}
+                  onToggleFavorite={onToggleFavorite}
+                  onToggleAddToCart={onToggleAddToCart}
+                />
               </div>
             ))}
           </div>

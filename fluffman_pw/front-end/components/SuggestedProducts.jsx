@@ -14,9 +14,10 @@ export default function SuggestedProducts() {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
 
-  // Gestione carrello (se necessario)
-  const [cartIds, setCartIds] = useState(() => {
-    return JSON.parse(localStorage.getItem("cart")) || [];
+  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+  // se esiste la trasforma in JSON ed in array, altrimenti []
+  const [cartListId, setCartListId] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
   });
 
   useEffect(() => {
@@ -75,10 +76,10 @@ export default function SuggestedProducts() {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
 
-  // Salva carrello nel localStorage quando cambia
+  // Ogni volta che cambiano gli id nel carrello, salva in local storage
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartIds));
-  }, [cartIds]);
+    localStorage.setItem("cartlist", JSON.stringify(cartListId));
+  }, [cartListId]);
 
   // Funzione per gestire i preferiti (stessa logica di NewProducts)
   const onToggleFavorite = (productId) => {
@@ -89,16 +90,14 @@ export default function SuggestedProducts() {
     }
   };
 
-  // Funzione per gestire il carrello
-  const onAddToCart = (productId) => {
-    if (!cartIds.includes(productId)) {
-      setCartIds([...cartIds, productId]);
-      // Opzionale: mostra un messaggio di conferma
-      console.log("Prodotto aggiunto al carrello!");
+  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  const onToggleAddToCart = (productId) => {
+    if (cartListId.includes(productId)) {
+      setCartListId(cartListId.filter(id => id !== productId))
     } else {
-      console.log("Prodotto già nel carrello!");
+      setCartListId([...cartListId, productId])
     }
-  };
+  }
 
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
@@ -145,7 +144,7 @@ export default function SuggestedProducts() {
                   product={product}
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
-                  onAddToCart={onAddToCart}
+                  onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
             ))}
@@ -164,7 +163,7 @@ export default function SuggestedProducts() {
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
-                onAddToCart={onAddToCart}
+                onToggleAddToCart={onToggleAddToCart}
               />
             </div>
           ))}
