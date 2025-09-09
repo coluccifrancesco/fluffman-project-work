@@ -228,13 +228,13 @@ export default function Header() {
             aria-labelledby="offcanvasScrollingLabel"
           >
             <div className="offcanvas-header">
-              <NavLink to="/">
+              <Link to="/">
                 <img
                   src="DogFaceLogo.png"
                   className="header-logo-belowLg d-block d-lg-none"
                   id="offcanvasScrollingLabel"
                 />
-              </NavLink>
+              </Link>
               <button
                 type="button"
                 className="btn-close"
