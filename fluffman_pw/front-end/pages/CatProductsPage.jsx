@@ -102,6 +102,7 @@ export default function CatProductsPage() {
           title="Un lauto pasto per il tuo gatto esigente"
           products={foodProducts}
           wishlistIds={wishlistIds}
+          cartListId={cartListId}
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -113,6 +114,7 @@ export default function CatProductsPage() {
           title="Tiragraffi, lettiere, ciotole, giochi: qui trovi tutto!"
           products={accessoryProducts}
           wishlistIds={wishlistIds}
+          cartListId={cartListId}
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />

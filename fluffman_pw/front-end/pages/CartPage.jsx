@@ -4,18 +4,50 @@ import "../styles/CartPage.css"
 
 export default function CartPage() {
 
-    // Contiene dati completi dei prodotti
-    const [cartProducts, setCartProducts] = useState([]);
-
     // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
     // se esiste la trasforma in JSON ed in array, altrimenti []
     const [cartListId, setCartListId] = useState(() => {
         return JSON.parse(localStorage.getItem("cartlist")) || [];
     });
 
+    // Contiene dati completi dei prodotti
+    const [cartProducts, setCartProducts] = useState([]);
+
     // Ogni volta che cambiano gli id nel carrello, salva in local storage
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartListId));
+        localStorage.setItem("cartlist", JSON.stringify(cartListId));
+    }, [cartListId]);
+
+    // Fetch products and images, then filter by cartlistIds
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const productsResponse = await fetch("http://localhost:3030/api/products");
+                const productsData = await productsResponse.json();
+
+                const imagesResponse = await fetch("http://localhost:3030/api/images");
+                const imagesData = await imagesResponse.json();
+
+                // Combina i dati e filtra solo i prodotti della cartlist
+                const cartListData = productsData
+                    .filter(p => cartListId.includes(p.id))
+                    .map(p => {
+                        const img = imagesData.find(i => i.product_id === p.id);
+                        const imageUrl = img ? `http://localhost:3030/products_image/${img?.name}` : "/images/default.jpg";
+                        return {
+                            ...p,
+                            image: imageUrl,
+                        };
+                    });
+
+                setCartProducts(cartListData);
+            } catch (error) {
+                console.error("Errore durante il recupero dei dati:", error);
+            } // finally {
+            //     setIsLoading(false);
+            // }
+        }
+        fetchData();
     }, [cartListId]);
 
     // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
@@ -54,8 +86,8 @@ export default function CartPage() {
 
                     {/* Nome prodotto e peso */}
                     <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
-                        <h5 className="m-0">Nome prodotto</h5>
-                        <p className="m-0 d-none d-sm-block">Peso:</p>
+                        <h5 className="m-0">{product.name}</h5>
+                        <p className="m-0 d-none d-sm-block">Peso: {product.weight}</p>
                     </div>
 
                     {/* Quantità da sm in sù */}
@@ -79,7 +111,7 @@ export default function CartPage() {
 
                     {/* Prezzo del prodotto */}
                     <div className="col-3 col-md-2 d-flex justify-content-end align-items-center">
-                        <h5 className="text-end m-0">€00.00</h5>
+                        <h5 className="text-end m-0">€{product.price}</h5>
                     </div>
 
                 </div>

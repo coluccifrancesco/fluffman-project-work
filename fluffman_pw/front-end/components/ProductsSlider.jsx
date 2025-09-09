@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
 import "../styles/ProductsSlider.css";
 
-export default function ProductsSlider({ title, products, wishlistIds, onToggleFavorite, onToggleAddToCart }) {
+export default function ProductsSlider({ title, products, wishlistIds, cartListId, onToggleFavorite, onToggleAddToCart }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -50,6 +50,7 @@ export default function ProductsSlider({ title, products, wishlistIds, onToggleF
                   product={product}
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
+                  isInCart={cartListId?.includes(product.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
@@ -68,8 +69,8 @@ export default function ProductsSlider({ title, products, wishlistIds, onToggleF
               <CardItem
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
-                isInCart={cartListId.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
+                isInCart={cartListId?.includes(product.id)}
                 onToggleAddToCart={onToggleAddToCart}
               />
             </div>
