@@ -4,20 +4,19 @@ import "../styles/CartPage.css"
 
 export default function CartPage() {
 
-    const [products, setProducts] = useState([]);
+    // Contiene dati completi dei prodotti
+    const [cartProducts, setCartProducts] = useState([]);
 
-    // Implementare logica di salvataggio in locale degli elementi, 
-    // una volta premuto il carrello per comprarli.
-    // Inserirli nell'array e fare un map nel carrello per mostrarli
-    // Da discutere successivamente come muoversi a riguardo
-
-    const [wishlistIds, setWishlistIds] = useState(() => {
-        return JSON.parse(localStorage.getItem("wishlist")) || [];
+    // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+    // se esiste la trasforma in JSON ed in array, altrimenti []
+    const [cartListId, setCartListId] = useState(() => {
+        return JSON.parse(localStorage.getItem("cartlist")) || [];
     });
 
+    // Ogni volta che cambiano gli id nel carrello, salva in local storage
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(wishlistIds));
-    }, [wishlistIds]);
+        localStorage.setItem("cart", JSON.stringify(cartListId));
+    }, [cartListId]);
 
 
     return <>
