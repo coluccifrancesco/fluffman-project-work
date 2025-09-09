@@ -24,6 +24,20 @@ export async function show(req, res) {
     }
 }
 
+// SHOW (per SLUG)
+export async function showBySlug(req, res) {
+    const { slug } = req.params;
+    try {
+        const [rows] = await pool.query("SELECT * FROM brands WHERE slug = ?", [slug]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: true, message: "Marchio non trovato." });
+        }
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
 // STORE
 export async function store(req, res) {
     const { name } = req.body;

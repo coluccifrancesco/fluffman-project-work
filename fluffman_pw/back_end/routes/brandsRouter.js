@@ -3,6 +3,7 @@ import express from "express";
 import {
     index,
     show,
+    showBySlug,
     store,
     update,
     destroy
@@ -15,6 +16,9 @@ router.get('/', index);
 
 // Rotta per ottenere un singolo marchio per ID
 router.get('/:id', show);
+
+// Rotta per ottenere un singolo marchio per slug
+router.get('/:slug', showBySlug);
 
 // Rotta per creare un nuovo marchio
 router.post('/', store);

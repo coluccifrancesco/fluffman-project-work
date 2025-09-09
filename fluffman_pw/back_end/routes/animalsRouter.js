@@ -5,6 +5,7 @@ import express from "express";
 import {
     index,
     show,
+    showBySlug,
     store,
     update,
     destroy
@@ -18,6 +19,9 @@ router.get('/', index);
 
 // Rotta per ottenere un singolo tipo di animale per ID
 router.get('/:id', show);
+
+// Rotta per ottenere un singolo tipo di animale per slug
+router.get('/:slug', showBySlug);
 
 // Rotta per creare un nuovo tipo di animale
 router.post('/', store);

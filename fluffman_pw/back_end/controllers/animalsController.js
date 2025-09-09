@@ -67,6 +67,39 @@ export async function show(req, res) {
     }
 }
 
+export async function showBySlug(req, res) {
+    const { slug } = req.params;
+
+    try {
+        const [rows] = await pool.query(
+            `
+            SELECT 
+                a.*,
+                b.name AS breed_name,
+                i.name AS image_path
+            FROM animals AS a
+            LEFT JOIN breeds AS b ON a.breed_id = b.id
+            LEFT JOIN images AS i ON a.id = i.animal_id
+            WHERE a.slug = ?
+            `,
+            [slug]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: true, message: "Animale non trovato." });
+        }
+
+        // La query potrebbe restituire più righe se un animale ha più immagini.
+        // Se vuoi solo una singola riga, puoi prendere la prima, ma se vuoi tutte le immagini,
+        // potresti dover raggruppare i risultati o modificare la query.
+        // Per semplicità, questa versione restituisce il primo risultato.
+        res.json(rows[0]);
+    } catch (err) {
+        console.error('Errore durante la ricerca per slug:', err);
+        res.status(500).json({ error: true, message: err.message });
+    }
+}
+
 // CREATE (store): Crea un nuovo prodotto
 export async function store(req, res) {
     const {
