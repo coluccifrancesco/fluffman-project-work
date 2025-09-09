@@ -6,11 +6,18 @@ export default function CartPage() {
 
     const [products, setProducts] = useState([]);
 
-
     // Implementare logica di salvataggio in locale degli elementi, 
     // una volta premuto il carrello per comprarli.
     // Inserirli nell'array e fare un map nel carrello per mostrarli
     // Da discutere successivamente come muoversi a riguardo
+
+    const [wishlistIds, setWishlistIds] = useState(() => {
+        return JSON.parse(localStorage.getItem("wishlist")) || [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(wishlistIds));
+    }, [wishlistIds]);
 
 
     return <>
@@ -115,7 +122,7 @@ export default function CartPage() {
             :
             
             } */}
-            
+
 
             {/* Checkout da sm in sù */}
             <div className="d-none d-sm-flex justify-content-end align-items-center check-cont">
