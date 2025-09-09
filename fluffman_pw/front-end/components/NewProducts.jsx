@@ -16,14 +16,16 @@ export default function NewProducts() {
         );
         const productsData = await res.json();
 
-        const productsWithImageUrls = productsData.map(p => ({
+        const productsWithImageUrls = productsData.map((p) => ({
           ...p,
           image: p.image_name
             ? `http://localhost:3030/products_image/${p.image_name}`
-            : "/images/default.jpg"
+            : "/images/default.jpg",
         }));
 
-        setProducts(productsWithImageUrls.sort(() => 0.5 - Math.random()).slice(0, 16));
+        setProducts(
+          productsWithImageUrls.sort(() => 0.5 - Math.random()).slice(0, 16)
+        );
       } catch (err) {
         console.error("Errore fetch:", err);
       }

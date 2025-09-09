@@ -10,3 +10,28 @@
 .bg {
   background-color: var(--background);
 }
+
+.select-pet {
+  color: var(--text);
+  background-color: var(--accent);
+  padding: 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.33rem;
+}
+
+.select-pet:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-color: var(--secondary);
+  cursor: pointer;
+}
+
+.select-pet:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 0.2rem rgba(175, 104, 24, 0.25);
+}
+
+.select-pet option {
+  background-color: var(--accent);
+  color: var(--text);
+}
