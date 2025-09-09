@@ -179,9 +179,7 @@ export default function SingleProductPage() {
         </div>
         <div className="container m-2 p-2">
           <h2 className="my-4 text-center">Prodotti Simili</h2>
-          <NewProducts 
-            onToggleAddToCart={onToggleAddToCart}
-          />
+          <NewProducts />
         </div>
       </div>
     </div>
