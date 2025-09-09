@@ -6,7 +6,7 @@ export default function Footer() {
     <>
       <footer className="container-fluid">
         <div className="container py-3">
-          <div className="row pt-3 justify-content-center">
+          <div className="row pt-3 justify-content-between">
             <div className="col-6 col-sm-3 col-xs-3 col-md-3">
               <ul className="list-unstyled">
                 <h5>
