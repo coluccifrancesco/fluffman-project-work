@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
 
@@ -54,7 +53,7 @@ export default function NewProducts() {
 
   const onToggleFavorite = (productId) => {
     if (wishlistIds.includes(productId)) {
-      setWishlistIds(wishlistIds.filter(id => id !== productId));
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
     } else {
       setWishlistIds([...wishlistIds, productId]);
     }
