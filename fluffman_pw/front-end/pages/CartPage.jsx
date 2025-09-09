@@ -4,21 +4,24 @@ import "../styles/CartPage.css"
 
 export default function CartPage() {
 
-    const [products, setProducts] = useState([]);
+    // Contiene dati completi dei prodotti
+    const [cartProducts, setCartProducts] = useState([]);
 
-    // Implementare logica di salvataggio in locale degli elementi, 
-    // una volta premuto il carrello per comprarli.
-    // Inserirli nell'array e fare un map nel carrello per mostrarli
-    // Da discutere successivamente come muoversi a riguardo
-
-    const [wishlistIds, setWishlistIds] = useState(() => {
-        return JSON.parse(localStorage.getItem("wishlist")) || [];
+    // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
+    // se esiste la trasforma in JSON ed in array, altrimenti []
+    const [cartListId, setCartListId] = useState(() => {
+        return JSON.parse(localStorage.getItem("cartlist")) || [];
     });
 
+    // Ogni volta che cambiano gli id nel carrello, salva in local storage
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(wishlistIds));
-    }, [wishlistIds]);
+        localStorage.setItem("cart", JSON.stringify(cartListId));
+    }, [cartListId]);
 
+    // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+    const onToggleRemove = (productId) => {
+        setCartListId(cartListId.filter(id => id !== productId))
+    }
 
     return <>
 
@@ -39,46 +42,48 @@ export default function CartPage() {
             </div>
 
 
-            {/* TEMPLATE per ora adatto solo da tablet in sù */}
+            {/* TEMPLATE */}
             {/* ↓ Da inserire ed adattare in un map */}
-            <div className="row py-3 border-top">
+            {cartProducts.map((product) => (
+                <div className="row py-3 border-top">
 
-                {/* Immagine */}
-                <div className="d-none d-md-block col-md-2 col-xxl-1">
-                    <img className="w-100 max-width-img" src="https://picsum.photos/800/800" alt="Immagine del prodotto" />
-                </div>
-
-                {/* Nome prodotto e peso */}
-                <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
-                    <h5 className="m-0">Nome prodotto</h5>
-                    <p className="m-0 d-none d-sm-block">Peso:</p>
-                </div>
-
-                {/* Quantità da sm in sù */}
-                <div className="col-4 col-md-3 d-none d-sm-flex justify-content-start align-items-center gap-2">
-                    <button className="quantity-btn">-</button>
-                    <p className="fs-2 m-0 px-2">0</p>
-                    <button className="quantity-btn">+</button>
-                    <button className="trash-btn"><i className="fa-solid fa-trash-can"></i></button>
-                </div>
-
-                {/* Quantità da sm in giù */}
-                <div className="col-4 d-flex d-sm-none justify-content-start align-items-center">
-                    <div className="d-flex justify-content-start align-items-center gap-1 flex-column">
-                        <button className="quantity-btn-mobile">+</button>
-                        <p className="fs-4 m-0 px-2">0</p>
-                        <button className="quantity-btn-mobile">-</button>
+                    {/* Immagine */}
+                    <div className="d-none d-md-block col-md-2 col-xxl-1">
+                        <img className="w-100 max-width-img" src="https://picsum.photos/800/800" alt="Immagine del prodotto" />
                     </div>
 
-                    <button className="trash-btn-mobile fs-5"><i className="fa-solid fa-trash-can"></i></button>
-                </div>
+                    {/* Nome prodotto e peso */}
+                    <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
+                        <h5 className="m-0">Nome prodotto</h5>
+                        <p className="m-0 d-none d-sm-block">Peso:</p>
+                    </div>
 
-                {/* Prezzo del prodotto */}
-                <div className="col-3 col-md-2 d-flex justify-content-end align-items-center">
-                    <h5 className="text-end m-0">€00.00</h5>
-                </div>
+                    {/* Quantità da sm in sù */}
+                    <div className="col-4 col-md-3 d-none d-sm-flex justify-content-start align-items-center gap-2">
+                        <button className="quantity-btn">-</button>
+                        <p className="fs-2 m-0 px-2">0</p>
+                        <button className="quantity-btn">+</button>
+                        <button className="trash-btn" onClick={onToggleRemove}><i className="fa-solid fa-trash-can"></i></button>
+                    </div>
 
-            </div>
+                    {/* Quantità da sm in giù */}
+                    <div className="col-4 d-flex d-sm-none justify-content-start align-items-center">
+                        <div className="d-flex justify-content-start align-items-center gap-1 flex-column">
+                            <button className="quantity-btn-mobile">+</button>
+                            <p className="fs-4 m-0 px-2">0</p>
+                            <button className="quantity-btn-mobile">-</button>
+                        </div>
+
+                        <button className="trash-btn-mobile fs-5"><i className="fa-solid fa-trash-can"></i></button>
+                    </div>
+
+                    {/* Prezzo del prodotto */}
+                    <div className="col-3 col-md-2 d-flex justify-content-end align-items-center">
+                        <h5 className="text-end m-0">€00.00</h5>
+                    </div>
+
+                </div>
+            ))}
 
 
             {/* Spedizione, da inserire logica calcolo del costo */}
