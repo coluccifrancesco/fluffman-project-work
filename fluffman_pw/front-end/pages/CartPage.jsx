@@ -111,12 +111,12 @@ export default function CartPage() {
 
             {/* Checkout da sm in sù */}
             <div className="d-none d-sm-flex justify-content-end align-items-center check-cont">
-                <Link><button className="check-btn">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
+                <Link to="/checkout"><button className="check-btn">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
             </div>
-            
+
             {/* Checkout da sm in giù */}
             <div className="d-block d-sm-none check-cont">
-                <Link><button className="check-btn-mobile w-100">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
+                <Link to="/checkout"><button className="check-btn-mobile w-100">Checkout<i className="fa-solid fa-cart-shopping"></i></button></Link>
             </div>
 
         </section>
