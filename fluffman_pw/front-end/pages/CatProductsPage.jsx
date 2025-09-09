@@ -38,8 +38,13 @@ export default function CatProductsPage() {
     }
   };
 
+  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
   const onToggleAddToCart = (productId) => {
-    
+    if (cartListId.includes(productId)){
+      setCartListId(cartListId.filter(id => id !== productId))
+    } else {
+      setCartListId([...cartListId, productId])
+    }
   }
 
   useEffect(() => {
@@ -98,6 +103,7 @@ export default function CatProductsPage() {
           products={foodProducts}
           wishlistIds={wishlistIds}
           onToggleFavorite={onToggleFavorite}
+          onToggleAddToCart={onToggleAddToCart}
         />
       )}
 
@@ -108,6 +114,7 @@ export default function CatProductsPage() {
           products={accessoryProducts}
           wishlistIds={wishlistIds}
           onToggleFavorite={onToggleFavorite}
+          onToggleAddToCart={onToggleAddToCart}
         />
       )}
     </div>

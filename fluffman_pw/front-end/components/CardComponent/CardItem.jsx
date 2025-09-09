@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export default function CardItem({ product, isFavorite, onToggleFavorite, onAddToCart }) {
+export default function CardItem({ product, isFavorite, onToggleFavorite, onToggleAddToCart }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -96,7 +96,7 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onAddT
             <button
               className="btn"
               type="button"
-              onClick={() => onAddToCart(product.id)}
+              onClick={() => onToggleAddToCart(product.id)}
               title="Aggiungi al carrello"
             >
               <i className="bi fs-4 me-3 bi-cart"></i>
