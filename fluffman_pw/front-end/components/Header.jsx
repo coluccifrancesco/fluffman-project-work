@@ -11,11 +11,11 @@ export default function Header() {
   // Richiesta all'api per i prodotti
   const fetchData = (value) => {
 
-    if (value.trim() == ""){
+    if (value.trim() == "") {
       setSearchResults([]);
       return
     }
-    
+
     fetch("http://localhost:3030/api/products/search")
 
       // Logica di gestione degli errori
@@ -32,8 +32,8 @@ export default function Header() {
           return product.name.toLowerCase().includes(value)
         });
 
-      setSearchResults(results);
-    })
+        setSearchResults(results);
+      })
   }
 
   const handleChange = (value) => {
@@ -43,8 +43,8 @@ export default function Header() {
 
   const handleOffCanvasCLick = () => {
     const closeButton = document.getElementById('search-bar-close-btn');
-    
-    if(closeButton){
+
+    if (closeButton) {
       closeButton.click();
     }
   }
