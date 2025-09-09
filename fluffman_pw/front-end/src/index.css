@@ -37,6 +37,16 @@
   object-fit: cover;
 }
 
+.card-img-top:hover {
+  cursor: pointer;
+}
+
+.card-title:hover {
+  cursor: pointer;
+  text-decoration: underline 1.2px;
+
+}
+
 .card:hover {
   transform: scale(1.05);
 }

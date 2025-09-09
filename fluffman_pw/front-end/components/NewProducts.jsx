@@ -1,29 +1,37 @@
+
+import React, { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
-import { useState, useEffect } from "react";
-import "../styles/NewProducts.css";
-import "../styles/Arrows.css";
 
 export default function NewProducts() {
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(
+        const resProd = await fetch(
           `http://localhost:3030/api/products?t=${Date.now()}`
         );
-        const productsData = await res.json();
+        const products = await resProd.json();
 
-        const productsWithImageUrls = productsData.map(p => ({
-          ...p,
-          image: p.image_name
-            ? `http://localhost:3030/products_image/${p.image_name}`
-            : "/images/default.jpg"
-        }));
+        const resImg = await fetch(
+          `http://localhost:3030/api/images?t=${Date.now()}`
+        );
+        const images = await resImg.json();
 
-        setProducts(productsWithImageUrls.sort(() => 0.5 - Math.random()).slice(0, 16));
+        const merged = products.map((p) => {
+          const img = images.find((i) => i.product_id === p.id);
+          const imageUrl = img
+            ? `http://localhost:3030/products_image/${img.name}`
+            : "/images/default.jpg";
+          return { ...p, image: imageUrl };
+        });
+
+        setProducts(merged.sort(() => 0.5 - Math.random()).slice(0, 16));
       } catch (err) {
         console.error("Errore fetch:", err);
       }
@@ -39,6 +47,18 @@ export default function NewProducts() {
     window.addEventListener("resize", handleSize);
     return () => window.removeEventListener("resize", handleSize);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter(id => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
 
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
@@ -65,16 +85,18 @@ export default function NewProducts() {
         <div className="position-relative">
           <div className="arrow_left" onClick={handlePrev}></div>
           <div className="row justify-content-center g-3 px-2 mx-5">
-            {visibleProducts.map((product) => {
-              return (
-                <div
-                  key={product.id}
-                  className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
-                >
-                  <CardItem product={product} />
-                </div>
-              );
-            })}
+            {visibleProducts.map((product) => (
+              <div
+                key={product.id}
+                className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
+              >
+                <CardItem
+                  product={product}
+                  isFavorite={wishlistIds.includes(product.id)}
+                  onToggleFavorite={onToggleFavorite}
+                />
+              </div>
+            ))}
           </div>
           <div className="arrow_right" onClick={handleNext}></div>
         </div>
@@ -86,7 +108,11 @@ export default function NewProducts() {
               className="flex-shrink-0"
               style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem product={product} />
+              <CardItem
+                product={product}
+                isFavorite={wishlistIds.includes(product.id)}
+                onToggleFavorite={onToggleFavorite}
+              />
             </div>
           ))}
         </div>
