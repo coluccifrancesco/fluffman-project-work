@@ -8,6 +8,25 @@ export default function DogProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Aggiungi lo stato per la wishlist, leggendo dal localStorage
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
+
+  // Salva la wishlist nel localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
+
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
       .then((res) => {
@@ -59,6 +78,8 @@ export default function DogProductsPage() {
         <ProductsSlider
           title="Il tuo cane merita di mangiare da re"
           products={foodProducts}
+          wishlistIds={wishlistIds}
+          onToggleFavorite={onToggleFavorite}
         />
       )}
       {/* Sezione Accessories  */}
@@ -67,6 +88,8 @@ export default function DogProductsPage() {
           title="Giochi, collari, cucce, tutto, ma proprio tutto ciò che serve per il
             tuo cane"
           products={accessoryProducts}
+          wishlistIds={wishlistIds}
+          onToggleFavorite={onToggleFavorite}
         />
       )}
     </div>

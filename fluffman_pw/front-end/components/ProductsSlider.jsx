@@ -1,11 +1,8 @@
-//*COMPONENTE PRODUCT SLIDER -
-//*riproduce la logica usata nella HomePage per applicarla ad altre pagine, possibilità di aggiornare la HomePage in seguito con questo componente
-
 import { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
 import "../styles/ProductsSlider.css";
 
-export default function ProductsSlider({ title, products }) {
+export default function ProductsSlider({ title, products, wishlistIds, onToggleFavorite }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -38,10 +35,8 @@ export default function ProductsSlider({ title, products }) {
 
   return (
     <div className="m-2 p-2">
-      {/* TITLE PROP PER IMPORTAZIONE */}
       <h2 className="p-2">{title}</h2>
 
-      {/* logica di rendering delle frecce e dello slider in mobile */}
       {!isMobile ? (
         <div className="position-relative">
           <div className="arrow_left_slider" onClick={handlePrev}></div>
@@ -51,7 +46,11 @@ export default function ProductsSlider({ title, products }) {
                 key={product.id}
                 className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
               >
-                <CardItem product={product} />
+                <CardItem
+                  product={product}
+                  isFavorite={wishlistIds.includes(product.id)}
+                  onToggleFavorite={onToggleFavorite}
+                />
               </div>
             ))}
           </div>
@@ -65,7 +64,11 @@ export default function ProductsSlider({ title, products }) {
               className="flex-shrink-0"
               style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem product={product} />
+              <CardItem
+                product={product}
+                isFavorite={wishlistIds.includes(product.id)}
+                onToggleFavorite={onToggleFavorite}
+              />
             </div>
           ))}
         </div>
