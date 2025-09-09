@@ -10,6 +10,12 @@ export default function Header() {
 
   // Richiesta all'api per i prodotti
   const fetchData = (value) => {
+
+    if (value.trim() == ""){
+      setSearchResults([]);
+      return
+    }
+    
     fetch("http://localhost:3030/api/products/search")
 
       // Logica di gestione degli errori
