@@ -6,8 +6,26 @@ export default function ProductsPage() {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  //product filtering IN page
-  const [filter, setFilter] = useState("all"); //value di riferimento per mostrare tutti i prodotti prima del filtraggio
+  const [filter, setFilter] = useState("all");
+
+  // Aggiungi lo stato per la wishlist, leggendo dal localStorage
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
+
+  // Salva la wishlist nel localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -26,12 +44,10 @@ export default function ProductsPage() {
         setLoading(false);
       });
   }, []);
-  //filtering products IN page
+
   const getFilteredProducts = () => {
-    switch (
-      filter // switch filter con Select
-    ) {
-      case "dogs": //value del filtro
+    switch (filter) {
+      case "dogs":
         return allProducts.filter((p) => p.animal_id === 1);
       case "cats":
         return allProducts.filter((p) => p.animal_id === 2);
@@ -58,8 +74,6 @@ export default function ProductsPage() {
     <div className="hp_bg">
       <div className="p-3">
         <div className="container my-4">
-          {/* Select di filtraggio dei prodotti */}
-
           <div className="text-start ">
             <select
               name="select-pet"
@@ -79,11 +93,14 @@ export default function ProductsPage() {
           </div>
           <h1 className="text-center my-5">Il nostro listino prodotti</h1>
 
-          {/* Griglia per mostrare i prodotti filtrati */}
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             {getFilteredProducts().map((product) => (
               <div key={product.id} className="col">
-                <CardItem product={product} />
+                <CardItem
+                  product={product}
+                  isFavorite={wishlistIds.includes(product.id)}
+                  onToggleFavorite={onToggleFavorite}
+                />
               </div>
             ))}
           </div>

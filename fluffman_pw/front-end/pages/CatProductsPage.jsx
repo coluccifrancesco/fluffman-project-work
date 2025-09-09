@@ -8,6 +8,25 @@ export default function CatProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Aggiungi lo stato per la wishlist, leggendo dal localStorage
+  const [wishlistIds, setWishlistIds] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
+
+  // Salva la wishlist nel localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
+  }, [wishlistIds]);
+
+  // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
+  const onToggleFavorite = (productId) => {
+    if (wishlistIds.includes(productId)) {
+      setWishlistIds(wishlistIds.filter((id) => id !== productId));
+    } else {
+      setWishlistIds([...wishlistIds, productId]);
+    }
+  };
+
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
       .then((res) => {
@@ -62,6 +81,8 @@ export default function CatProductsPage() {
         <ProductsSlider
           title="Un lauto pasto per il tuo gatto esigente"
           products={foodProducts}
+          wishlistIds={wishlistIds}
+          onToggleFavorite={onToggleFavorite}
         />
       )}
 
@@ -70,6 +91,8 @@ export default function CatProductsPage() {
         <ProductsSlider
           title="Tiragraffi, lettiere, ciotole, giochi: qui trovi tutto!"
           products={accessoryProducts}
+          wishlistIds={wishlistIds}
+          onToggleFavorite={onToggleFavorite}
         />
       )}
     </div>
