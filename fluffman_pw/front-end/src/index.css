@@ -55,3 +55,15 @@
 .bi-cart3:hover {
   color: rgb(254, 217, 7);
 }
+
+/* .cart-row {
+  position: relative;
+} */
+
+.cart-summary {
+  position: sticky;
+  top: 160px;
+  align-self: flex-start;
+  padding: 1rem;
+  z-index: 100;
+}

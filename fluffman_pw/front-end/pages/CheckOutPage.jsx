@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function CheckOutPage() {
 
@@ -24,79 +24,112 @@ export default function CheckOutPage() {
         console.log(`Dettagli Ordine: ${orderDetails}`);
     };
 
+    const [showAddress, setShowAddress] = useState(false);
 
     return (
         <>
-            <div className="container mt-">
-                <form className="row g-3">
-                    <div className="col-md-4">
-                        <label htmlFor="userName" className="form-label">Nome</label>
-                        <input type="text" className="form-control" id="userName" placeholder="Mario" />
-                    </div>
-                    <div className="col-md-4">
-                        <label htmlFor="userLastName" className="form-label">Cognome</label>
-                        <input type="text" className="form-control" id="userLastName" placeholder="Rossi" />
-                    </div>
-                    <div className="col-md-4">
-                        <label htmlFor="usermail" className="form-label">Email</label>
-                        <input type="email" className="form-control" id="usermail" placeholder="mariorossi@gmail.com" />
-                    </div>
-                    <div className="col-md-4">
-                        <label htmlFor="inputCity" className="form-label">Città</label>
-                        <input type="text" className="form-control" id="inputCity" />
-                    </div>
-                    <div className="col-md-4">
-                        <label htmlFor="inputProvince" className="form-label">Provincia</label>
-                        <input type="text" className="form-control" id="inputProvince" />
-                    </div>
-                    <div className="col-md-4">
-                        <label htmlFor="inputCap" className="form-label">CAP</label>
-                        <input type="text" className="form-control" id="inputCap" />
-                    </div>
-                    <div className="col-12">
-                        <label htmlFor="inputAddress" className="form-label">Indirizzo di Consegna</label>
-                        <input type="text" className="form-control" id="inputAddress" placeholder="Via Napoli n.3" />
-                    </div>
-                    <div className="col-12">
-                        <label htmlFor="inputAddress2" className="form-label">Informazioni aggiuntive per la consegna</label>
-                        <input type="text area" className="form-control" id="inputAddress2" placeholder="Es. Piano 2, Scala A, Citofono: Rossi Mario" />
-                    </div>
-
-                </form>
-                <div className="accordion accordion-flush" id="accordionFlushExample">
-                    <div className="accordion-item">
-                        <h2 className="accordion-header">
-                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                Aggiungi una carta per il pagamento
-                            </button>
-                        </h2>
-                        <div id="flush-collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                            <form className="row g-3">
-                                <div className="col-md-12">
-                                    <label htmlFor="cardNumber" className="form-label">Numero carta</label>
-                                    <input type="text" className="form-control" id="cardNumber" />
-                                </div>
-                                <div className="col-md-6">
-                                    <label htmlFor="expireDate" className="form-label">Data di scadenza</label>
-                                    <input type="text" className="form-control" id="expireDate" />
-                                    <div className="form-text" id="basic-addon4">Parte anteriore della carta in formato MM/YY</div>
-                                </div>
-                                <div className="col-md-6">
-                                    <label htmlFor="securityCode" className="form-label">Codice di sicurezza</label>
-                                    <input type="text" className="form-control" id="securityCode" />
-                                    <div className="form-text" id="basic-addon4">3 cifre sul retro della carta</div>
-                                </div>
-                                <div className="col-md-12">
-                                    <label htmlFor="cardOwner" className="form-label">Nome del proprietario della carta</label>
-                                    <input type="text" className="form-control" id="cardOwner" placeholder="Mario Rossi" />
-                                </div>
-                            </form>
+            <div className="container mt-3 ">
+                <h1 className="mb-4">Checkout</h1>
+                <div className="row cart-row d-flex">
+                    <form className="col-md-8 g-3 d-flex flex-column">
+                        <div className="col-12">
+                            <h2 className="mb-4">Dati Personali</h2>
+                            <label htmlFor="userName" className="form-label fs-5">Nome</label>
+                            <input type="text" className="form-control" id="userName" placeholder="Mario" />
+                            <label htmlFor="userLastName" className="form-label fs-5">Cognome</label>
+                            <input type="text" className="form-control" id="userLastName" placeholder="Rossi" />
+                            <label htmlFor="userMail" className="form-label fs-5">Email</label>
+                            <input type="email" className="form-control" id="userMail" placeholder="mariorossi@gmail.com" />
+                            <label htmlFor="userPhone" className="form-label fs-5">Telefono</label>
+                            <div className="input-group">
+                                <span className="input-group-text" id="addon-wrapping">+39 </span>
+                                <input type="tel" className="form-control" id="userPhone" placeholder="123 456 7890" />
+                            </div>
                         </div>
+                        <div className="col-12">
+                            <h2 className="mb-4">Indirizzo di Fatturazione</h2>
+                            <label htmlFor="inputAddress" className="form-label">Indirizzo</label>
+                            <input type="text" className="form-control" id="inputAddress" placeholder="Via Roma n.1" />
+                            <label htmlFor="inputAddress2" className="form-label">Piano, appartamento, scala</label>
+                            <input type="text" className="form-control" id="inputAddress2" placeholder="Es. Piano 2, Scala A" />
+                            <label htmlFor="inputZip" className="form-label">CAP</label>
+                            <input type="text" className="form-control" id="inputZip" placeholder="00100" />
+                            <label htmlFor="inputCity" className="form-label">Città</label>
+                            <input type="text" className="form-control" id="inputCity" placeholder="Roma" />
+                            <label htmlFor="inputProvince" className="form-label">Provincia</label>
+                            <input type="text" className="form-control" id="inputProvince" placeholder="RM" />
+                            <label htmlFor="inputCountry" className="form-label">Nazione</label>
+                            <input type="text" className="form-control" id="inputCountry" placeholder="Italia" />
+                        </div>
+                        <div className="col-12">
+                            <h2 className="mb-4">Indirizzo di Consegna</h2>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id="checkChecked" checked={showAddress} onChange={() => setShowAddress(!showAddress)} />
+                                <label className="form-check-label" htmlFor="checkChecked">
+                                    Indirizzo di consegna diverso da quello di fatturazione
+                                </label>
+                            </div>
+                            {showAddress && (
+                                <>
+                                    <label htmlFor="inputAddress" className="form-label">Indirizzo</label>
+                                    <input type="text" className="form-control" id="inputAddress" placeholder="Via Roma n.1" />
+                                    <label htmlFor="inputAddress2" className="form-label">Piano, appartamento, scala</label>
+                                    <input type="text" className="form-control" id="inputAddress2" placeholder="Es. Piano 2, Scala A" />
+                                    <label htmlFor="inputZip" className="form-label">CAP</label>
+                                    <input type="text" className="form-control" id="inputZip" placeholder="00100" />
+                                    <label htmlFor="inputCity" className="form-label">Città</label>
+                                    <input type="text" className="form-control" id="inputCity" placeholder="Roma" />
+                                    <label htmlFor="inputProvince" className="form-label">Provincia</label>
+                                    <input type="text" className="form-control" id="inputProvince" placeholder="RM" />
+                                    <label htmlFor="inputCountry" className="form-label">Nazione</label>
+                                    <input type="text" className="form-control" id="inputCountry" placeholder="Italia" />
+                                </>
+                            )}
+                        </div>
+                    </form>
+                    <div className="col-md-4 cart-summary bg-light rounded g-3 d-flex flex-column">
+                        <div className="col-12">
+                            <h2 className="my-4">Il tuo ordine</h2>
+                        </div>
+
                     </div>
                 </div>
-                <div className="col-12">
-                    <button onClick={handleClick} type="submit" className="btn btn-primary">Ordina e paga</button>
+            </div>
+
+
+            <div className="accordion accordion-flush" id="accordionFlushExample">
+                <div className="accordion-item">
+                    <h2 className="accordion-header">
+                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                            Aggiungi una carta per il pagamento
+                        </button>
+                    </h2>
+                    <div id="flush-collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <form className="row g-3">
+                            <div className="col-md-12">
+                                <label htmlFor="cardNumber" className="form-label">Numero carta</label>
+                                <input type="text" className="form-control" id="cardNumber" />
+                            </div>
+                            <div className="col-md-6">
+                                <label htmlFor="expireDate" className="form-label">Data di scadenza</label>
+                                <input type="text" className="form-control" id="expireDate" />
+                                <div className="form-text" id="basic-addon4">Parte anteriore della carta in formato MM/YY</div>
+                            </div>
+                            <div className="col-md-6">
+                                <label htmlFor="securityCode" className="form-label">Codice di sicurezza</label>
+                                <input type="text" className="form-control" id="securityCode" />
+                                <div className="form-text" id="basic-addon4">3 cifre sul retro della carta</div>
+                            </div>
+                            <div className="col-md-12">
+                                <label htmlFor="cardOwner" className="form-label">Nome del proprietario della carta</label>
+                                <input type="text" className="form-control" id="cardOwner" placeholder="Mario Rossi" />
+                            </div>
+                        </form>
+                    </div>
                 </div>
+            </div>
+            <div className="col-12">
+                <button onClick={handleClick} type="submit" className="btn btn-primary">Ordina e paga</button>
             </div>
         </>
     )
