@@ -30,39 +30,53 @@ export default function CheckOutPage() {
         <>
             <div className="container mt-3 ">
                 <h1 className="mb-4">Checkout</h1>
-                <div className="row cart-row d-flex">
-                    <form className="col-md-8 g-3 d-flex flex-column">
+                <br />
+                <div className="row cart-row d-flex justify-content-between">
+                    <form className="col-md-7 g-3 d-flex flex-column">
                         <div className="col-12">
-                            <h2 className="mb-4">Dati Personali</h2>
-                            <label htmlFor="userName" className="form-label fs-5">Nome</label>
+                            <h2 className="mb-1">Dati Personali</h2>
+                            <hr />
+                            <label htmlFor="userName" className="form-label fs-5 mt-3">Nome</label>
                             <input type="text" className="form-control" id="userName" placeholder="Mario" />
-                            <label htmlFor="userLastName" className="form-label fs-5">Cognome</label>
+                            <label htmlFor="userLastName" className="form-label fs-5 mt-2">Cognome</label>
                             <input type="text" className="form-control" id="userLastName" placeholder="Rossi" />
-                            <label htmlFor="userMail" className="form-label fs-5">Email</label>
+                            <label htmlFor="userMail" className="form-label fs-5 mt-2">Email</label>
                             <input type="email" className="form-control" id="userMail" placeholder="mariorossi@gmail.com" />
-                            <label htmlFor="userPhone" className="form-label fs-5">Telefono</label>
+                            <label htmlFor="userPhone" className="form-label fs-5 mt-2">Telefono</label>
                             <div className="input-group">
                                 <span className="input-group-text" id="addon-wrapping">+39 </span>
                                 <input type="tel" className="form-control" id="userPhone" placeholder="123 456 7890" />
                             </div>
                         </div>
+
                         <div className="col-12 mt-3">
                             <h2 className="mb-4">Indirizzo di Fatturazione</h2>
                             <label htmlFor="inputAddress" className="form-label">Indirizzo</label>
+
+                        <div className="col-12">
+                            <h2 className="mb-1 mt-4">Indirizzo di Fatturazione</h2>
+                            <hr />
+                            <label htmlFor="inputAddress" className="form-label fs-5 mt-3">Indirizzo</label>
+
                             <input type="text" className="form-control" id="inputAddress" placeholder="Via Roma n.1" />
-                            <label htmlFor="inputAddress2" className="form-label">Piano, appartamento, scala</label>
+                            <label htmlFor="inputAddress2" className="form-label fs-5 mt-2">Piano, appartamento o scala</label>
                             <input type="text" className="form-control" id="inputAddress2" placeholder="Es. Piano 2, Scala A" />
-                            <label htmlFor="inputZip" className="form-label">CAP</label>
+                            <label htmlFor="inputZip" className="form-label fs-5 mt-2">CAP</label>
                             <input type="text" className="form-control" id="inputZip" placeholder="00100" />
-                            <label htmlFor="inputCity" className="form-label">Città</label>
+                            <label htmlFor="inputCity" className="form-label fs-5 mt-2">Città</label>
                             <input type="text" className="form-control" id="inputCity" placeholder="Roma" />
-                            <label htmlFor="inputProvince" className="form-label">Provincia</label>
+                            <label htmlFor="inputProvince" className="form-label fs-5 mt-2">Provincia</label>
                             <input type="text" className="form-control" id="inputProvince" placeholder="RM" />
-                            <label htmlFor="inputCountry" className="form-label">Nazione</label>
+                            <label htmlFor="inputCountry" className="form-label fs-5 mt-2">Nazione</label>
                             <input type="text" className="form-control" id="inputCountry" placeholder="Italia" />
                         </div>
                         <div className="col-12">
+
                             <h2 className="mt-3">Indirizzo di Consegna</h2>
+
+                            <h2 className="mt-4 mb-1">Indirizzo di Consegna</h2>
+                            <hr />
+
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" value="" id="checkChecked" checked={showAddress} onChange={() => setShowAddress(!showAddress)} />
                                 <label className="form-check-label" htmlFor="checkChecked">
@@ -71,25 +85,25 @@ export default function CheckOutPage() {
                             </div>
                             {showAddress && (
                                 <>
-                                    <label htmlFor="inputAddress" className="form-label">Indirizzo</label>
+                                    <label htmlFor="inputAddress" className="form-label fs-5 mt-3">Indirizzo</label>
                                     <input type="text" className="form-control" id="inputAddress" placeholder="Via Roma n.1" />
-                                    <label htmlFor="inputAddress2" className="form-label">Piano, appartamento, scala</label>
+                                    <label htmlFor="inputAddress2" className="form-label fs-5 mt-2">Piano, appartamento o scala</label>
                                     <input type="text" className="form-control" id="inputAddress2" placeholder="Es. Piano 2, Scala A" />
-                                    <label htmlFor="inputZip" className="form-label">CAP</label>
+                                    <label htmlFor="inputZip" className="form-label fs-5 mt-2">CAP</label>
                                     <input type="text" className="form-control" id="inputZip" placeholder="00100" />
-                                    <label htmlFor="inputCity" className="form-label">Città</label>
+                                    <label htmlFor="inputCity" className="form-label fs-5 mt-2">Città</label>
                                     <input type="text" className="form-control" id="inputCity" placeholder="Roma" />
-                                    <label htmlFor="inputProvince" className="form-label">Provincia</label>
+                                    <label htmlFor="inputProvince" className="form-label fs-5 mt-2">Provincia</label>
                                     <input type="text" className="form-control" id="inputProvince" placeholder="RM" />
-                                    <label htmlFor="inputCountry" className="form-label">Nazione</label>
+                                    <label htmlFor="inputCountry" className="form-label fs-5 mt-2">Nazione</label>
                                     <input type="text" className="form-control" id="inputCountry" placeholder="Italia" />
                                 </>
                             )}
                         </div>
                     </form>
-                    <div className="col-md-4 cart-summary bg-light rounded g-3 d-flex flex-column">
-                        <div className="col-12">
-                            <h2 className="my-4">Il tuo ordine</h2>
+                    <div className="col-md-4 cart-summary bg-light rounded g-3 p-0 d-flex flex-column">
+                        <div className="cart-summary-header rounded-3 col-12">
+                            <h2 className="p-5">Il tuo ordine</h2>
                         </div>
 
                     </div>
