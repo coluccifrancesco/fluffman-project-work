@@ -108,7 +108,7 @@ export default function SuggestedProducts() {
               className="flex-shrink-0"
               style={{ width: "80%", maxWidth: "250px" }}
             >
-              <CardItem product={product} />
+              <CardItem product={product} onToggleFavorite={onToggleFavorite} onAddToCart={onAddToCart} />
             </div>
           ))}
         </div>
