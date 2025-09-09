@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 
-export default function CardItem({ product, isFavorite, onToggleFavorite, onToggleAddToCart }) {
+export default function CardItem({ product, isFavorite, onToggleFavorite, onToggleAddToCart, isInCart }) {
 
   const navigate = useNavigate();
 
@@ -114,7 +114,6 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
               type="button"
 
               onClick={() => onToggleAddToCart(product.id)}
-              title="Aggiungi al carrello"
               title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
               <i className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"}`}></i>
@@ -125,5 +124,3 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
     </div>
   );
 }
-
-export default CardItem;
