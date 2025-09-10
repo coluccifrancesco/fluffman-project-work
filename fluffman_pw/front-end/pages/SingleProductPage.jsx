@@ -74,12 +74,12 @@ export default function SingleProductPage() {
 
   // Funzione per aggiungere o aggiornare un prodotto nel carrello con la quantità
   const handleAddToCart = () => {
-    const existingProduct = cartItems.find(item => item.id === product.id);
+    const existingProduct = cartItems.find(item => item?.id === product.id);
 
     if (existingProduct) {
       // Se il prodotto esiste, aggiorna la sua quantità
       setCartItems(cartItems.map(item =>
-        item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+        item?.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
       ));
     } else {
       // Se il prodotto non esiste, lo aggiunge con la quantità selezionata
