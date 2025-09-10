@@ -16,6 +16,7 @@ import brandsRouter from './routes/brandsRouter.js';
 import purchasesRouter from './routes/purchasesRouter.js';
 import productPurchaseRouter from './routes/productPurchaseRouter.js';
 import cartRouter from "./routes/cartRouter.js";
+import emailRouter from "./routes/emailRouter.js";
 
 //caricare le variabili da .env
 dotenv.config();
@@ -62,6 +63,8 @@ app.use('/api/purchases', purchasesRouter);
 app.use('/api/product_purchase', productPurchaseRouter);
 // Collega il nuovo router
 app.use('/api/cart', cartRouter);
+// Collega il router per l'invio delle email
+app.use('/api/send-email', emailRouter);
 
 //rotta di base
 app.get('/', (req, res) => { res.send('Welcome to our Pet shop') });
