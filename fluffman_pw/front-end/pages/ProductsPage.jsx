@@ -201,7 +201,7 @@ export default function ProductsPage() {
 
                   cartListId={cartItems.map((item) => item?.id)}
                   onToggleAddToCart={onToggleAddToCart}
-                  isInCart={cartItems.some((item) => item.id === product.id)}
+                  isInCart={cartItems.some((item) => item?.id === product.id)}
                   isFavorite={wishlistIds.includes(product.id)}
                 />
               </div>
