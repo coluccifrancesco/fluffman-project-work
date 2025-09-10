@@ -5,6 +5,8 @@ import "../styles/Header.css";
 
 export default function Header() {
   const { wishlist } = useWishlist();
+  // Calcola solo gli item con id valido (evita badge errato se ci sono oggetti vuoti)
+  const wishlistCount = Array.isArray(wishlist) ? wishlist.filter(item => item && item.id != null).length : 0;
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
@@ -134,9 +136,9 @@ export default function Header() {
             <NavLink to="/Wishlist">
               <div className="position-relative">
                 <i className="fa-solid fa-star m-0"></i>
-                {wishlist.length > 0 && (
+                {wishlistCount > 0 && (
                   <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.7rem" }}>
-                    {wishlist.length}
+                    {wishlistCount}
                   </span>
                 )}
               </div>
