@@ -1,59 +1,67 @@
 import { useState, useEffect } from "react";
-import { useCart } from "../context/CartContext";
 import "../styles/CheckOutPage.css";
 
 export default function CheckOutPage() {
-  const { cart, clearCart } = useCart();
+  const [cartItems, setCartItems] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
+  });
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
   // Stato per la visualizzazione dell'indirizzo di consegna
   const [showAddress, setShowAddress] = useState(false);
 
-  // Stato per l'accordion
+  //state per l'accordion
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
-  // Stato per il modal di conferma
-  const [showModal, setShowModal] = useState(false);
-
-  // URL base per le API
-  const BASE_URL = "http://localhost:3030";
 
   // Fetch dei dati del prodotto in base agli elementi nel carrello
   useEffect(() => {
     async function fetchData() {
       try {
-        const productsResponse = await fetch(`${BASE_URL}/api/products`);
+        const productsResponse = await fetch(
+          "http://localhost:3030/api/products"
+        );
         const productsData = await productsResponse.json();
 
-        const cartListData = cart.map(item => {
-          const product = productsData.find(p => p?.id === item?.id);
-          if (!product) return null;
+        const BASE_URL = "http://localhost:3030";
 
-          let imageUrl = null;
-          if (product?.image_path) {
-            let cleanPath = product.image_path.trim();
-            const baseUrlPattern = "/api/images/";
-            if (cleanPath.includes(baseUrlPattern)) {
-              cleanPath = cleanPath.substring(cleanPath.lastIndexOf(baseUrlPattern));
-            }
-            if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
-              imageUrl = cleanPath;
-            } else if (cleanPath.startsWith('/api/images/')) {
-              imageUrl = `${BASE_URL}${cleanPath}`;
-            } else {
-              imageUrl = `${BASE_URL}/products_image/${cleanPath}`;
-            }
-          }
+        const cartListData = cartItems
+          .map((item) => {
+            const product = productsData.find((p) => p?.id === item?.id);
+            if (!product) return null;
 
-          return {
-            ...product,
-            image: imageUrl,
-            currentQuantity: item.quantity,
-            availableQuantity: product.quantity,
-            price: parseFloat(product.price),
-          };
-        }).filter(Boolean);
+            // Gestione robusta dell'URL delle immagini
+            let imageUrl = null;
+            if (product?.image_path) {
+              let cleanPath = product.image_path.trim();
+              const baseUrlPattern = "http://localhost:3030/api/images/";
+              if (cleanPath.includes(baseUrlPattern)) {
+                const lastIndex = cleanPath.lastIndexOf(baseUrlPattern);
+                if (lastIndex > 0) {
+                  cleanPath = cleanPath.substring(lastIndex);
+                }
+              }
+              if (
+                cleanPath.startsWith("http://") ||
+                cleanPath.startsWith("https://")
+              ) {
+                imageUrl = cleanPath;
+              } else if (cleanPath.startsWith("/api/images/")) {
+                imageUrl = `${BASE_URL}${cleanPath}`;
+              } else {
+                imageUrl = `${BASE_URL}/products_image/${cleanPath}`;
+              }
+            }
+
+            return {
+              ...product,
+              image: imageUrl,
+              currentQuantity: item.quantity,
+              availableQuantity: product.quantity,
+              price: parseFloat(product.price),
+            };
+          })
+          .filter(Boolean);
 
         setCartProducts(cartListData);
       } catch (error) {
@@ -61,7 +69,7 @@ export default function CheckOutPage() {
       }
     }
     fetchData();
-  }, [cart]);
+  }, [cartItems]);
 
   // Calcola il totale ogni volta che la lista dei prodotti cambia
   useEffect(() => {
@@ -81,7 +89,7 @@ export default function CheckOutPage() {
   }, [cartProducts]);
 
   const handleClick = () => {
-    // Simulazione di acquisto con dati reali
+    //  Simulazione di acquisto con dati reali
     const customerEmail = "utente@email.com";
     const orderDetails = {
       products: cartProducts.map((p) => ({
@@ -96,12 +104,9 @@ export default function CheckOutPage() {
     sendConfirmationEmail(customerEmail, orderDetails);
     notifySeller("seller@email.com", orderDetails);
 
-    // Svuota il carrello dopo un acquisto simulato
-    if (typeof clearCart === 'function') {
-      clearCart();
-    }
-    // Mostra il modal
-    setShowModal(true);
+    // Cancella il carrello dopo un acquisto simulato
+    //   setCartItems([]);
+    //   localStorage.removeItem("cartlist");
   };
 
   const sendConfirmationEmail = (customerEmail, orderDetails) => {
@@ -118,11 +123,6 @@ export default function CheckOutPage() {
   const handleAccordionToggle = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <>
       <div className="container mt-3 ">
@@ -379,8 +379,9 @@ export default function CheckOutPage() {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
-              className={`accordion-button ${isAccordionOpen ? "" : "collapsed"
-                }`}
+              className={`accordion-button ${
+                isAccordionOpen ? "" : "collapsed"
+              }`}
               type="button"
               onClick={handleAccordionToggle}
               aria-expanded={isAccordionOpen}
@@ -391,8 +392,9 @@ export default function CheckOutPage() {
           </h2>
           <div
             id="flush-collapseOne"
-            className={`accordion-collapse collapse ${isAccordionOpen ? "show" : ""
-              }`}
+            className={`accordion-collapse collapse ${
+              isAccordionOpen ? "show" : ""
+            }`}
           >
             <form className="row g-3">
               <div className="col-md-12 mt-3">
@@ -441,68 +443,73 @@ export default function CheckOutPage() {
             onClick={handleClick}
             type="submit"
             className="btn btn-success btn-lg"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
           >
             Ordina e paga
           </button>
         </div>
       )}
 
-      {/* Modal di avviso */}
-      {showModal && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5" id="exampleModalLabel">
-                  Acquisto effettuato con successo
-                </h1>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={closeModal}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
-                <ul>
-                  {cartProducts.map((p) => (
-                    <li key={p.id} className="text-dark">
-                      {p.name} {p.currentQuantity}x
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-dark">
-                  Costo di spedizione: €
-                  {(
-                    totalPrice -
-                    cartProducts.reduce(
-                      (sum, product) =>
-                        sum + product.price * product.currentQuantity,
-                      0
-                    )
-                  ).toFixed(2)}
-                </p>
-                <p className="text-dark fw-bold">
-                  Totale: €{totalPrice.toFixed(2)}
-                </p>
-              </div>
-              <div className="modal-footer">
-                <p className="text-dark">
-                  Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={closeModal}
-                >
-                  Chiudi
-                </button>
-              </div>
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
+                Acquisto effettuato con successo
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
+              <ul>
+                {cartProducts.map((p) => (
+                  <li key={p.id} className="text-dark">
+                    {p.name} {p.currentQuantity}x
+                  </li>
+                ))}
+              </ul>
+              <p className="text-dark">
+                Costo di spedizione: €
+                {(
+                  totalPrice -
+                  cartProducts.reduce(
+                    (sum, product) =>
+                      sum + product.price * product.currentQuantity,
+                    0
+                  )
+                ).toFixed(2)}
+              </p>
+              <p className="text-dark fw-bold">
+                Totale: €{totalPrice.toFixed(2)}
+              </p>
+            </div>
+            <div className="modal-footer">
+              <p className="text-dark">
+                Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h
+              </p>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Chiudi
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
