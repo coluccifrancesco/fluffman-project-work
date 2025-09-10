@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import "../styles/CheckOutPage.css";
 
 export default function CheckOutPage() {
   const [cartItems, setCartItems] = useState(() => {
@@ -6,62 +7,61 @@ export default function CheckOutPage() {
   });
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  // Stato per la visualizzazione dell'indirizzo di consegna
   const [showAddress, setShowAddress] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
-  const [purchaseSummary, setPurchaseSummary] = useState(null); // Nuovo stato per il riepilogo dell'acquisto
 
-  const userNameRef = useRef(null);
-  const userLastNameRef = useRef(null);
-  const userMailRef = useRef(null);
-  const userPhoneRef = useRef(null);
+  //state per l'accordion
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
-  const inputAddressRef = useRef(null);
-  const inputAddress2Ref = useRef(null);
-  const inputZipRef = useRef(null);
-  const inputCityRef = useRef(null);
-  const inputProvinceRef = useRef(null);
-  const inputCountryRef = useRef(null);
-
-  const deliveryAddressRef = useRef(null);
-  const deliveryAddress2Ref = useRef(null);
-  const deliveryZipRef = useRef(null);
-  const deliveryCityRef = useRef(null);
-  const deliveryProvinceRef = useRef(null);
-  const deliveryCountryRef = useRef(null);
-
-
-  const BASE_URL = "http://localhost:3030";
-  const SELLER_EMAIL = "seller@example.com"; // Modificare con l'email del venditore
-
+  // Fetch dei dati del prodotto in base agli elementi nel carrello
   useEffect(() => {
     async function fetchData() {
       try {
-        const productsResponse = await fetch(`${BASE_URL}/api/products`);
+        const productsResponse = await fetch(
+          "http://localhost:3030/api/products"
+        );
         const productsData = await productsResponse.json();
 
-        const cartListData = cartItems.map(item => {
-          const product = productsData.find(p => p?.id === item?.id);
-          if (!product) return null;
+        const BASE_URL = "http://localhost:3030";
 
-          let imageUrl = null;
-          if (product?.image_path) {
-            let cleanPath = product.image_path.trim();
-            const baseUrlPattern = "/api/images/";
-            if (cleanPath.includes(baseUrlPattern)) {
-              cleanPath = cleanPath.split(baseUrlPattern)[1];
+        const cartListData = cartItems
+          .map((item) => {
+            const product = productsData.find((p) => p?.id === item?.id);
+            if (!product) return null;
+
+            // Gestione robusta dell'URL delle immagini
+            let imageUrl = null;
+            if (product?.image_path) {
+              let cleanPath = product.image_path.trim();
+              const baseUrlPattern = "http://localhost:3030/api/images/";
+              if (cleanPath.includes(baseUrlPattern)) {
+                const lastIndex = cleanPath.lastIndexOf(baseUrlPattern);
+                if (lastIndex > 0) {
+                  cleanPath = cleanPath.substring(lastIndex);
+                }
+              }
+              if (
+                cleanPath.startsWith("http://") ||
+                cleanPath.startsWith("https://")
+              ) {
+                imageUrl = cleanPath;
+              } else if (cleanPath.startsWith("/api/images/")) {
+                imageUrl = `${BASE_URL}${cleanPath}`;
+              } else {
+                imageUrl = `${BASE_URL}/products_image/${cleanPath}`;
+              }
             }
-            imageUrl = `${BASE_URL}/api/images/${cleanPath}`;
-          }
 
-          return {
-            ...product,
-            image: imageUrl,
-            currentQuantity: item.quantity,
-            availableQuantity: product.quantity,
-            price: parseFloat(product.price)
-          };
-        }).filter(Boolean);
+            return {
+              ...product,
+              image: imageUrl,
+              currentQuantity: item.quantity,
+              availableQuantity: product.quantity,
+              price: parseFloat(product.price),
+            };
+          })
+          .filter(Boolean);
 
         setCartProducts(cartListData);
       } catch (error) {
@@ -71,8 +71,12 @@ export default function CheckOutPage() {
     fetchData();
   }, [cartItems]);
 
+  // Calcola il totale ogni volta che la lista dei prodotti cambia
   useEffect(() => {
-    const subtotal = cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
+    const subtotal = cartProducts.reduce(
+      (sum, product) => sum + product.price * product.currentQuantity,
+      0
+    );
     const SHIPPING_THRESHOLD = 19.99;
     const SHIPPING_COST = 3.99;
     let shippingCost = 0;
@@ -84,219 +88,41 @@ export default function CheckOutPage() {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
-  const handleOrder = async () => {
-    const userEmail = userMailRef.current.value;
-    const userName = userNameRef.current.value;
-    const userLastName = userLastNameRef.current.value;
-    const userPhone = userPhoneRef.current.value;
-
-    const billingAddress = {
-      address: inputAddressRef.current.value,
-      address2: inputAddress2Ref.current.value,
-      zip: inputZipRef.current.value,
-      city: inputCityRef.current.value,
-      province: inputProvinceRef.current.value,
-      country: inputCountryRef.current.value,
-    };
-
-    const requiredFields = [
-      userName,
-      userLastName,
-      userEmail,
-      billingAddress.address,
-      billingAddress.zip,
-      billingAddress.city,
-      billingAddress.province,
-      billingAddress.country
-    ];
-
-    if (requiredFields.some(field => !field)) {
-      setModalTitle("Attenzione");
-      setModalMessage("Per favore, compila tutti i campi obbligatori dell'indirizzo di fatturazione.");
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
-      return;
-    }
-
-    const productListHtml = cartProducts.map(p => `
-      <li>${p.name} (${p.currentQuantity}x) - €${(p.price * p.currentQuantity).toFixed(2)}</li>
-    `).join('');
-
-    const emailBodyBuyer = `
-      <h1>Riepilogo del tuo Ordine</h1>
-      <p>Gentile ${userName},</p>
-      <p>Il tuo ordine è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
-      <ul>
-        ${productListHtml}
-      </ul>
-      <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
-      <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
-      <p>Grazie per il tuo acquisto!</p>
-    `;
-
-    const emailBodySeller = `
-        <h1>Nuovo Ordine Ricevuto</h1>
-        <p>Ciao venditore,</p>
-        <p>Hai ricevuto un nuovo ordine da ${userName} ${userLastName}.</p>
-        <p>Dettagli dell'ordine:</p>
-        <ul>
-            ${productListHtml}
-        </ul>
-        <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
-        <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
-        <p>Dettagli utente:</p>
-        <ul>
-            <li>Nome: ${userName}</li>
-            <li>Cognome: ${userLastName}</li>
-            <li>Email: ${userEmail}</li>
-            <li>Telefono: ${userPhone}</li>
-        </ul>
-        <p>Indirizzo di fatturazione:</p>
-        <ul>
-            <li>Indirizzo: ${billingAddress.address}</li>
-            <li>CAP: ${billingAddress.zip}</li>
-            <li>Città: ${billingAddress.city}</li>
-            <li>Provincia: ${billingAddress.province}</li>
-            <li>Nazione: ${billingAddress.country}</li>
-        </ul>
-        ${showAddress ? `
-            <p>Indirizzo di consegna:</p>
-            <ul>
-                <li>Indirizzo: ${deliveryAddressRef.current.value}</li>
-                <li>CAP: ${deliveryZipRef.current.value}</li>
-                <li>Città: ${deliveryCityRef.current.value}</li>
-                <li>Provincia: ${deliveryProvinceRef.current.value}</li>
-                <li>Nazione: ${deliveryCountryRef.current.value}</li>
-            </ul>
-        ` : ''}
-    `;
-
-    const orderData = {
-      userEmail,
-      userName,
-      userLastName,
-      userPhone,
-      billingAddress,
-      totalPrice,
-      products: cartProducts.map(p => ({
+  const handleClick = () => {
+    //  Simulazione di acquisto con dati reali
+    const customerEmail = "utente@email.com";
+    const orderDetails = {
+      products: cartProducts.map((p) => ({
         id: p.id,
         name: p.name,
         quantity: p.currentQuantity,
-        price: p.price
+        price: p.price,
       })),
+      totalPrice: totalPrice,
     };
 
-    if (showAddress) {
-      orderData.deliveryAddress = {
-        address: deliveryAddressRef.current.value,
-        address2: deliveryAddress2Ref.current.value,
-        zip: deliveryZipRef.current.value,
-        city: deliveryCityRef.current.value,
-        province: deliveryProvinceRef.current.value,
-        country: deliveryCountryRef.current.value,
-      };
-    }
+    sendConfirmationEmail(customerEmail, orderDetails);
+    notifySeller("seller@email.com", orderDetails);
 
-    console.log('Dati ordine da inviare:', JSON.stringify(orderData, null, 2));
-
-    try {
-      const emailResponseBuyer = await fetch(`${BASE_URL}/api/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: userEmail,
-          subject: "Conferma del tuo Ordine",
-          body: emailBodyBuyer,
-        })
-      });
-
-      if (!emailResponseBuyer.ok) {
-        console.error("Errore nell'invio dell'email all'acquirente. Stato HTTP:", emailResponseBuyer.status);
-      }
-      const emailResultBuyer = await emailResponseBuyer.json();
-      console.log('Risultato invio email acquirente:', emailResultBuyer);
-
-      const emailResponseSeller = await fetch(`${BASE_URL}/api/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: SELLER_EMAIL,
-          subject: `Nuovo Ordine da ${userName} ${userLastName}`,
-          body: emailBodySeller,
-        })
-      });
-
-      if (!emailResponseSeller.ok) {
-        console.error("Errore nell'invio dell'email al venditore. Stato HTTP:", emailResponseSeller.status);
-      }
-      const emailResultSeller = await emailResponseSeller.json();
-      console.log('Risultato invio email venditore:', emailResultSeller);
-
-
-      const purchaseResponse = await fetch(`${BASE_URL}/api/purchases`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-
-      if (!purchaseResponse.ok) {
-        console.error("Errore nel salvataggio dell'ordine. Stato HTTP:", purchaseResponse.status);
-        const purchaseErrorData = await purchaseResponse.json();
-        setModalTitle("Errore nel salvataggio dell'ordine");
-        setModalMessage(`Si è verificato un errore: ${purchaseErrorData.message || 'Errore sconosciuto'}`);
-        const modalElement = document.getElementById('exampleModal');
-        if (window.bootstrap && window.bootstrap.Modal) {
-          const modal = new window.bootstrap.Modal(modalElement);
-          modal.show();
-        } else {
-          console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-        }
-        return;
-      }
-      const purchaseResult = await purchaseResponse.json();
-      console.log('Risultato salvataggio ordine:', purchaseResult);
-
-      // Salvo i dati dell'acquisto in un nuovo stato prima di svuotare il carrello
-      const summary = {
-        products: cartProducts,
-        totalPrice: totalPrice,
-        shippingCost: totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)
-      };
-      setPurchaseSummary(summary);
-
-      setModalTitle("Acquisto effettuato con successo");
-      setModalMessage("Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.");
-
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
-
-      setCartItems([]);
-      localStorage.removeItem("cartlist");
-
-    } catch (error) {
-      console.error("Errore durante l'elaborazione dell'ordine:", error);
-      setModalTitle("Errore Generale");
-      setModalMessage("Si è verificato un errore durante l'ordine. Riprova più tardi.");
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
-    }
+    // Cancella il carrello dopo un acquisto simulato
+    //   setCartItems([]);
+    //   localStorage.removeItem("cartlist");
   };
 
+  const sendConfirmationEmail = (customerEmail, orderDetails) => {
+    console.log(`Invio mail di conferma al cliente: ${customerEmail}`);
+    console.log("Dettagli ordine:", orderDetails);
+  };
+
+  const notifySeller = (sellerEmail, orderDetails) => {
+    console.log(`Notifica di vendita a: ${sellerEmail}`);
+    console.log("Dettagli Ordine:", orderDetails);
+  };
+
+  // Funzione per gestire il toggle dell'accordion
+  const handleAccordionToggle = () => {
+    setIsAccordionOpen(!isAccordionOpen);
+  };
   return (
     <>
       <div className="container mt-3 ">
@@ -315,7 +141,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="userName"
                 placeholder="Mario"
-                ref={userNameRef}
               />
               <label htmlFor="userLastName" className="form-label fs-5 mt-2">
                 Cognome
@@ -325,7 +150,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="userLastName"
                 placeholder="Rossi"
-                ref={userLastNameRef}
               />
               <label htmlFor="userMail" className="form-label fs-5 mt-2">
                 Email
@@ -335,7 +159,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="userMail"
                 placeholder="mariorossi@gmail.com"
-                ref={userMailRef}
               />
               <label htmlFor="userPhone" className="form-label fs-5 mt-2">
                 Telefono
@@ -349,7 +172,6 @@ export default function CheckOutPage() {
                   className="form-control"
                   id="userPhone"
                   placeholder="123 456 7890"
-                  ref={userPhoneRef}
                 />
               </div>
             </div>
@@ -360,12 +182,12 @@ export default function CheckOutPage() {
               <label htmlFor="inputAddress" className="form-label fs-5 mt-3">
                 Indirizzo
               </label>
+
               <input
                 type="text"
                 className="form-control"
                 id="inputAddress"
                 placeholder="Via Roma n.1"
-                ref={inputAddressRef}
               />
               <label htmlFor="inputAddress2" className="form-label fs-5 mt-2">
                 Piano, appartamento o scala
@@ -375,7 +197,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="inputAddress2"
                 placeholder="Es. Piano 2, Scala A"
-                ref={inputAddress2Ref}
               />
               <label htmlFor="inputZip" className="form-label fs-5 mt-2">
                 CAP
@@ -385,7 +206,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="inputZip"
                 placeholder="00100"
-                ref={inputZipRef}
               />
               <label htmlFor="inputCity" className="form-label fs-5 mt-2">
                 Città
@@ -395,7 +215,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="inputCity"
                 placeholder="Roma"
-                ref={inputCityRef}
               />
               <label htmlFor="inputProvince" className="form-label fs-5 mt-2">
                 Provincia
@@ -405,7 +224,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="inputProvince"
                 placeholder="RM"
-                ref={inputProvinceRef}
               />
               <label htmlFor="inputCountry" className="form-label fs-5 mt-2">
                 Nazione
@@ -415,7 +233,6 @@ export default function CheckOutPage() {
                 className="form-control"
                 id="inputCountry"
                 placeholder="Italia"
-                ref={inputCountryRef}
               />
             </div>
             <div className="col-12">
@@ -437,7 +254,7 @@ export default function CheckOutPage() {
               {showAddress && (
                 <>
                   <label
-                    htmlFor="deliveryAddress"
+                    htmlFor="inputAddress"
                     className="form-label fs-5 mt-3"
                   >
                     Indirizzo
@@ -445,12 +262,11 @@ export default function CheckOutPage() {
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryAddress"
+                    id="inputAddress"
                     placeholder="Via Roma n.1"
-                    ref={deliveryAddressRef}
                   />
                   <label
-                    htmlFor="deliveryAddress2"
+                    htmlFor="inputAddress2"
                     className="form-label fs-5 mt-2"
                   >
                     Piano, appartamento o scala
@@ -458,32 +274,29 @@ export default function CheckOutPage() {
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryAddress2"
+                    id="inputAddress2"
                     placeholder="Es. Piano 2, Scala A"
-                    ref={deliveryAddress2Ref}
                   />
-                  <label htmlFor="deliveryZip" className="form-label fs-5 mt-2">
+                  <label htmlFor="inputZip" className="form-label fs-5 mt-2">
                     CAP
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryZip"
+                    id="inputZip"
                     placeholder="00100"
-                    ref={deliveryZipRef}
                   />
-                  <label htmlFor="deliveryCity" className="form-label fs-5 mt-2">
+                  <label htmlFor="inputCity" className="form-label fs-5 mt-2">
                     Città
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryCity"
+                    id="inputCity"
                     placeholder="Roma"
-                    ref={deliveryCityRef}
                   />
                   <label
-                    html-for="deliveryProvince"
+                    htmlFor="inputProvince"
                     className="form-label fs-5 mt-2"
                   >
                     Provincia
@@ -491,12 +304,11 @@ export default function CheckOutPage() {
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryProvince"
+                    id="inputProvince"
                     placeholder="RM"
-                    ref={deliveryProvinceRef}
                   />
                   <label
-                    html-for="deliveryCountry"
+                    htmlFor="inputCountry"
                     className="form-label fs-5 mt-2"
                   >
                     Nazione
@@ -504,9 +316,8 @@ export default function CheckOutPage() {
                   <input
                     type="text"
                     className="form-control"
-                    id="deliveryCountry"
+                    id="inputCountry"
                     placeholder="Italia"
-                    ref={deliveryCountryRef}
                   />
                 </>
               )}
@@ -520,15 +331,32 @@ export default function CheckOutPage() {
               {cartProducts.length > 0 ? (
                 <>
                   {cartProducts.map((product) => (
-                    <div key={product.id} className="d-flex justify-content-between my-2">
-                      <span>{product.name} x {product.currentQuantity}</span>
-                      <span>€{(product.price * product.currentQuantity).toFixed(2)}</span>
+                    <div
+                      key={product.id}
+                      className="d-flex justify-content-between my-2"
+                    >
+                      <span>
+                        {product.name} x {product.currentQuantity}
+                      </span>
+                      <span>
+                        €{(product.price * product.currentQuantity).toFixed(2)}
+                      </span>
                     </div>
                   ))}
                   <hr />
                   <div className="d-flex justify-content-between">
                     <span>Costo spedizione:</span>
-                    <span>€{(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</span>
+                    <span>
+                      €
+                      {(
+                        totalPrice -
+                        cartProducts.reduce(
+                          (sum, product) =>
+                            sum + product.price * product.currentQuantity,
+                          0
+                        )
+                      ).toFixed(2)}
+                    </span>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between fw-bold fs-5">
@@ -543,6 +371,7 @@ export default function CheckOutPage() {
           </div>
         </div>
       </div>
+      {/* ACCORDION */}
       <div
         className="accordion accordion-flush container mt-3 border border-dark"
         id="accordionFlushExample"
@@ -550,11 +379,12 @@ export default function CheckOutPage() {
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
-              className="accordion-button collapsed"
+              className={`accordion-button ${
+                isAccordionOpen ? "" : "collapsed"
+              }`}
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#flush-collapseOne"
-              aria-expanded="false"
+              onClick={handleAccordionToggle}
+              aria-expanded={isAccordionOpen}
               aria-controls="flush-collapseOne"
             >
               Aggiungi una carta per il pagamento
@@ -562,8 +392,9 @@ export default function CheckOutPage() {
           </h2>
           <div
             id="flush-collapseOne"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionFlushExample"
+            className={`accordion-collapse collapse ${
+              isAccordionOpen ? "show" : ""
+            }`}
           >
             <form className="row g-3">
               <div className="col-md-12 mt-3">
@@ -609,9 +440,11 @@ export default function CheckOutPage() {
       {cartProducts.length > 0 && (
         <div className="container mt-3 col-12 text-center">
           <button
-            onClick={handleOrder}
+            onClick={handleClick}
             type="submit"
             className="btn btn-success btn-lg"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
           >
             Ordina e paga
           </button>
@@ -629,7 +462,7 @@ export default function CheckOutPage() {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="exampleModalLabel">
-                {modalTitle}
+                Acquisto effettuato con successo
               </h1>
               <button
                 type="button"
@@ -639,26 +472,33 @@ export default function CheckOutPage() {
               ></button>
             </div>
             <div className="modal-body">
-              <p className="text-dark">{modalMessage}</p>
-              {modalTitle === "Acquisto effettuato con successo" && purchaseSummary && (
-                <>
-                  <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
-                  <ul>
-                    {purchaseSummary.products.map((p) => (
-                      <li key={p.id} className="text-dark">
-                        {p.name} {p.currentQuantity}x
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-dark">
-                    Costo di spedizione:{" "}
-                    €{purchaseSummary.shippingCost.toFixed(2)}
-                  </p>
-                  <p className="text-dark fw-bold">Totale: €{purchaseSummary.totalPrice.toFixed(2)}</p>
-                </>
-              )}
+              <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
+              <ul>
+                {cartProducts.map((p) => (
+                  <li key={p.id} className="text-dark">
+                    {p.name} {p.currentQuantity}x
+                  </li>
+                ))}
+              </ul>
+              <p className="text-dark">
+                Costo di spedizione: €
+                {(
+                  totalPrice -
+                  cartProducts.reduce(
+                    (sum, product) =>
+                      sum + product.price * product.currentQuantity,
+                    0
+                  )
+                ).toFixed(2)}
+              </p>
+              <p className="text-dark fw-bold">
+                Totale: €{totalPrice.toFixed(2)}
+              </p>
             </div>
             <div className="modal-footer">
+              <p className="text-dark">
+                Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h
+              </p>
               <button
                 type="button"
                 className="btn btn-secondary"
