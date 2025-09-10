@@ -142,7 +142,7 @@ export default function SuggestedProducts() {
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
                   // Passiamo gli ID al componente figlio per mantenere la compatibilità
-                  isInCart={cartItems.some(item => item.id === product.id)}
+                  isInCart={cartItems.some(item => item?.id === product.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
