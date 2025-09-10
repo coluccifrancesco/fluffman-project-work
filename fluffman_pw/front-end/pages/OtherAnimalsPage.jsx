@@ -12,9 +12,8 @@ export default function OtherAnimalProductsPage() {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
 
-  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
-  // se esiste la trasforma in JSON ed in array, altrimenti []
-  const [cartListId, setCartListId] = useState(() => {
+  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
+  const [cartItems, setCartItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cartlist")) || [];
   });
 
@@ -23,10 +22,10 @@ export default function OtherAnimalProductsPage() {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
 
-  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  // Salva il carrello nel localStorage ogni volta che cambia
   useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartListId));
-  }, [cartListId]);
+    localStorage.setItem("cartlist", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
   const onToggleFavorite = (productId) => {
@@ -37,14 +36,16 @@ export default function OtherAnimalProductsPage() {
     }
   };
 
-  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    if (cartListId.includes(productId)) {
-      setCartListId(cartListId.filter(id => id !== productId))
+    const existingProduct = cartItems.find(item => item.id === productId);
+
+    if (existingProduct) {
+      setCartItems(cartItems.filter(item => item.id !== productId));
     } else {
-      setCartListId([...cartListId, productId])
+      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
     }
-  }
+  };
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -91,6 +92,7 @@ export default function OtherAnimalProductsPage() {
           title="Tutto per il tuo acquario"
           products={fishProducts}
           wishlistIds={wishlistIds}
+          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -102,6 +104,7 @@ export default function OtherAnimalProductsPage() {
           title="Cibo e accessori per roditori"
           products={rodentProducts}
           wishlistIds={wishlistIds}
+          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -113,6 +116,7 @@ export default function OtherAnimalProductsPage() {
           title="Semi, gabbie e giochi per i tuoi uccelli"
           products={birdProducts}
           wishlistIds={wishlistIds}
+          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />

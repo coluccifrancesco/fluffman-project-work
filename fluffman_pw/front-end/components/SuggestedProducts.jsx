@@ -9,21 +9,19 @@ export default function SuggestedProducts() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Gestione wishlist (stessa logica di NewProducts)
+  // Gestione wishlist
   const [wishlistIds, setWishlistIds] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
 
-  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
-  // se esiste la trasforma in JSON ed in array, altrimenti []
-  const [cartListId, setCartListId] = useState(() => {
+  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
+  const [cartItems, setCartItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cartlist")) || [];
   });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // Usa la stessa logica di NewProducts per coerenza
         const resProd = await fetch(
           `http://localhost:3030/api/products?t=${Date.now()}`
         );
@@ -34,7 +32,6 @@ export default function SuggestedProducts() {
         );
         const imagesData = await resImg.json();
 
-        // Merge dei dati come in NewProducts
         const mergedProducts = productsData.map((p) => {
           const img = imagesData.find((i) => i.product_id === p.id);
           const imageUrl = img
@@ -43,12 +40,10 @@ export default function SuggestedProducts() {
           return {
             ...p,
             image: imageUrl,
-            // Assicurati che image_path sia disponibile per CardItem
             image_path: img?.name || null
           };
         });
 
-        // Mescola e seleziona i primi 16 (o il numero che preferisci)
         const shuffledProducts = mergedProducts.sort(() => 0.5 - Math.random());
         const finalProducts = shuffledProducts.slice(0, 16);
 
@@ -76,12 +71,12 @@ export default function SuggestedProducts() {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
 
-  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  // Salva il carrello nel localStorage quando cambia
   useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartListId));
-  }, [cartListId]);
+    localStorage.setItem("cartlist", JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  // Funzione per gestire i preferiti (stessa logica di NewProducts)
+  // Funzione per gestire i preferiti
   const onToggleFavorite = (productId) => {
     if (wishlistIds.includes(productId)) {
       setWishlistIds(wishlistIds.filter((id) => id !== productId));
@@ -90,12 +85,14 @@ export default function SuggestedProducts() {
     }
   };
 
-  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    if (cartListId.includes(productId)) {
-      setCartListId(cartListId.filter(id => id !== productId))
+    const existingProduct = cartItems.find(item => item.id === productId);
+
+    if (existingProduct) {
+      setCartItems(cartItems.filter(item => item.id !== productId));
     } else {
-      setCartListId([...cartListId, productId])
+      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
     }
   }
 
@@ -144,6 +141,8 @@ export default function SuggestedProducts() {
                   product={product}
                   isFavorite={wishlistIds.includes(product.id)}
                   onToggleFavorite={onToggleFavorite}
+                  // Passiamo gli ID al componente figlio per mantenere la compatibilità
+                  isInCart={cartItems.some(item => item.id === product.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
@@ -163,6 +162,8 @@ export default function SuggestedProducts() {
                 product={product}
                 isFavorite={wishlistIds.includes(product.id)}
                 onToggleFavorite={onToggleFavorite}
+                // Passiamo gli ID al componente figlio per mantenere la compatibilità
+                isInCart={cartItems.some(item => item.id === product.id)}
                 onToggleAddToCart={onToggleAddToCart}
               />
             </div>

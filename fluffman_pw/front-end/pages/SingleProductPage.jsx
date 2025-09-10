@@ -9,13 +9,12 @@ export default function SingleProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+
   // Stato per la quantità selezionata dall'utente, inizializzato a 1.
   const [quantity, setQuantity] = useState(1);
 
-
-  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
-  // se esiste la trasforma in JSON ed in array, altrimenti []
-  const [cartListId, setCartListId] = useState(() => {
+  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
+  const [cartItems, setCartItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cartlist")) || [];
   });
 
@@ -42,10 +41,10 @@ export default function SingleProductPage() {
       });
   }, [slug]);
 
-  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  // Ogni volta che il carrello cambia, salva in local storage
   useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartListId));
-  }, [cartListId]);
+    localStorage.setItem("cartlist", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Funzione per incrementare la quantità, con un limite massimo
   const handleIncreaseQuantity = () => {
@@ -73,21 +72,20 @@ export default function SingleProductPage() {
     }
   };
 
+  // Funzione per aggiungere o aggiornare un prodotto nel carrello con la quantità
   const handleAddToCart = () => {
-    // Logica per aggiungere il prodotto con la quantità selezionata al carrello
-    console.log(`Aggiunto al carrello: ${quantity} x ${product.name}`);
-    // Chiamata alla funzione per aggiungere al carrello
-  };
+    const existingProduct = cartItems.find(item => item.id === product.id);
 
-  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
-  const onToggleAddToCart = (productId) => {
-    if (cartListId.includes(productId)) {
-      setCartListId(cartListId.filter(id => id !== productId)
-    )
+    if (existingProduct) {
+      // Se il prodotto esiste, aggiorna la sua quantità
+      setCartItems(cartItems.map(item =>
+        item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+      ));
     } else {
-      setCartListId([...cartListId, productId])
+      // Se il prodotto non esiste, lo aggiunge con la quantità selezionata
+      setCartItems([...cartItems, { id: product.id, quantity: quantity }]);
     }
-  }
+  };
 
   if (error) {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
@@ -97,7 +95,7 @@ export default function SingleProductPage() {
     return <div className="text-center mt-5">Caricamento...</div>;
   }
 
-  // Controlla se la quantità del prodotto è bassa (tra 1 e 19)
+  // Controlla se la quantità del prodotto è bassa (tra 1 e 49)
   const isLowOnStock = product.quantity && product.quantity > 0 && product.quantity < 50;
 
   return (
@@ -168,7 +166,7 @@ export default function SingleProductPage() {
               <button
                 className="cart-btn mt-3 w-50 p-2"
                 type="button"
-                onClick={() => onToggleAddToCart(product.id)}
+                onClick={handleAddToCart}
                 disabled={product.quantity === 0}
               >
                 {product.quantity === 0 ? "Non disponibile" : `Aggiungi al Carrello (${quantity})`}

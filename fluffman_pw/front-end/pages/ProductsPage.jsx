@@ -11,13 +11,11 @@ export default function ProductsPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Contiene gli id dei prodotti nel carrello al primo caricamento cerco la chiave "cartlist" nel local storage, 
-  // se esiste la trasforma in JSON ed in array, altrimenti []
-  const [cartListId, setCartListId] = useState(() => {
+  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
+  const [cartItems, setCartItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cartlist")) || [];
   });
 
-  // Aggiungi lo stato per la wishlist, leggendo dal localStorage
   const [wishlistIds, setWishlistIds] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
@@ -35,7 +33,7 @@ export default function ProductsPage() {
     const newParams = new URLSearchParams(searchParams.toString());
     if (!value) newParams.delete(key);
     else newParams.set(key, value);
-    setSearchParams(newParams, { replace: true }); // aggiornamento URL senza ricaricare
+    setSearchParams(newParams, { replace: true });
   };
 
   useEffect(() => {
@@ -71,26 +69,27 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  // Ogni volta che cambiano gli id nel carrello, salva in local storage
+  // Salva il carrello nel localStorage ogni volta che cambia
   useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartListId));
-  }, [cartListId]);
+    localStorage.setItem("cartlist", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Salva la wishlist nel localStorage ogni volta che cambia
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
   }, [wishlistIds]);
 
-  // Premuto il bottone, se già presente l'id del prodotto lo rimuove, viceversa se assente
+  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    if (cartListId.includes(productId)) {
-      setCartListId(cartListId.filter(id => id !== productId))
-    } else {
-      setCartListId([...cartListId, productId])
-    }
-  }
+    const existingProduct = cartItems.find(item => item.id === productId);
 
-  // Aggiungi la funzione per aggiungere/rimuovere un prodotto dai preferiti
+    if (existingProduct) {
+      setCartItems(cartItems.filter(item => item.id !== productId));
+    } else {
+      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
+    }
+  };
+
   const onToggleFavorite = (productId) => {
     if (wishlistIds.includes(productId)) {
       setWishlistIds(wishlistIds.filter((id) => id !== productId));
@@ -198,6 +197,8 @@ export default function ProductsPage() {
                 <CardItem
                   product={product}
                   onToggleFavorite={onToggleFavorite}
+                  // Passiamo gli ID al componente figlio per mantenere la compatibilità
+                  cartListId={cartItems.map(item => item.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
