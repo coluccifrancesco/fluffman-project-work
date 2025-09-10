@@ -1,30 +1,110 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/CheckOutPage.css";
 
 export default function CheckOutPage() {
+  const [cartItems, setCartItems] = useState(() => {
+    return JSON.parse(localStorage.getItem("cartlist")) || [];
+  });
+  const [cartProducts, setCartProducts] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  // Stato per la visualizzazione dell'indirizzo di consegna
+  const [showAddress, setShowAddress] = useState(false);
+
+  // Fetch dei dati del prodotto in base agli elementi nel carrello
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const productsResponse = await fetch("http://localhost:3030/api/products");
+        const productsData = await productsResponse.json();
+
+        const BASE_URL = "http://localhost:3030";
+
+        const cartListData = cartItems.map(item => {
+          const product = productsData.find(p => p?.id === item?.id);
+          if (!product) return null;
+
+          // Gestione robusta dell'URL delle immagini
+          let imageUrl = null;
+          if (product?.image_path) {
+            let cleanPath = product.image_path.trim();
+            const baseUrlPattern = "http://localhost:3030/api/images/";
+            if (cleanPath.includes(baseUrlPattern)) {
+              const lastIndex = cleanPath.lastIndexOf(baseUrlPattern);
+              if (lastIndex > 0) {
+                cleanPath = cleanPath.substring(lastIndex);
+              }
+            }
+            if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+              imageUrl = cleanPath;
+            } else if (cleanPath.startsWith('/api/images/')) {
+              imageUrl = `${BASE_URL}${cleanPath}`;
+            } else {
+              imageUrl = `${BASE_URL}/products_image/${cleanPath}`;
+            }
+          }
+
+          return {
+            ...product,
+            image: imageUrl,
+            currentQuantity: item.quantity,
+            availableQuantity: product.quantity,
+            price: parseFloat(product.price)
+          };
+        }).filter(Boolean);
+
+        setCartProducts(cartListData);
+      } catch (error) {
+        console.error("Errore durante il recupero dei dati:", error);
+      }
+    }
+    fetchData();
+  }, [cartItems]);
+
+  // Calcola il totale ogni volta che la lista dei prodotti cambia
+  useEffect(() => {
+    const subtotal = cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
+    const SHIPPING_THRESHOLD = 19.99;
+    const SHIPPING_COST = 3.99;
+    let shippingCost = 0;
+
+    if (subtotal > 0 && subtotal < SHIPPING_THRESHOLD) {
+      shippingCost = SHIPPING_COST;
+    }
+    const finalTotal = subtotal + shippingCost;
+    setTotalPrice(finalTotal);
+  }, [cartProducts]);
+
   const handleClick = () => {
-    //  Simulazione di acqusto
+    //  Simulazione di acquisto con dati reali
     const customerEmail = "utente@email.com";
     const orderDetails = {
-      itemId: "123",
-      quantity: 2,
+      products: cartProducts.map(p => ({
+        id: p.id,
+        name: p.name,
+        quantity: p.currentQuantity,
+        price: p.price
+      })),
+      totalPrice: totalPrice
     };
 
     sendConfirmationEmail(customerEmail, orderDetails);
     notifySeller("seller@email.com", orderDetails);
+
+    // Cancella il carrello dopo un acquisto simulato
+    //   setCartItems([]);
+    //   localStorage.removeItem("cartlist");
   };
 
   const sendConfirmationEmail = (customerEmail, orderDetails) => {
     console.log(`Invio mail di conferma al cliente: ${customerEmail}`);
-    console.log(`Dettagli ordine: ${orderDetails}`);
+    console.log("Dettagli ordine:", orderDetails);
   };
 
   const notifySeller = (sellerEmail, orderDetails) => {
-    console.log(`Notifica di vendita: ${sellerEmail}`);
-    console.log(`Dettagli Ordine: ${orderDetails}`);
+    console.log(`Notifica di vendita a: ${sellerEmail}`);
+    console.log("Dettagli Ordine:", orderDetails);
   };
-
-  const [showAddress, setShowAddress] = useState(false);
 
   return (
     <>
@@ -80,12 +160,6 @@ export default function CheckOutPage() {
             </div>
 
             <div className="col-12 mt-3">
-              {/* <h2 className="mb-4">Indirizzo di Fatturazione</h2>
-              <label htmlFor="inputAddress" className="form-label">
-                Indirizzo
-              </label> */}
-            </div>
-            <div className="col-12">
               <h2 className="mb-1 mt-4">Indirizzo di Fatturazione</h2>
               <hr />
               <label htmlFor="inputAddress" className="form-label fs-5 mt-3">
@@ -145,11 +219,8 @@ export default function CheckOutPage() {
               />
             </div>
             <div className="col-12">
-              {/* <h2 className="mt-3">Indirizzo di Consegna</h2> */}
-
               <h2 className="mt-4 mb-1">Indirizzo di Consegna</h2>
               <hr />
-              {/* ADD LOGIC TO SAVE ADDRESS DATA  */}
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -239,10 +310,33 @@ export default function CheckOutPage() {
             <div className="cart-summary-header rounded-3 col-12">
               <h2 className="p-5">Il tuo ordine</h2>
             </div>
+            <div className="order-details-summary p-4">
+              {cartProducts.length > 0 ? (
+                <>
+                  {cartProducts.map((product) => (
+                    <div key={product.id} className="d-flex justify-content-between my-2">
+                      <span>{product.name} x {product.currentQuantity}</span>
+                      <span>€{(product.price * product.currentQuantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                  <hr />
+                  <div className="d-flex justify-content-between">
+                    <span>Costo spedizione:</span>
+                    <span>€{(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</span>
+                  </div>
+                  <hr />
+                  <div className="d-flex justify-content-between fw-bold fs-5">
+                    <span>Totale:</span>
+                    <span>€{totalPrice.toFixed(2)}</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-center">Il carrello è vuoto.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      {/* Accordion */}
       <div
         className="accordion accordion-flush container mt-3 border border-dark"
         id="accordionFlushExample"
@@ -306,18 +400,19 @@ export default function CheckOutPage() {
         </div>
       </div>
 
-      {/* further logic to show btn only after form completion, create State to check Form data insertion */}
-      <div className="container mt-3 col-12 text-center">
-        <button
-          onClick={handleClick}
-          type="submit"
-          className="btn btn-success btn-lg"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Ordina e paga
-        </button>
-      </div>
+      {cartProducts.length > 0 && (
+        <div className="container mt-3 col-12 text-center">
+          <button
+            onClick={handleClick}
+            type="submit"
+            className="btn btn-success btn-lg"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Ordina e paga
+          </button>
+        </div>
+      )}
 
       <div
         className="modal fade"
@@ -342,13 +437,17 @@ export default function CheckOutPage() {
             <div className="modal-body">
               <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
               <ul>
-                <li className="text-dark">Prodotto 1 2x</li>
-                <li className="text-dark">Prodotto 2 1x</li>
-                <li className="text-dark">Prodotto 3 4x</li>
+                {cartProducts.map((p) => (
+                  <li key={p.id} className="text-dark">
+                    {p.name} {p.currentQuantity}x
+                  </li>
+                ))}
               </ul>
-
-              <p className="text-dark">Costo di spedizione</p>
-              <p className="text-dark">Totale</p>
+              <p className="text-dark">
+                Costo di spedizione:{" "}
+                €{(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}
+              </p>
+              <p className="text-dark fw-bold">Totale: €{totalPrice.toFixed(2)}</p>
             </div>
             <div className="modal-footer">
               <p className="text-dark">
