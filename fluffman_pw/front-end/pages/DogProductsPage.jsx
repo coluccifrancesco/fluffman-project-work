@@ -39,10 +39,10 @@ export default function DogProductsPage() {
 
   // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find(item => item.id === productId);
+    const existingProduct = cartItems.find(item => item?.id === productId);
 
     if (existingProduct) {
-      setCartItems(cartItems.filter(item => item.id !== productId));
+      setCartItems(cartItems.filter(item => item?.id !== productId));
     } else {
       setCartItems([...cartItems, { id: productId, quantity: 1 }]);
     }
@@ -100,7 +100,7 @@ export default function DogProductsPage() {
           title="Il tuo cane merita di mangiare da re"
           products={foodProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -112,7 +112,7 @@ export default function DogProductsPage() {
             tuo cane"
           products={accessoryProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />

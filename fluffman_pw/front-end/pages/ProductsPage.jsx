@@ -81,7 +81,7 @@ export default function ProductsPage() {
 
   // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find((item) => item.id === productId);
+    const existingProduct = cartItems.find((item) => item?.id === productId);
 
     if (existingProduct) {
       setCartItems(cartItems.filter((item) => item.id !== productId));
@@ -198,7 +198,8 @@ export default function ProductsPage() {
                   product={product}
                   onToggleFavorite={onToggleFavorite}
                   // Passiamo gli ID al componente figlio per mantenere la compatibilità
-                  cartListId={cartItems.map((item) => item.id)}
+
+                  cartListId={cartItems.map((item) => item?.id)}
                   onToggleAddToCart={onToggleAddToCart}
                   isInCart={cartItems.some((item) => item.id === product.id)}
                   isFavorite={wishlistIds.includes(product.id)}

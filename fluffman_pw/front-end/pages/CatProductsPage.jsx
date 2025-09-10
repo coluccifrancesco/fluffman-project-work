@@ -36,10 +36,10 @@ export default function CatProductsPage() {
 
   // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find(item => item.id === productId);
+    const existingProduct = cartItems.find(item => item?.id === productId);
 
     if (existingProduct) {
-      setCartItems(cartItems.filter(item => item.id !== productId));
+      setCartItems(cartItems.filter(item => item?.id !== productId));
     } else {
       setCartItems([...cartItems, { id: productId, quantity: 1 }]);
     }
@@ -97,7 +97,7 @@ export default function CatProductsPage() {
           title="Un lauto pasto per il tuo gatto esigente"
           products={foodProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -108,7 +108,7 @@ export default function CatProductsPage() {
           title="Tiragraffi, lettiere, ciotole, giochi: qui trovi tutto!"
           products={accessoryProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
