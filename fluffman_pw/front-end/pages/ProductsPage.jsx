@@ -198,7 +198,7 @@ export default function ProductsPage() {
                   product={product}
                   onToggleFavorite={onToggleFavorite}
                   // Passiamo gli ID al componente figlio per mantenere la compatibilità
-                  cartListId={cartItems.map(item => item.id)}
+                  cartListId={cartItems.map(item => item?.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
               </div>

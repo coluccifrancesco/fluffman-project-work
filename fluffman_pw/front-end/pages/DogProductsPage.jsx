@@ -100,7 +100,7 @@ export default function DogProductsPage() {
           title="Il tuo cane merita di mangiare da re"
           products={foodProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
@@ -112,7 +112,7 @@ export default function DogProductsPage() {
             tuo cane"
           products={accessoryProducts}
           wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
+          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
           onToggleFavorite={onToggleFavorite}
           onToggleAddToCart={onToggleAddToCart}
         />
