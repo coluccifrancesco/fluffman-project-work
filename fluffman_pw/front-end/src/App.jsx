@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { WishlistProvider } from "../context/WishlistContext";
 import DefaultLayout from "../layouts/DefaultLayout";
 import HomePage from "../pages/HomePage";
 import DogProductsPage from "../pages/DogProductsPage";
@@ -16,7 +17,7 @@ import ErrorPage from '../pages/ErrorPage';
 
 function App() {
   return (
-    <>
+    <WishlistProvider>
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
@@ -39,7 +40,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </WishlistProvider>
   );
 }
 

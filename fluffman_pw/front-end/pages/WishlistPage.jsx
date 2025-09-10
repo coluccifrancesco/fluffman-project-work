@@ -1,16 +1,16 @@
+
 import { Link } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
 import { useState, useEffect } from "react";
+import { useWishlist } from "../context/WishlistContext";
+
 
 
 export default function WishlistPage() {
-    const [wishlistIds, setWishlistIds] = useState(() => {
-        return JSON.parse(localStorage.getItem("wishlist")) || [];
-    });
+    const { wishlist, toggleWishlist } = useWishlist();
     const [wishlistProducts, setWishlistProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Fetch products and images, then filter by wishlistIds
     useEffect(() => {
         async function fetchData() {
             try {
@@ -19,6 +19,9 @@ export default function WishlistPage() {
 
                 const imagesResponse = await fetch("http://localhost:3030/api/images");
                 const imagesData = await imagesResponse.json();
+
+                // Prendi solo gli id dalla wishlist del context
+                const wishlistIds = wishlist.map(item => item.id);
 
                 // Combina i dati e filtra solo i prodotti della wishlist
                 const wishlistData = productsData
@@ -40,20 +43,7 @@ export default function WishlistPage() {
             }
         }
         fetchData();
-    }, [wishlistIds]);
-
-    // Sync wishlistIds with localStorage
-    useEffect(() => {
-        localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
-    }, [wishlistIds]);
-
-    const onToggleFavorite = (productId) => {
-        if (wishlistIds.includes(productId)) {
-            setWishlistIds(wishlistIds.filter(id => id !== productId));
-        } else {
-            setWishlistIds([...wishlistIds, productId]);
-        }
-    };
+    }, [wishlist]);
 
     if (isLoading) {
         return <div className="text-center mt-5">Caricamento in corso...</div>;
@@ -75,8 +65,8 @@ export default function WishlistPage() {
                             <CardItem
                                 key={product.id}
                                 product={product}
-                                isFavorite={wishlistIds.includes(product.id)}
-                                onToggleFavorite={onToggleFavorite}
+                                isFavorite={wishlist.some(item => item.id === product.id)}
+                                onToggleFavorite={toggleWishlist}
                             />
                         </div>
                     ))}
