@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../styles/CheckOutPage.css";
 
 export default function CheckOutPage() {
   const handleClick = () => {
@@ -241,9 +242,9 @@ export default function CheckOutPage() {
           </div>
         </div>
       </div>
-
+      {/* Accordion */}
       <div
-        className="accordion accordion-flush container mt-3 border border-dark rounded-4"
+        className="accordion accordion-flush container mt-3 border border-dark"
         id="accordionFlushExample"
       >
         <div className="accordion-item">
@@ -304,6 +305,7 @@ export default function CheckOutPage() {
           </div>
         </div>
       </div>
+
       {/* further logic to show btn only after form completion, create State to check Form data insertion */}
       <div className="container mt-3 col-12 text-center">
         <button
@@ -320,7 +322,7 @@ export default function CheckOutPage() {
       <div
         className="modal fade"
         id="exampleModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >

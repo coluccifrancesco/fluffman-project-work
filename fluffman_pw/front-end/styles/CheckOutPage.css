@@ -1,0 +1,33 @@
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+#accordionFlushExample {
+  border-radius: 1.5rem !important;
+  border: 0.5rem solid !important;
+  border-color: var(--background) !important;
+}
+.accordion {
+  background-color: rgba(95, 187, 170, 1);
+}
+.accordion * {
+  background-color: var(--background);
+}
+
+.accordion-button {
+  border-radius: 1.5rem !important;
+  background-color: var(--background);
+}
+
+.accordion-button:focus,
+.accordion-button:focus-visible {
+  outline: none !important;
+  border: 1px transparent;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 0 4px var(--background) !important;
+  border-radius: 1.5rem !important;
+}
