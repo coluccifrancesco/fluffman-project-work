@@ -1,8 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useWishlist } from "../context/WishlistContext";
 import { Link, NavLink } from "react-router-dom";
 import "../styles/Header.css";
 
 export default function Header() {
+  const { wishlist } = useWishlist();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    // Aggiorna il conteggio del carrello ogni volta che cambia localStorage
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem("cartlist")) || [];
+      setCartCount(cart.length);
+    };
+    updateCartCount();
+    window.addEventListener("storage", updateCartCount);
+    return () => window.removeEventListener("storage", updateCartCount);
+  }, []);
 
   // Valore inserito nella searchbar
   const [searchValue, setSearchValue] = useState("");
@@ -118,12 +132,26 @@ export default function Header() {
           </li>
           <li>
             <NavLink to="/Wishlist">
-              <i className="fa-solid fa-star m-0"></i>
+              <div className="position-relative">
+                <i className="fa-solid fa-star m-0"></i>
+                {wishlist.length > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.7rem" }}>
+                    {wishlist.length}
+                  </span>
+                )}
+              </div>
             </NavLink>
           </li>
           <li>
             <NavLink to={"/cart"}>
-              <i className="fa-solid fa-cart-shopping m-0"></i>
+              <div className="position-relative">
+                <i className="fa-solid fa-cart-shopping m-0"></i>
+                {cartCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.7rem" }}>
+                    {cartCount}
+                  </span>
+                )}
+              </div>
             </NavLink>
           </li>
         </ul>
