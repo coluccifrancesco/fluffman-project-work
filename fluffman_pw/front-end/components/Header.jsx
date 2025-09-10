@@ -1,24 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 import { Link, NavLink } from "react-router-dom";
 import "../styles/Header.css";
 
 export default function Header() {
   const { wishlist } = useWishlist();
+  const { cart } = useCart();
   // Calcola solo gli item con id valido (evita badge errato se ci sono oggetti vuoti)
   const wishlistCount = Array.isArray(wishlist) ? wishlist.filter(item => item && item.id != null).length : 0;
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    // Aggiorna il conteggio del carrello ogni volta che cambia localStorage
-    const updateCartCount = () => {
-      const cart = JSON.parse(localStorage.getItem("cartlist")) || [];
-      setCartCount(cart.length);
-    };
-    updateCartCount();
-    window.addEventListener("storage", updateCartCount);
-    return () => window.removeEventListener("storage", updateCartCount);
-  }, []);
+  const cartCount = Array.isArray(cart) ? cart.filter(item => item && item.id != null).length : 0;
 
   // Valore inserito nella searchbar
   const [searchValue, setSearchValue] = useState("");

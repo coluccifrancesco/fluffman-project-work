@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
+import { useWishlist } from "../context/WishlistContext";
+// import { useCart } from "../context/CartContext";
 import "../styles/ProductsSlider.css";
 
-export default function ProductsSlider({ title, products, wishlistIds, cartListId, onToggleFavorite, onToggleAddToCart }) {
+export default function ProductsSlider({ title, products }) {
+  const { wishlist, toggleWishlist } = useWishlist();
+  // const { cart } = useCart();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -48,10 +52,8 @@ export default function ProductsSlider({ title, products, wishlistIds, cartListI
               >
                 <CardItem
                   product={product}
-                  isFavorite={wishlistIds.includes(product.id)}
-                  onToggleFavorite={onToggleFavorite}
-                  isInCart={cartListId?.includes(product.id)}
-                  onToggleAddToCart={onToggleAddToCart}
+                  isFavorite={wishlist.some(item => item.id === product.id)}
+                  onToggleFavorite={toggleWishlist}
                 />
               </div>
             ))}
@@ -68,10 +70,8 @@ export default function ProductsSlider({ title, products, wishlistIds, cartListI
             >
               <CardItem
                 product={product}
-                isFavorite={wishlistIds.includes(product.id)}
-                onToggleFavorite={onToggleFavorite}
-                isInCart={cartListId?.includes(product.id)}
-                onToggleAddToCart={onToggleAddToCart}
+                isFavorite={wishlist.some(item => item.id === product.id)}
+                onToggleFavorite={toggleWishlist}
               />
             </div>
           ))}

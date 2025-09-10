@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useCart } from "../context/CartContext";
 import "../styles/CheckOutPage.css";
 
+
 export default function CheckOutPage() {
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
+  // Usa CartContext per il carrello
+  const { cart, clearCart } = useCart();
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -23,7 +24,17 @@ export default function CheckOutPage() {
         );
         const productsData = await productsResponse.json();
 
-        const BASE_URL = "http://localhost:3030";
+        const cartListData = cart.map(item => {
+          const product = productsData.find(p => p?.id === item?.id);
+          if (!product) return null;
+
+          let imageUrl = null;
+          if (product?.image_path) {
+            let cleanPath = product.image_path.trim();
+            const baseUrlPattern = "/api/images/";
+            if (cleanPath.includes(baseUrlPattern)) {
+              cleanPath = cleanPath.split(baseUrlPattern)[1];
+        /* const BASE_URL = "http://localhost:3030";
 
         const cartListData = cartItems
           .map((item) => {
@@ -50,7 +61,7 @@ export default function CheckOutPage() {
                 imageUrl = `${BASE_URL}${cleanPath}`;
               } else {
                 imageUrl = `${BASE_URL}/products_image/${cleanPath}`;
-              }
+              } */
             }
 
             return {
@@ -69,7 +80,7 @@ export default function CheckOutPage() {
       }
     }
     fetchData();
-  }, [cartItems]);
+  }, [cart]);
 
   // Calcola il totale ogni volta che la lista dei prodotti cambia
   useEffect(() => {
@@ -109,6 +120,9 @@ export default function CheckOutPage() {
     //   localStorage.removeItem("cartlist");
   };
 
+      if (typeof clearCart === 'function') {
+        clearCart();
+      }
   const sendConfirmationEmail = (customerEmail, orderDetails) => {
     console.log(`Invio mail di conferma al cliente: ${customerEmail}`);
     console.log("Dettagli ordine:", orderDetails);

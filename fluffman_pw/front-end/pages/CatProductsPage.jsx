@@ -2,48 +2,19 @@ import ProductsSlider from "../components/ProductsSlider";
 import CatLoading from "../components/Loading";
 import "../styles/ProductPages.css";
 import { useEffect, useState } from "react";
+// import { useWishlist } from "../context/WishlistContext";
+// import { useCart } from "../context/CartContext";
 
 export default function CatProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [wishlistIds, setWishlistIds] = useState(() => {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
-  });
+  // Usa context per wishlist e carrello
+  // const { wishlist } = useWishlist();
+  // const { cart } = useCart();
 
-  // Lo stato del carrello adesso contiene gli oggetti { id, quantity }
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
 
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
-  }, [wishlistIds]);
-
-  // Quando il carrello cambia, salva i nuovi dati
-  useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const onToggleFavorite = (productId) => {
-    if (wishlistIds.includes(productId)) {
-      setWishlistIds(wishlistIds.filter((id) => id !== productId));
-    } else {
-      setWishlistIds([...wishlistIds, productId]);
-    }
-  };
-
-  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
-  const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find(item => item?.id === productId);
-
-    if (existingProduct) {
-      setCartItems(cartItems.filter(item => item?.id !== productId));
-    } else {
-      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
-    }
-  };
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -96,10 +67,6 @@ export default function CatProductsPage() {
         <ProductsSlider
           title="Un lauto pasto per il tuo gatto esigente"
           products={foodProducts}
-          wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
-          onToggleFavorite={onToggleFavorite}
-          onToggleAddToCart={onToggleAddToCart}
         />
       )}
 
@@ -107,10 +74,6 @@ export default function CatProductsPage() {
         <ProductsSlider
           title="Tiragraffi, lettiere, ciotole, giochi: qui trovi tutto!"
           products={accessoryProducts}
-          wishlistIds={wishlistIds}
-          cartListId={cartItems.map(item => item?.id)} // Passiamo gli ID al componente figlio per mantenere la compatibilità
-          onToggleFavorite={onToggleFavorite}
-          onToggleAddToCart={onToggleAddToCart}
         />
       )}
     </div>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TagsComponent from "../components/TagsComponent";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 
 function SingleProductPage() {
   const { slug } = useParams();
@@ -16,10 +17,8 @@ function SingleProductPage() {
   // Stato per la quantità selezionata dall'utente, inizializzato a 1.
   const [quantity, setQuantity] = useState(1);
 
-  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
+  // Usa CartContext per il carrello
+  const { addToCart } = useCart();
 
   useEffect(() => {
     if (!slug) {
@@ -44,10 +43,7 @@ function SingleProductPage() {
       });
   }, [slug]);
 
-  // Ogni volta che il carrello cambia, salva in local storage
-  useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartItems));
-  }, [cartItems]);
+
 
   // Funzione per incrementare la quantità, con un limite massimo
   const handleIncreaseQuantity = () => {
@@ -82,18 +78,10 @@ function SingleProductPage() {
     }
   };
 
-  // Funzione per aggiungere o aggiornare un prodotto nel carrello con la quantità
+  // Funzione per aggiungere il prodotto al carrello tramite context
   const handleAddToCart = () => {
-    const existingProduct = cartItems.find(item => item?.id === product.id);
-
-    if (existingProduct) {
-      // Se il prodotto esiste, aggiorna la sua quantità
-      setCartItems(cartItems.map(item =>
-        item?.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
-      ));
-    } else {
-      // Se il prodotto non esiste, lo aggiunge con la quantità selezionata
-      setCartItems([...cartItems, { id: product.id, quantity: quantity }]);
+    if (product) {
+      addToCart(product.id, quantity);
     }
   };
 

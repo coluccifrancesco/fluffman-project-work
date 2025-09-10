@@ -1,16 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
+import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import { useWishlist } from "../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
 
-export default function CardItem({
-  product,
-  // isInCart, onToggleAddToCart verranno gestiti da context separato se necessario
-  isInCart,
-  onToggleAddToCart
-}) {
+export default function CardItem({ product }) {
   const { wishlist, toggleWishlist } = useWishlist();
+  const { cart, addToCart, removeFromCart } = useCart();
   const isFavorite = wishlist.some(item => item.id === product.id);
+  const isInCart = cart.some(item => item.id === product.id);
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -123,10 +121,9 @@ export default function CardItem({
               ></i>
             </button>
 
-            {/* Carrello: lasciare la gestione come prop se non hai ancora un context per il carrello */}
             <button
               className="p-0"
-              onClick={() => onToggleAddToCart && onToggleAddToCart(product.id)}
+              onClick={() => isInCart ? removeFromCart(product.id) : addToCart(product.id, 1)}
               title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
               <i
