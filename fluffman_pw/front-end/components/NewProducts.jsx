@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CardItem from "./CardComponent/CardItem";
 import { useWishlist } from "../context/WishlistContext";
+// import { useCart } from "../context/CartContext";
 
 export default function NewProducts() {
   const [products, setProducts] = useState([]);
@@ -8,10 +9,8 @@ export default function NewProducts() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   // Wishlist gestita tramite context
   const { wishlist, toggleWishlist } = useWishlist();
-  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
+  // Carrello gestito tramite context
+  // const { cart, addToCart, removeFromCart } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -51,27 +50,6 @@ export default function NewProducts() {
     return () => window.removeEventListener("resize", handleSize);
   }, []);
 
-
-
-
-  // Salva il carrello nel localStorage ogni volta che cambia
-  useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
-  const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find(item => item?.id === productId);
-
-    if (existingProduct) {
-      setCartItems(cartItems.filter(item => item.id !== productId));
-    } else {
-      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
-    }
-  };
-
-
-
   let cardsPerPage = 4;
   const isTablet = windowWidth >= 768 && windowWidth < 992;
   const isMobile = windowWidth < 768;
@@ -106,8 +84,6 @@ export default function NewProducts() {
                   product={product}
                   isFavorite={wishlist.some(item => item.id === product.id)}
                   onToggleFavorite={toggleWishlist}
-                  isInCart={cartItems.some(item => item?.id === product.id)}
-                  onToggleAddToCart={onToggleAddToCart}
                 />
               </div>
             ))}
@@ -126,8 +102,6 @@ export default function NewProducts() {
                 product={product}
                 isFavorite={wishlist.some(item => item.id === product.id)}
                 onToggleFavorite={toggleWishlist}
-                isInCart={cartItems.some(item => item.id === product.id)}
-                onToggleAddToCart={onToggleAddToCart}
               />
             </div>
           ))}

@@ -1,9 +1,10 @@
+
 import { useState, useEffect, useRef } from "react";
+import { useCart } from "../context/CartContext";
 
 export default function CheckOutPage() {
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
+  // Usa CartContext per il carrello
+  const { cart, clearCart } = useCart();
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [showAddress, setShowAddress] = useState(false);
@@ -40,7 +41,7 @@ export default function CheckOutPage() {
         const productsResponse = await fetch(`${BASE_URL}/api/products`);
         const productsData = await productsResponse.json();
 
-        const cartListData = cartItems.map(item => {
+        const cartListData = cart.map(item => {
           const product = productsData.find(p => p?.id === item?.id);
           if (!product) return null;
 
@@ -69,7 +70,7 @@ export default function CheckOutPage() {
       }
     }
     fetchData();
-  }, [cartItems]);
+  }, [cart]);
 
   useEffect(() => {
     const subtotal = cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
@@ -280,8 +281,9 @@ export default function CheckOutPage() {
         console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
       }
 
-      setCartItems([]);
-      localStorage.removeItem("cartlist");
+      if (typeof clearCart === 'function') {
+        clearCart();
+      }
 
     } catch (error) {
       console.error("Errore durante l'elaborazione dell'ordine:", error);

@@ -1,28 +1,18 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles/CartPage.css";
+import { useCart } from "../context/CartContext";
 
 export default function CartPage() {
 
-    // Utilizza un'unica fonte di verità per lo stato del carrello.
-    const [cartItems, setCartItems] = useState(() => {
-        const storedItems = JSON.parse(localStorage.getItem("cartlist")) || [];
 
-        if (storedItems.length > 0 && typeof storedItems[0] === 'number') {
-            const initialCartItems = storedItems.map(id => ({ id: id, quantity: 1 }));
-            localStorage.setItem("cartlist", JSON.stringify(initialCartItems));
-            return initialCartItems;
-        }
-        return storedItems;
-    });
+
+    // Usa CartContext per il carrello
+    const { cart, removeFromCart, updateQuantity } = useCart();
 
     const [cartProducts, setCartProducts] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-
-    // Salva i dati aggiornati nel localStorage ogni volta che `cartItems` cambia.
-    useEffect(() => {
-        localStorage.setItem("cartlist", JSON.stringify(cartItems));
-    }, [cartItems]);
 
     // Fetch dei dati e gestione dell'immagine.
     useEffect(() => {
@@ -33,7 +23,7 @@ export default function CartPage() {
 
                 const BASE_URL = "http://localhost:3030";
 
-                const cartListData = cartItems.map(item => {
+                const cartListData = cart.map(item => {
                     const product = productsData.find(p => p?.id === item?.id);
                     if (!product) return null;
 
@@ -72,7 +62,9 @@ export default function CartPage() {
             }
         }
         fetchData();
-    }, [cartItems]);
+    }, [cart]);
+
+    // ...existing code...
 
     // Calcola il totale ogni volta che la lista dei prodotti cambia.
     useEffect(() => {
@@ -93,24 +85,19 @@ export default function CartPage() {
     }, [cartProducts]);
 
 
-    // Rimuove un prodotto dal carrello.
+
+    // Rimuove un prodotto dal carrello tramite context
     const onRemove = (product) => {
-        setCartItems(cartItems.filter(item => item?.id !== product.id));
+        removeFromCart(product.id);
     }
 
-    // Gestisce l'aumento o la diminuzione della quantità.
+
+    // Gestisce l'aumento o la diminuzione della quantità tramite context
     const handleQuantityChange = (product, change) => {
-        setCartItems(prevItems => {
-            return prevItems.map(item => {
-                if (item.id === product.id) {
-                    const newQuantity = item.quantity + change;
-                    if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
-                        return { ...item, quantity: newQuantity };
-                    }
-                }
-                return item;
-            });
-        });
+        const newQuantity = product.currentQuantity + change;
+        if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
+            updateQuantity(product.id, newQuantity);
+        }
     };
 
     return <>

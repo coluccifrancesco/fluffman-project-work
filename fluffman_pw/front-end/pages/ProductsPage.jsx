@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
 import "../styles/ProductPages.css";
+// import { useWishlist } from "../context/WishlistContext";
+// import { useCart } from "../context/CartContext";
 
 export default function ProductsPage() {
   const [allProducts, setAllProducts] = useState([]);
@@ -11,14 +13,9 @@ export default function ProductsPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
-  const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
-  });
-
-  const [wishlistIds, setWishlistIds] = useState(() => {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
-  });
+  // Usa context per wishlist e carrello
+  // const { wishlist } = useWishlist();
+  // const { cart } = useCart();
 
   const [filters, setFilters] = useState({
     animal_id: searchParams.get("animal_id") || "all",
@@ -69,34 +66,7 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  // Salva il carrello nel localStorage ogni volta che cambia
-  useEffect(() => {
-    localStorage.setItem("cartlist", JSON.stringify(cartItems));
-  }, [cartItems]);
 
-  // Salva la wishlist nel localStorage ogni volta che cambia
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
-  }, [wishlistIds]);
-
-  // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
-  const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find((item) => item?.id === productId);
-
-    if (existingProduct) {
-      setCartItems(cartItems.filter((item) => item.id !== productId));
-    } else {
-      setCartItems([...cartItems, { id: productId, quantity: 1 }]);
-    }
-  };
-
-  const onToggleFavorite = (productId) => {
-    if (wishlistIds.includes(productId)) {
-      setWishlistIds(wishlistIds.filter((id) => id !== productId));
-    } else {
-      setWishlistIds([...wishlistIds, productId]);
-    }
-  };
 
   if (loading) return <div className="text-center mt-5">Caricamento...</div>;
   if (error)
@@ -196,13 +166,6 @@ export default function ProductsPage() {
               <div key={product.id} className="col">
                 <CardItem
                   product={product}
-                  onToggleFavorite={onToggleFavorite}
-                  // Passiamo gli ID al componente figlio per mantenere la compatibilità
-
-                  cartListId={cartItems.map((item) => item?.id)}
-                  onToggleAddToCart={onToggleAddToCart}
-                  isInCart={cartItems.some((item) => item?.id === product.id)}
-                  isFavorite={wishlistIds.includes(product.id)}
                 />
               </div>
             ))}
