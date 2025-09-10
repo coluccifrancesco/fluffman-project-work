@@ -10,6 +10,7 @@
 .bg {
   background-color: var(--background);
 }
+
 /* .tag {
   background-color: var(--accent);
 } */
@@ -44,9 +45,30 @@
 .cart-btn:active .fa-cart-shopping {
   transform: translateY(-3px) rotate(-10deg);
 }
+
 .btn-cart {
   color: inherit;
 }
+
 /*#endregion cart-icon animation */
 
 /*#endregion cart-btn*/
+
+.star-btn {
+  background-color: var(--accent);
+  border: none;
+  border-radius: 3rem;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.star-btn:hover {
+  transform: scale(1.05);
+}
+
+.star-btn:active {
+  transform: scale(0.95);
+}

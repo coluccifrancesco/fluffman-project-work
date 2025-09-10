@@ -4,11 +4,14 @@ import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TagsComponent from "../components/TagsComponent";
+import { useWishlist } from "../context/WishlistContext";
 
-export default function SingleProductPage() {
+function SingleProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  // Wishlist gestita tramite context
+  const { wishlist, toggleWishlist } = useWishlist();
 
   // Stato per la quantità selezionata dall'utente, inizializzato a 1.
   const [quantity, setQuantity] = useState(1);
@@ -69,6 +72,13 @@ export default function SingleProductPage() {
       }
     } else if (e.target.value === "") {
       setQuantity("");
+    }
+  };
+
+  // Funzione per aggiungere o rimuovere un prodotto dai preferiti tramite context
+  const handleAddToWishlist = () => {
+    if (product) {
+      toggleWishlist(product.id);
     }
   };
 
@@ -164,6 +174,18 @@ export default function SingleProductPage() {
 
             <div className="button-container d-flex justify-content-center">
               <button
+                className="star-btn mt-3 w-50 p-2"
+                type="button"
+                onClick={handleAddToWishlist}
+              >
+                {wishlist.some(item => item.id === product.id)
+                  ? 'Rimuovi dalla Wishlist'
+                  : 'Aggiungi alla Wishlist'}
+                <i className="fa-solid fa-star btn-star text-light"></i>
+              </button>
+            </div>
+            <div className="button-container d-flex justify-content-center">
+              <button
                 className="cart-btn mt-3 w-50 p-2"
                 type="button"
                 onClick={handleAddToCart}
@@ -183,3 +205,5 @@ export default function SingleProductPage() {
     </div>
   );
 }
+
+export default SingleProductPage;
