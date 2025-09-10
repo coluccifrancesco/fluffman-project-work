@@ -35,7 +35,7 @@ export default function ProductsSlider({ title, products, wishlistIds, cartListI
 
   return (
     <div className="m-2 p-2">
-      <h2 className="p-2">{title}</h2>
+      <h2 className="p-2 text-center">{title}</h2>
 
       {!isMobile ? (
         <div className="position-relative">
