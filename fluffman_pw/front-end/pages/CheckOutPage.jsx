@@ -32,6 +32,7 @@ export default function CheckOutPage() {
 
 
   const BASE_URL = "http://localhost:3030";
+  const SELLER_EMAIL = "seller@example.com"; // Modificare con l'email del venditore
 
   useEffect(() => {
     async function fetchData() {
@@ -126,7 +127,7 @@ export default function CheckOutPage() {
       <li>${p.name} (${p.currentQuantity}x) - €${(p.price * p.currentQuantity).toFixed(2)}</li>
     `).join('');
 
-    const emailBody = `
+    const emailBodyBuyer = `
       <h1>Riepilogo del tuo Ordine</h1>
       <p>Gentile ${userName},</p>
       <p>Il tuo ordine è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
@@ -136,6 +137,43 @@ export default function CheckOutPage() {
       <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
       <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
       <p>Grazie per il tuo acquisto!</p>
+    `;
+
+    const emailBodySeller = `
+        <h1>Nuovo Ordine Ricevuto</h1>
+        <p>Ciao venditore,</p>
+        <p>Hai ricevuto un nuovo ordine da ${userName} ${userLastName}.</p>
+        <p>Dettagli dell'ordine:</p>
+        <ul>
+            ${productListHtml}
+        </ul>
+        <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
+        <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
+        <p>Dettagli utente:</p>
+        <ul>
+            <li>Nome: ${userName}</li>
+            <li>Cognome: ${userLastName}</li>
+            <li>Email: ${userEmail}</li>
+            <li>Telefono: ${userPhone}</li>
+        </ul>
+        <p>Indirizzo di fatturazione:</p>
+        <ul>
+            <li>Indirizzo: ${billingAddress.address}</li>
+            <li>CAP: ${billingAddress.zip}</li>
+            <li>Città: ${billingAddress.city}</li>
+            <li>Provincia: ${billingAddress.province}</li>
+            <li>Nazione: ${billingAddress.country}</li>
+        </ul>
+        ${showAddress ? `
+            <p>Indirizzo di consegna:</p>
+            <ul>
+                <li>Indirizzo: ${deliveryAddressRef.current.value}</li>
+                <li>CAP: ${deliveryZipRef.current.value}</li>
+                <li>Città: ${deliveryCityRef.current.value}</li>
+                <li>Provincia: ${deliveryProvinceRef.current.value}</li>
+                <li>Nazione: ${deliveryCountryRef.current.value}</li>
+            </ul>
+        ` : ''}
     `;
 
     const orderData = {
@@ -167,32 +205,38 @@ export default function CheckOutPage() {
     console.log('Dati ordine da inviare:', JSON.stringify(orderData, null, 2));
 
     try {
-      const emailResponse = await fetch(`${BASE_URL}/api/send-email`, {
+      const emailResponseBuyer = await fetch(`${BASE_URL}/api/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: userEmail,
           subject: "Conferma del tuo Ordine",
-          body: emailBody,
+          body: emailBodyBuyer,
         })
       });
 
-      if (!emailResponse.ok) {
-        console.error("Errore nell'invio dell'email. Stato HTTP:", emailResponse.status);
-        const emailErrorData = await emailResponse.json();
-        setModalTitle("Errore nell'invio dell'email");
-        setModalMessage(`Si è verificato un errore: ${emailErrorData.message || 'Errore sconosciuto'}`);
-        const modalElement = document.getElementById('exampleModal');
-        if (window.bootstrap && window.bootstrap.Modal) {
-          const modal = new window.bootstrap.Modal(modalElement);
-          modal.show();
-        } else {
-          console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-        }
-        return;
+      if (!emailResponseBuyer.ok) {
+        console.error("Errore nell'invio dell'email all'acquirente. Stato HTTP:", emailResponseBuyer.status);
       }
-      const emailResult = await emailResponse.json();
-      console.log('Risultato invio email:', emailResult);
+      const emailResultBuyer = await emailResponseBuyer.json();
+      console.log('Risultato invio email acquirente:', emailResultBuyer);
+
+      const emailResponseSeller = await fetch(`${BASE_URL}/api/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: SELLER_EMAIL,
+          subject: `Nuovo Ordine da ${userName} ${userLastName}`,
+          body: emailBodySeller,
+        })
+      });
+
+      if (!emailResponseSeller.ok) {
+        console.error("Errore nell'invio dell'email al venditore. Stato HTTP:", emailResponseSeller.status);
+      }
+      const emailResultSeller = await emailResponseSeller.json();
+      console.log('Risultato invio email venditore:', emailResultSeller);
+
 
       const purchaseResponse = await fetch(`${BASE_URL}/api/purchases`, {
         method: 'POST',
