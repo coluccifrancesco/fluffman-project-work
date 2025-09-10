@@ -39,10 +39,10 @@ export default function DogProductsPage() {
 
   // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
-    const existingProduct = cartItems.find(item => item.id === productId);
+    const existingProduct = cartItems.find(item => item?.id === productId);
 
     if (existingProduct) {
-      setCartItems(cartItems.filter(item => item.id !== productId));
+      setCartItems(cartItems.filter(item => item?.id !== productId));
     } else {
       setCartItems([...cartItems, { id: productId, quantity: 1 }]);
     }
