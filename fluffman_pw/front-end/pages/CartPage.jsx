@@ -34,7 +34,7 @@ export default function CartPage() {
                 const BASE_URL = "http://localhost:3030";
 
                 const cartListData = cartItems.map(item => {
-                    const product = productsData.find(p => p.id === item.id);
+                    const product = productsData.find(p => p?.id === item?.id);
                     if (!product) return null;
 
                     let imageUrl = null;
@@ -95,7 +95,7 @@ export default function CartPage() {
 
     // Rimuove un prodotto dal carrello.
     const onRemove = (product) => {
-        setCartItems(cartItems.filter(item => item.id !== product.id));
+        setCartItems(cartItems.filter(item => item?.id !== product.id));
     }
 
     // Gestisce l'aumento o la diminuzione della quantità.
