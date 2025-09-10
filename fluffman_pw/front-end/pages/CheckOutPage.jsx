@@ -28,7 +28,7 @@ export default function CheckOutPage() {
   return (
     <>
       <div className="container mt-3 ">
-        <h1 className="mb-4">Checkout</h1>
+        <h1 className="mb-4 text-center">Checkout</h1>
         <br />
         <div className="row cart-row d-flex justify-content-between">
           <form className="col-md-7 g-3 d-flex flex-column">
@@ -79,10 +79,10 @@ export default function CheckOutPage() {
             </div>
 
             <div className="col-12 mt-3">
-              <h2 className="mb-4">Indirizzo di Fatturazione</h2>
+              {/* <h2 className="mb-4">Indirizzo di Fatturazione</h2>
               <label htmlFor="inputAddress" className="form-label">
                 Indirizzo
-              </label>
+              </label> */}
             </div>
             <div className="col-12">
               <h2 className="mb-1 mt-4">Indirizzo di Fatturazione</h2>
@@ -144,11 +144,11 @@ export default function CheckOutPage() {
               />
             </div>
             <div className="col-12">
-              <h2 className="mt-3">Indirizzo di Consegna</h2>
+              {/* <h2 className="mt-3">Indirizzo di Consegna</h2> */}
 
               <h2 className="mt-4 mb-1">Indirizzo di Consegna</h2>
               <hr />
-
+              {/* ADD LOGIC TO SAVE ADDRESS DATA  */}
               <div className="form-check">
                 <input
                   className="form-check-input"
