@@ -1,5 +1,6 @@
 import CardItem from "./CardComponent/CardItem";
 import { useState, useEffect } from "react";
+import { useWishlist } from "../context/WishlistContext";
 import "../styles/SuggestedProducts.css";
 import "../styles/Arrows.css";
 
@@ -8,12 +9,8 @@ export default function SuggestedProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Gestione wishlist
-  const [wishlistIds, setWishlistIds] = useState(() => {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
-  });
-
+  // Wishlist gestita tramite context
+  const { wishlist, toggleWishlist } = useWishlist();
   // Stato del carrello aggiornato per gestire gli oggetti { id, quantity }
   const [cartItems, setCartItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cartlist")) || [];
@@ -66,24 +63,14 @@ export default function SuggestedProducts() {
     return () => window.removeEventListener("resize", handleSize);
   }, []);
 
-  // Salva wishlist nel localStorage quando cambia
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlistIds));
-  }, [wishlistIds]);
+
 
   // Salva il carrello nel localStorage quando cambia
   useEffect(() => {
     localStorage.setItem("cartlist", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Funzione per gestire i preferiti
-  const onToggleFavorite = (productId) => {
-    if (wishlistIds.includes(productId)) {
-      setWishlistIds(wishlistIds.filter((id) => id !== productId));
-    } else {
-      setWishlistIds([...wishlistIds, productId]);
-    }
-  };
+
 
   // Funzione di aggiunta/rimozione modificata per usare un array di oggetti
   const onToggleAddToCart = (productId) => {
@@ -139,9 +126,8 @@ export default function SuggestedProducts() {
               >
                 <CardItem
                   product={product}
-                  isFavorite={wishlistIds.includes(product.id)}
-                  onToggleFavorite={onToggleFavorite}
-                  // Passiamo gli ID al componente figlio per mantenere la compatibilità
+                  isFavorite={wishlist.some(item => item.id === product.id)}
+                  onToggleFavorite={toggleWishlist}
                   isInCart={cartItems.some(item => item?.id === product.id)}
                   onToggleAddToCart={onToggleAddToCart}
                 />
@@ -160,9 +146,8 @@ export default function SuggestedProducts() {
             >
               <CardItem
                 product={product}
-                isFavorite={wishlistIds.includes(product.id)}
-                onToggleFavorite={onToggleFavorite}
-                // Passiamo gli ID al componente figlio per mantenere la compatibilità
+                isFavorite={wishlist.some(item => item.id === product.id)}
+                onToggleFavorite={toggleWishlist}
                 isInCart={cartItems.some(item => item.id === product.id)}
                 onToggleAddToCart={onToggleAddToCart}
               />

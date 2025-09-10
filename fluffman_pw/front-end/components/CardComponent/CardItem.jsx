@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
+import { useWishlist } from "../../context/WishlistContext";
 
 export default function CardItem({
   product,
-  isFavorite,
-  onToggleFavorite,
-  onToggleAddToCart,
+  // isInCart, onToggleAddToCart verranno gestiti da context separato se necessario
   isInCart,
+  onToggleAddToCart
 }) {
+  const { wishlist, toggleWishlist } = useWishlist();
+  const isFavorite = wishlist.some(item => item.id === product.id);
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -110,27 +112,26 @@ export default function CardItem({
           <div className="card-buttons d-flex align-items-start">
             <button
               className="p-0"
-              onClick={() => onToggleFavorite(product.id)}
+              onClick={() => toggleWishlist(product.id)}
               title={
                 isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"
               }
             >
               <i
-                className={`bi fs-4 me-3 ${
-                  isFavorite ? "bi-star-fill text-warning" : "bi-star"
-                }`}
+                className={`bi fs-4 me-3 ${isFavorite ? "bi-star-fill text-warning" : "bi-star"
+                  }`}
               ></i>
             </button>
 
+            {/* Carrello: lasciare la gestione come prop se non hai ancora un context per il carrello */}
             <button
               className="p-0"
-              onClick={() => onToggleAddToCart(product.id)}
+              onClick={() => onToggleAddToCart && onToggleAddToCart(product.id)}
               title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
               <i
-                className={`bi fs-4 me-3 ${
-                  isInCart ? "bi-cart-fill text-success" : "bi-cart"
-                }`}
+                className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"
+                  }`}
               ></i>
             </button>
           </div>
