@@ -102,7 +102,7 @@ export default function CartPage() {
     const handleQuantityChange = (product, change) => {
         setCartItems(prevItems => {
             return prevItems.map(item => {
-                if (item.id === product.id) {
+                if (item?.id === product.id) {
                     const newQuantity = item.quantity + change;
                     if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
                         return { ...item, quantity: newQuantity };
