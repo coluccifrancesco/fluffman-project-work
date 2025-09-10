@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CartPage.css";
@@ -7,11 +6,6 @@ import { useCart } from "../context/CartContext";
 export default function CartPage() {
     const navigate = useNavigate();
     const BASE_URL = "http://localhost:3030";
-
-    const [cartItems, setCartItems] = useState(() => {
-        const storedItems = JSON.parse(localStorage.getItem("cartlist")) || [];
-
-    // Usa CartContext per il carrello
     const { cart, removeFromCart, updateQuantity } = useCart();
 
     const [cartProducts, setCartProducts] = useState([]);
@@ -20,18 +14,11 @@ export default function CartPage() {
     const [modalMessage, setModalMessage] = useState("");
 
     // Fetch dei dati e gestione dell'immagine.
-
-    useEffect(() => {
-        localStorage.setItem("cartlist", JSON.stringify(cartItems));
-    }, [cartItems]);
-
     useEffect(() => {
         async function fetchData() {
             try {
                 const productsResponse = await fetch(`${BASE_URL}/api/products`);
                 const productsData = await productsResponse.json();
-
-                const BASE_URL = "http://localhost:3030";
 
                 const cartListData = cart.map(item => {
                     const product = productsData.find(p => p?.id === item?.id);
@@ -74,8 +61,7 @@ export default function CartPage() {
         fetchData();
     }, [cart]);
 
-    // ...existing code...
-
+    // Calcola il totale ogni volta che la lista dei prodotti cambia.
     useEffect(() => {
         const subtotal = cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
 
@@ -96,7 +82,6 @@ export default function CartPage() {
         removeFromCart(product.id);
     }
 
-
     // Gestisce l'aumento o la diminuzione della quantità tramite context
     const handleQuantityChange = (product, change) => {
         const newQuantity = product.currentQuantity + change;
@@ -113,7 +98,7 @@ export default function CartPage() {
 
             let outOfStockItems = [];
 
-            for (const item of cartItems) {
+            for (const item of cart) {
                 const availableProduct = productsData.find(p => p.id === item.id);
                 if (!availableProduct || item.quantity > availableProduct.quantity) {
                     outOfStockItems.push({
