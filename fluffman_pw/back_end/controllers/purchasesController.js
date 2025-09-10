@@ -2,16 +2,38 @@ import pool from "../db/connection.js";
 
 // STORE
 export async function store(req, res) {
+    // Estraiamo le variabili con i nomi esatti che arrivano dal frontend
     const {
-        user_id, date, card_number, total_price, name, last_name, email,
-        phone_number, address, state, cap, shipping, invoice, status, shipping_invoice
+        totalPrice,
+        userName,
+        userLastName,
+        userEmail,
+        userPhone,
+        billingAddress,
     } = req.body;
 
-    const productsInCart = req.body.products; // Array di oggetti: [{ id: 1, quantity: 2 }, { id: 5, quantity: 1 }]
+    const productsInCart = req.body.products;
 
-    if (!user_id || !productsInCart || productsInCart.length === 0) {
-        return res.status(400).json({ error: true, message: "Mancano campi obbligatori o il carrello è vuoto." });
+    if (!productsInCart || productsInCart.length === 0) {
+        return res.status(400).json({ error: true, message: "Il carrello è vuoto." });
     }
+
+    // Definiamo i campi per l'inserimento nel DB, mappando i nomi del frontend a quelli del DB
+    const user_id = 0; // Impostato a 0 per evitare l'errore "Column 'user_id' cannot be null"
+    const date = new Date().toISOString().split('T')[0]; // Data odierna
+    const card_number = 'N/A'; // Non gestito nel frontend
+    const total_price = totalPrice;
+    const name = userName;
+    const last_name = userLastName;
+    const email = userEmail;
+    const phone_number = userPhone;
+    const address = billingAddress.address;
+    const state = billingAddress.city;
+    const cap = billingAddress.zip;
+    const shipping = 'Standard'; // Valore di default
+    const invoice = false; // Valore di default
+    const status = 'Pending'; // Stato iniziale dell'ordine
+    const shipping_invoice = billingAddress.address; // Usiamo l'indirizzo di fatturazione come predefinito
 
     let connection;
 
@@ -52,8 +74,8 @@ export async function store(req, res) {
 
         for (const item of productsInCart) {
             await connection.query(
-                "INSERT INTO product_purchase (purchase_id, product_id, quantity) VALUES (?, ?, ?)",
-                [purchaseId, item.id, item.quantity]
+                "INSERT INTO product_purchase (purchase_id, product_id, quantity, name, price) VALUES (?, ?, ?, ?, ?)",
+                [purchaseId, item.id, item.quantity, item.name, item.price]
             );
         }
 
@@ -77,7 +99,6 @@ export async function store(req, res) {
 // INDEX
 export async function index(req, res) {
     try {
-        // Ho cambiato l'ordinamento in base alla nuova colonna 'date'.
         const [rows] = await pool.query("SELECT * FROM purchases ORDER BY date DESC");
         res.json(rows);
     } catch (err) {
@@ -108,18 +129,6 @@ export async function updateStatus(req, res) {
     }
 
     try {
-        /* Codice Supabase (PostgreSQL)
-        const { rows: [updated] } = await pool.query(
-            "UPDATE purchases SET status = $1 WHERE id = $2 RETURNING *",
-            [status, id]
-        );
-        if (!updated) {
-            return res.status(404).json({ error: true, message: "Acquisto non trovato." });
-        }
-        res.json(updated);
-        */
-
-        // Codice MySQL
         const [result] = await pool.query("UPDATE purchases SET status = ? WHERE id = ?", [status, id]);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Acquisto non trovato." });
@@ -135,15 +144,6 @@ export async function updateStatus(req, res) {
 export async function destroy(req, res) {
     const { id } = req.params;
     try {
-        /* Codice Supabase (PostgreSQL)
-        const result = await pool.query("DELETE FROM purchases WHERE id = $1", [id]);
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: true, message: "Acquisto non trovato." });
-        }
-        res.sendStatus(204);
-        */
-
-        // Codice MySQL
         const [result] = await pool.query("DELETE FROM purchases WHERE id = ?", [id]);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: "Acquisto non trovato." });
