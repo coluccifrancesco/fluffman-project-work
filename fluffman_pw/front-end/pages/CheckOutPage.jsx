@@ -1,70 +1,91 @@
-import { useState, useEffect, useRef } from "react";
-import '../styles/checkoutpage.css'
+import React, { useState, useEffect } from "react";
+import '../styles/CheckOutPage.css'
 
-export default function CheckOutPage() {
+const CheckoutPage = () => {
+  // Stato per gli articoli del carrello. Inizializza dallo storage locale.
   const [cartItems, setCartItems] = useState(() => {
-    return JSON.parse(localStorage.getItem("cartlist")) || [];
+    try {
+      return JSON.parse(localStorage.getItem("cartlist")) || [];
+    } catch (error) {
+      console.error("Errore nel parsing del localStorage:", error);
+      return [];
+    }
   });
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [showAddress, setShowAddress] = useState(false);
-  //state per l'accordion
+  const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
-  const [purchaseSummary, setPurchaseSummary] = useState(null); // Nuovo stato per il riepilogo dell'acquisto
+  const [modal, setModal] = useState({ isVisible: false, title: "", message: "", summary: null });
 
-  const userNameRef = useRef(null);
-  const userLastNameRef = useRef(null);
-  const userMailRef = useRef(null);
-  const userPhoneRef = useRef(null);
-
-  const inputAddressRef = useRef(null);
-  const inputAddress2Ref = useRef(null);
-  const inputZipRef = useRef(null);
-  const inputCityRef = useRef(null);
-  const inputProvinceRef = useRef(null);
-  const inputCountryRef = useRef(null);
-
-  const deliveryAddressRef = useRef(null);
-  const deliveryAddress2Ref = useRef(null);
-  const deliveryZipRef = useRef(null);
-  const deliveryCityRef = useRef(null);
-  const deliveryProvinceRef = useRef(null);
-  const deliveryCountryRef = useRef(null);
-
+  // Stato per i dati del modulo.
+  const [formData, setFormData] = useState({
+    name: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    billing: {
+      address: "",
+      address2: "",
+      zip: "",
+      city: "",
+      province: "",
+      country: ""
+    },
+    delivery: {
+      address: "",
+      address2: "",
+      zip: "",
+      city: "",
+      province: "",
+      country: ""
+    },
+    payment: {
+      cardNumber: "",
+      expireDate: "",
+      securityCode: "",
+      cardOwner: ""
+    }
+  });
 
   const BASE_URL = "http://localhost:3030";
   const SELLER_EMAIL = "seller@example.com"; // Modificare con l'email del venditore
 
+  // Fetch dei dati dei prodotti del carrello
   useEffect(() => {
     async function fetchData() {
+      if (cartItems.length === 0) {
+        setCartProducts([]);
+        setTotalPrice(0);
+        return;
+      }
       try {
         const productsResponse = await fetch(`${BASE_URL}/api/products`);
         const productsData = await productsResponse.json();
 
-        const cartListData = cartItems.map(item => {
-          const product = productsData.find(p => p?.id === item?.id);
-          if (!product) return null;
+        const cartListData = cartItems
+          .map((item) => {
+            const product = productsData.find((p) => p?.id === item?.id);
+            if (!product) return null;
 
-          let imageUrl = null;
-          if (product?.image_path) {
-            let cleanPath = product.image_path.trim();
-            const baseUrlPattern = "/api/images/";
-            if (cleanPath.includes(baseUrlPattern)) {
-              cleanPath = cleanPath.split(baseUrlPattern)[1];
+            let imageUrl = null;
+            if (product?.image_path) {
+              let cleanPath = product.image_path.trim();
+              const baseUrlPattern = "/api/images/";
+              if (cleanPath.includes(baseUrlPattern)) {
+                cleanPath = cleanPath.split(baseUrlPattern)[1];
+              }
+              imageUrl = `${BASE_URL}/api/images/${cleanPath}`;
             }
-            imageUrl = `${BASE_URL}/api/images/${cleanPath}`;
-          }
 
-          return {
-            ...product,
-            image: imageUrl,
-            currentQuantity: item.quantity,
-            availableQuantity: product.quantity,
-            price: parseFloat(product.price)
-          };
-        }).filter(Boolean);
+            return {
+              ...product,
+              image: imageUrl,
+              currentQuantity: item.quantity,
+              availableQuantity: product.quantity,
+              price: parseFloat(product.price),
+            };
+          })
+          .filter(Boolean);
 
         setCartProducts(cartListData);
       } catch (error) {
@@ -74,8 +95,12 @@ export default function CheckOutPage() {
     fetchData();
   }, [cartItems]);
 
+  // Calcolo del prezzo totale ogni volta che i prodotti del carrello cambiano
   useEffect(() => {
-    const subtotal = cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
+    const subtotal = cartProducts.reduce(
+      (sum, product) => sum + product.price * product.currentQuantity,
+      0
+    );
     const SHIPPING_THRESHOLD = 19.99;
     const SHIPPING_COST = 3.99;
     let shippingCost = 0;
@@ -87,57 +112,73 @@ export default function CheckOutPage() {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
-  const handleOrder = async () => {
-    const userEmail = userMailRef.current.value;
-    const userName = userNameRef.current.value;
-    const userLastName = userLastNameRef.current.value;
-    const userPhone = userPhoneRef.current.value;
+  // Gestione della visibilità del modal
+  const showModal = (title, message, summary = null) => {
+    setModal({ isVisible: true, title, message, summary });
+  };
 
-    const billingAddress = {
-      address: inputAddressRef.current.value,
-      address2: inputAddress2Ref.current.value,
-      zip: inputZipRef.current.value,
-      city: inputCityRef.current.value,
-      province: inputProvinceRef.current.value,
-      country: inputCountryRef.current.value,
-    };
+  const closeModal = () => {
+    setModal({ isVisible: false, title: "", message: "", summary: null });
+  };
+
+  const handleInputChange = (e, section) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
+
+  const handleDirectInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    const { name, lastName, email, phone, billing, delivery, payment } = formData;
 
     const requiredFields = [
-      userName,
-      userLastName,
-      userEmail,
-      billingAddress.address,
-      billingAddress.zip,
-      billingAddress.city,
-      billingAddress.province,
-      billingAddress.country
+      name,
+      lastName,
+      email,
+      billing.address,
+      billing.zip,
+      billing.city,
+      billing.province,
+      billing.country,
     ];
 
-    if (requiredFields.some(field => !field)) {
-      setModalTitle("Attenzione");
-      setModalMessage("Per favore, compila tutti i campi obbligatori dell'indirizzo di fatturazione.");
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
+    if (requiredFields.some((field) => !field)) {
+      showModal(
+        "Attenzione",
+        "Per favore, compila tutti i campi obbligatori dell'indirizzo di fatturazione."
+      );
       return;
     }
 
-    const productListHtml = cartProducts.map(p => `
-      <li>${p.name} (${p.currentQuantity}x) - €${(p.price * p.currentQuantity).toFixed(2)}</li>
-    `).join('');
+    const productListHtml = cartProducts
+      .map(
+        (p) =>
+          `<li>${p.name} (${p.currentQuantity}x) - €${(
+            p.price * p.currentQuantity
+          ).toFixed(2)}</li>`
+      )
+      .join("");
+
+    const shippingCost = totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
 
     const emailBodyBuyer = `
       <h1>Riepilogo del tuo Ordine</h1>
-      <p>Gentile ${userName},</p>
+      <p>Gentile ${name},</p>
       <p>Il tuo ordine è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
       <ul>
         ${productListHtml}
       </ul>
-      <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
+      <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
       <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
       <p>Grazie per il tuo acquisto!</p>
     `;
@@ -145,539 +186,750 @@ export default function CheckOutPage() {
     const emailBodySeller = `
         <h1>Nuovo Ordine Ricevuto</h1>
         <p>Ciao venditore,</p>
-        <p>Hai ricevuto un nuovo ordine da ${userName} ${userLastName}.</p>
+        <p>Hai ricevuto un nuovo ordine da ${name} ${lastName}.</p>
         <p>Dettagli dell'ordine:</p>
         <ul>
             ${productListHtml}
         </ul>
-        <p>Costo di spedizione: €${(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</p>
+        <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
         <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
         <p>Dettagli utente:</p>
         <ul>
-            <li>Nome: ${userName}</li>
-            <li>Cognome: ${userLastName}</li>
-            <li>Email: ${userEmail}</li>
-            <li>Telefono: ${userPhone}</li>
+            <li>Nome: ${name}</li>
+            <li>Cognome: ${lastName}</li>
+            <li>Email: ${email}</li>
+            <li>Telefono: ${phone}</li>
         </ul>
         <p>Indirizzo di fatturazione:</p>
         <ul>
-            <li>Indirizzo: ${billingAddress.address}</li>
-            <li>CAP: ${billingAddress.zip}</li>
-            <li>Città: ${billingAddress.city}</li>
-            <li>Provincia: ${billingAddress.province}</li>
-            <li>Nazione: ${billingAddress.country}</li>
+            <li>Indirizzo: ${billing.address}</li>
+            <li>CAP: ${billing.zip}</li>
+            <li>Città: ${billing.city}</li>
+            <li>Provincia: ${billing.province}</li>
+            <li>Nazione: ${billing.country}</li>
         </ul>
-        ${showAddress ? `
+        ${showDeliveryAddress
+        ? `
             <p>Indirizzo di consegna:</p>
             <ul>
-                <li>Indirizzo: ${deliveryAddressRef.current.value}</li>
-                <li>CAP: ${deliveryZipRef.current.value}</li>
-                <li>Città: ${deliveryCityRef.current.value}</li>
-                <li>Provincia: ${deliveryProvinceRef.current.value}</li>
-                <li>Nazione: ${deliveryCountryRef.current.value}</li>
+                <li>Indirizzo: ${delivery.address}</li>
+                <li>CAP: ${delivery.zip}</li>
+                <li>Città: ${delivery.city}</li>
+                <li>Provincia: ${delivery.province}</li>
+                <li>Nazione: ${delivery.country}</li>
             </ul>
-        ` : ''}
+        `
+        : ""
+      }
     `;
 
     const orderData = {
-      userEmail,
-      userName,
-      userLastName,
-      userPhone,
-      billingAddress,
+      userEmail: email,
+      userName: name,
+      userLastName: lastName,
+      userPhone: phone,
+      billingAddress: billing,
       totalPrice,
-      products: cartProducts.map(p => ({
+      products: cartProducts.map((p) => ({
         id: p.id,
         name: p.name,
         quantity: p.currentQuantity,
-        price: p.price
+        price: p.price,
       })),
     };
 
-    if (showAddress) {
-      orderData.deliveryAddress = {
-        address: deliveryAddressRef.current.value,
-        address2: deliveryAddress2Ref.current.value,
-        zip: deliveryZipRef.current.value,
-        city: deliveryCityRef.current.value,
-        province: deliveryProvinceRef.current.value,
-        country: deliveryCountryRef.current.value,
-      };
+    if (showDeliveryAddress) {
+      orderData.deliveryAddress = delivery;
     }
 
-    console.log('Dati ordine da inviare:', JSON.stringify(orderData, null, 2));
-
     try {
-      const emailResponseBuyer = await fetch(`${BASE_URL}/api/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: userEmail,
-          subject: "Conferma del tuo Ordine",
-          body: emailBodyBuyer,
-        })
-      });
+      // Invio email all'acquirente e al venditore
+      await Promise.all([
+        fetch(`${BASE_URL}/api/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: email,
+            subject: "Conferma del tuo Ordine",
+            body: emailBodyBuyer,
+          }),
+        }),
+        fetch(`${BASE_URL}/api/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: SELLER_EMAIL,
+            subject: `Nuovo Ordine da ${name} ${lastName}`,
+            body: emailBodySeller,
+          }),
+        }),
+      ]);
 
-      if (!emailResponseBuyer.ok) {
-        console.error("Errore nell'invio dell'email all'acquirente. Stato HTTP:", emailResponseBuyer.status);
-      }
-      const emailResultBuyer = await emailResponseBuyer.json();
-      console.log('Risultato invio email acquirente:', emailResultBuyer);
-
-      const emailResponseSeller = await fetch(`${BASE_URL}/api/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: SELLER_EMAIL,
-          subject: `Nuovo Ordine da ${userName} ${userLastName}`,
-          body: emailBodySeller,
-        })
-      });
-
-      if (!emailResponseSeller.ok) {
-        console.error("Errore nell'invio dell'email al venditore. Stato HTTP:", emailResponseSeller.status);
-      }
-      const emailResultSeller = await emailResponseSeller.json();
-      console.log('Risultato invio email venditore:', emailResultSeller);
-
-
+      // Salvataggio dell'ordine
       const purchaseResponse = await fetch(`${BASE_URL}/api/purchases`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
       });
 
       if (!purchaseResponse.ok) {
-        console.error("Errore nel salvataggio dell'ordine. Stato HTTP:", purchaseResponse.status);
         const purchaseErrorData = await purchaseResponse.json();
-        setModalTitle("Errore nel salvataggio dell'ordine");
-        setModalMessage(`Si è verificato un errore: ${purchaseErrorData.message || 'Errore sconosciuto'}`);
-        const modalElement = document.getElementById('exampleModal');
-        if (window.bootstrap && window.bootstrap.Modal) {
-          const modal = new window.bootstrap.Modal(modalElement);
-          modal.show();
-        } else {
-          console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-        }
-        return;
+        throw new Error(
+          purchaseErrorData.message || "Errore sconosciuto nel salvataggio dell'ordine"
+        );
       }
-      const purchaseResult = await purchaseResponse.json();
-      console.log('Risultato salvataggio ordine:', purchaseResult);
 
-      // Salvo i dati dell'acquisto in un nuovo stato prima di svuotare il carrello
+      // Prepara il riepilogo per il modal prima di svuotare il carrello
       const summary = {
         products: cartProducts,
         totalPrice: totalPrice,
-        shippingCost: totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)
+        shippingCost: shippingCost
       };
-      setPurchaseSummary(summary);
 
-      setModalTitle("Acquisto effettuato con successo");
-      setModalMessage("Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.");
-
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
-
+      // Svuota il carrello e resetta il form
       setCartItems([]);
       localStorage.removeItem("cartlist");
+      setFormData({
+        name: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        billing: { address: "", address2: "", zip: "", city: "", province: "", country: "" },
+        delivery: { address: "", address2: "", zip: "", city: "", province: "", country: "" },
+        payment: { cardNumber: "", expireDate: "", securityCode: "", cardOwner: "" }
+      });
+      setShowDeliveryAddress(false);
+      setIsAccordionOpen(false);
 
+      showModal("Acquisto effettuato con successo", "Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.", summary);
     } catch (error) {
       console.error("Errore durante l'elaborazione dell'ordine:", error);
-      setModalTitle("Errore Generale");
-      setModalMessage("Si è verificato un errore durante l'ordine. Riprova più tardi.");
-      const modalElement = document.getElementById('exampleModal');
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error("Bootstrap JS non caricato. Impossibile mostrare il modal.");
-      }
+      showModal(
+        "Errore Generale",
+        `Si è verificato un errore durante l'ordine: ${error.message}. Riprova più tardi.`
+      );
     }
   };
 
-  // Funzione per gestire il toggle dell'accordion
   const handleAccordionToggle = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
 
   return (
     <>
-      <div className="container mt-3 ">
-        <h1 className="mb-4 text-center">Checkout</h1>
-        <br />
-        <div className="row cart-row d-flex justify-content-between">
-          <form className="col-md-7 g-3 d-flex flex-column">
-            <div className="col-12">
-              <h2 className="mb-1">Dati Personali</h2>
-              <hr />
-              <label htmlFor="userName" className="form-label fs-5 mt-3">
-                Nome
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="userName"
-                placeholder="Mario"
-                ref={userNameRef}
-              />
-              <label htmlFor="userLastName" className="form-label fs-5 mt-2">
-                Cognome
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="userLastName"
-                placeholder="Rossi"
-                ref={userLastNameRef}
-              />
-              <label htmlFor="userMail" className="form-label fs-5 mt-2">
-                Email
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                id="userMail"
-                placeholder="mariorossi@gmail.com"
-                ref={userMailRef}
-              />
-              <label htmlFor="userPhone" className="form-label fs-5 mt-2">
-                Telefono
-              </label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-wrapping">
-                  +39{" "}
-                </span>
-                <input
-                  type="tel"
-                  className="form-control"
-                  id="userPhone"
-                  placeholder="123 456 7890"
-                  ref={userPhoneRef}
-                />
+      <style>
+        {`
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+          }
+          .card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+          }
+          @media (min-width: 1024px) {
+            .card {
+              flex-direction: row;
+            }
+          }
+          .form-section {
+            padding: 2.5rem;
+            flex: 3;
+          }
+          .summary-section {
+            padding: 2.5rem;
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            flex: 2;
+            border-radius: 0 0 1.5rem 1.5rem;
+          }
+          @media (min-width: 1024px) {
+            .summary-section {
+              border-top: none;
+              border-left: 1px solid #e5e7eb;
+              border-radius: 0 1.5rem 1.5rem 0;
+            }
+          }
+          .title {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 1rem;
+          }
+          .subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+          }
+          .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          @media (min-width: 768px) {
+            .form-grid {
+              grid-template-columns: 1fr 1fr;
+            }
+          }
+          .form-group {
+            margin-bottom: 1rem;
+          }
+          .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 0.25rem;
+          }
+          .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          }
+          .form-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+            outline: none;
+          }
+          .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+          }
+          .checkbox-group input {
+            margin-right: 0.5rem;
+          }
+          .accordion-container {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+          }
+          .accordion-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+          }
+          .accordion-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+          }
+          .accordion-body {
+            padding: 1rem;
+          }
+          .btn-submit {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #10b981;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.15s ease-in-out;
+          }
+          .btn-submit:hover {
+            background-color: #059669;
+          }
+          .product-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+          }
+          .product-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+          }
+          .product-item img {
+            width: 64px;
+            height: 64px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+          }
+          .product-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin: 0;
+          }
+          .product-item p {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin: 0;
+          }
+          .product-item span {
+            font-weight: bold;
+            color: #1f2937;
+            margin-left: auto;
+          }
+          .summary-totals {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+          }
+          .summary-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #374151;
+            margin-bottom: 0.5rem;
+          }
+          .summary-total-line {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 1rem;
+          }
+          .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+          }
+          .modal-content {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+          }
+          .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+          .modal-message {
+            color: #4b5563;
+          }
+          .modal-button {
+            background-color: #2563eb;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+          }
+          .modal-button:hover {
+            background-color: #1e40af;
+          }
+          .summary-details {
+            text-align: left;
+            margin-top: 1rem;
+            color: #4b5563;
+          }
+          .summary-details h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+          .summary-details ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+          }
+          .summary-details li {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+          }
+          .summary-details p {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+          }
+          .summary-details .total {
+            font-weight: bold;
+          }
+        `}
+      </style>
+      <div className="container">
+        <div className="card">
+          {/* Sezione del modulo di checkout */}
+          <div className="form-section">
+            <h1 className="title">Checkout</h1>
+            <form onSubmit={handleOrder}>
+              <h2 className="subtitle">Dati Personali</h2>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="name">Nome</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleDirectInputChange}
+                    placeholder="Mario"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="lastName">Cognome</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleDirectInputChange}
+                    placeholder="Rossi"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleDirectInputChange}
+                    placeholder="mariorossi@gmail.com"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone">Telefono</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleDirectInputChange}
+                    placeholder="+39 123 456 7890"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="col-12 mt-3">
-              <h2 className="mb-1 mt-4">Indirizzo di Fatturazione</h2>
-              <hr />
-              <label htmlFor="inputAddress" className="form-label fs-5 mt-3">
-                Indirizzo
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputAddress"
-                placeholder="Via Roma n.1"
-                ref={inputAddressRef}
-              />
-              <label htmlFor="inputAddress2" className="form-label fs-5 mt-2">
-                Piano, appartamento o scala
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputAddress2"
-                placeholder="Es. Piano 2, Scala A"
-                ref={inputAddress2Ref}
-              />
-              <label htmlFor="inputZip" className="form-label fs-5 mt-2">
-                CAP
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputZip"
-                placeholder="00100"
-                ref={inputZipRef}
-              />
-              <label htmlFor="inputCity" className="form-label fs-5 mt-2">
-                Città
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputCity"
-                placeholder="Roma"
-                ref={inputCityRef}
-              />
-              <label htmlFor="inputProvince" className="form-label fs-5 mt-2">
-                Provincia
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputProvince"
-                placeholder="RM"
-                ref={inputProvinceRef}
-              />
-              <label htmlFor="inputCountry" className="form-label fs-5 mt-2">
-                Nazione
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputCountry"
-                placeholder="Italia"
-                ref={inputCountryRef}
-              />
-            </div>
-            <div className="col-12">
-              <h2 className="mt-4 mb-1">Indirizzo di Consegna</h2>
-              <hr />
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="checkChecked"
-                  checked={showAddress}
-                  onChange={() => setShowAddress(!showAddress)}
-                />
-                <label className="form-check-label" htmlFor="checkChecked">
-                  Indirizzo di consegna diverso da quello di fatturazione
-                </label>
-              </div>
-              {showAddress && (
-                <>
-                  <label
-                    htmlFor="deliveryAddress"
-                    className="form-label fs-5 mt-3"
-                  >
-                    Indirizzo
-                  </label>
+              <h2 className="subtitle">Indirizzo di Fatturazione</h2>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="billingAddress">Indirizzo</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryAddress"
+                    id="billingAddress"
+                    name="address"
+                    value={formData.billing.address}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="Via Roma n.1"
-                    ref={deliveryAddressRef}
                   />
-                  <label
-                    htmlFor="deliveryAddress2"
-                    className="form-label fs-5 mt-2"
-                  >
-                    Piano, appartamento o scala
-                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="billingAddress2">Piano, appartamento o scala</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryAddress2"
+                    id="billingAddress2"
+                    name="address2"
+                    value={formData.billing.address2}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="Es. Piano 2, Scala A"
-                    ref={deliveryAddress2Ref}
                   />
-                  <label htmlFor="deliveryZip" className="form-label fs-5 mt-2">
-                    CAP
-                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="billingZip">CAP</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryZip"
+                    id="billingZip"
+                    name="zip"
+                    value={formData.billing.zip}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="00100"
-                    ref={deliveryZipRef}
                   />
-                  <label htmlFor="deliveryCity" className="form-label fs-5 mt-2">
-                    Città
-                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="billingCity">Città</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryCity"
+                    id="billingCity"
+                    name="city"
+                    value={formData.billing.city}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="Roma"
-                    ref={deliveryCityRef}
                   />
-                  <label
-                    html-for="deliveryProvince"
-                    className="form-label fs-5 mt-2"
-                  >
-                    Provincia
-                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="billingProvince">Provincia</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryProvince"
+                    id="billingProvince"
+                    name="province"
+                    value={formData.billing.province}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="RM"
-                    ref={deliveryProvinceRef}
                   />
-                  <label
-                    html-for="deliveryCountry"
-                    className="form-label fs-5 mt-2"
-                  >
-                    Nazione
-                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="billingCountry">Nazione</label>
                   <input
                     type="text"
-                    className="form-control"
-                    id="deliveryCountry"
+                    id="billingCountry"
+                    name="country"
+                    value={formData.billing.country}
+                    onChange={(e) => handleInputChange(e, 'billing')}
                     placeholder="Italia"
-                    ref={deliveryCountryRef}
                   />
-                </>
-              )}
-            </div>
-          </form>
-          <div className="col-md-4 cart-summary bg-light rounded g-3 p-0 d-flex flex-column">
-            <div className="cart-summary-header rounded-3 col-12">
-              <h2 className="p-5">Il tuo ordine</h2>
-            </div>
-            <div className="order-details-summary p-4">
-              {cartProducts.length > 0 ? (
-                <>
-                  {cartProducts.map((product) => (
-                    <div key={product.id} className="d-flex justify-content-between my-2">
-                      <span>{product.name} x {product.currentQuantity}</span>
-                      <span>€{(product.price * product.currentQuantity).toFixed(2)}</span>
-                    </div>
-                  ))}
-                  <hr />
-                  <div className="d-flex justify-content-between">
-                    <span>Costo spedizione:</span>
-                    <span>€{(totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0)).toFixed(2)}</span>
-                  </div>
-                  <hr />
-                  <div className="d-flex justify-content-between fw-bold fs-5">
-                    <span>Totale:</span>
-                    <span>€{totalPrice.toFixed(2)}</span>
-                  </div>
-                </>
-              ) : (
-                <p className="text-center">Il carrello è vuoto.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="accordion accordion-flush container mt-3 border border-dark"
-        id="accordionFlushExample"
-      >
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className={`accordion-button ${isAccordionOpen ? "" : "collapsed"
-                }`}
-              type="button"
-              onClick={handleAccordionToggle}
-              aria-expanded={isAccordionOpen}
-              aria-controls="flush-collapseOne"
-            >
-              Aggiungi una carta per il pagamento
-            </button>
-          </h2>
-          <div
-            id="flush-collapseOne"
-            className={`accordion-collapse collapse ${isAccordionOpen ? "show" : ""
-              }`}
-          >
-            <form className="row g-3">
-              <div className="col-md-12 mt-3">
-                <label htmlFor="cardNumber" className="form-label">
-                  Numero carta
-                </label>
-                <input type="text" className="form-control" id="cardNumber" />
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="expireDate" className="form-label">
-                  Data di scadenza
-                </label>
-                <input type="text" className="form-control" id="expireDate" />
-                <div className="form-text" id="basic-addon4">
-                  Parte anteriore della carta in formato MM/YY
                 </div>
               </div>
-              <div className="col-md-6">
-                <label htmlFor="securityCode" className="form-label">
-                  Codice di sicurezza
-                </label>
-                <input type="text" className="form-control" id="securityCode" />
-                <div className="form-text" id="basic-addon4">
-                  3 cifre sul retro della carta
-                </div>
-              </div>
-              <div className="col-md-12 mb-3">
-                <label htmlFor="cardOwner" className="form-label">
-                  Nome del proprietario della carta
-                </label>
+
+              <h2 className="subtitle">Indirizzo di Consegna</h2>
+              <div className="checkbox-group">
                 <input
-                  type="text"
-                  className="form-control"
-                  id="cardOwner"
-                  placeholder="Mario Rossi"
+                  type="checkbox"
+                  id="checkChecked"
+                  checked={showDeliveryAddress}
+                  onChange={() => setShowDeliveryAddress(!showDeliveryAddress)}
                 />
+                <label htmlFor="checkChecked">Indirizzo di consegna diverso da quello di fatturazione</label>
               </div>
+              {showDeliveryAddress && (
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="deliveryAddress">Indirizzo</label>
+                    <input
+                      type="text"
+                      id="deliveryAddress"
+                      name="address"
+                      value={formData.delivery.address}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="Via Roma n.1"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="deliveryAddress2">Piano, appartamento o scala</label>
+                    <input
+                      type="text"
+                      id="deliveryAddress2"
+                      name="address2"
+                      value={formData.delivery.address2}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="Es. Piano 2, Scala A"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="deliveryZip">CAP</label>
+                    <input
+                      type="text"
+                      id="deliveryZip"
+                      name="zip"
+                      value={formData.delivery.zip}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="00100"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="deliveryCity">Città</label>
+                    <input
+                      type="text"
+                      id="deliveryCity"
+                      name="city"
+                      value={formData.delivery.city}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="Roma"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="deliveryProvince">Provincia</label>
+                    <input
+                      type="text"
+                      id="deliveryProvince"
+                      name="province"
+                      value={formData.delivery.province}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="RM"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="deliveryCountry">Nazione</label>
+                    <input
+                      type="text"
+                      id="deliveryCountry"
+                      name="country"
+                      value={formData.delivery.country}
+                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      placeholder="Italia"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="accordion-container">
+                <div className="accordion-header" onClick={handleAccordionToggle}>
+                  <h2>Aggiungi una carta per il pagamento</h2>
+                  <span>{isAccordionOpen ? "▲" : "▼"}</span>
+                </div>
+                {isAccordionOpen && (
+                  <div className="accordion-body">
+                    <div className="form-group">
+                      <label htmlFor="cardNumber">Numero carta</label>
+                      <input
+                        type="text"
+                        id="cardNumber"
+                        name="cardNumber"
+                        value={formData.payment.cardNumber}
+                        onChange={(e) => handleInputChange(e, 'payment')}
+                      />
+                    </div>
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label htmlFor="expireDate">Data di scadenza</label>
+                        <input
+                          type="text"
+                          id="expireDate"
+                          name="expireDate"
+                          value={formData.payment.expireDate}
+                          onChange={(e) => handleInputChange(e, 'payment')}
+                          placeholder="MM/YY"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="securityCode">Codice di sicurezza</label>
+                        <input
+                          type="text"
+                          id="securityCode"
+                          name="securityCode"
+                          value={formData.payment.securityCode}
+                          onChange={(e) => handleInputChange(e, 'payment')}
+                          placeholder="3 cifre sul retro"
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="cardOwner">Nome del proprietario della carta</label>
+                      <input
+                        type="text"
+                        id="cardOwner"
+                        name="cardOwner"
+                        value={formData.payment.cardOwner}
+                        onChange={(e) => handleInputChange(e, 'payment')}
+                        placeholder="Mario Rossi"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {cartProducts.length > 0 && (
+                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                  <button
+                    type="submit"
+                    className="btn-submit"
+                  >
+                    Ordina e Paga
+                  </button>
+                </div>
+              )}
             </form>
           </div>
-        </div>
-      </div>
 
-      {cartProducts.length > 0 && (
-        <div className="container mt-3 col-12 text-center">
-          <button
-            onClick={handleOrder}
-            type="submit"
-            className="btn btn-success btn-lg"
-          >
-            Ordina e paga
-          </button>
-        </div>
-      )}
-
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
-                {modalTitle}
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <p className="text-dark">{modalMessage}</p>
-              {modalTitle === "Acquisto effettuato con successo" && purchaseSummary && (
-                <>
-                  <p className="text-dark"> Hai acquistato i seguenti prodotti:</p>
-                  <ul>
-                    {purchaseSummary.products.map((p) => (
-                      <li key={p.id} className="text-dark">
-                        {p.name} {p.currentQuantity}x
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-dark">
-                    Costo di spedizione:{" "}
-                    €{purchaseSummary.shippingCost.toFixed(2)}
-                  </p>
-                  <p className="text-dark fw-bold">Totale: €{purchaseSummary.totalPrice.toFixed(2)}</p>
-                </>
+          {/* Sezione del riepilogo dell'ordine */}
+          <div className="summary-section">
+            <h2 className="title">Il tuo Ordine</h2>
+            <div className="product-list">
+              {cartProducts.length > 0 ? (
+                cartProducts.map((product) => (
+                  <div key={product.id} className="product-item">
+                    <img src={product.image} alt={product.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Immagine'} />
+                    <div>
+                      <h3>{product.name}</h3>
+                      <p>Quantità: {product.currentQuantity}</p>
+                    </div>
+                    <span>€{(product.price * product.currentQuantity).toFixed(2)}</span>
+                  </div>
+                ))
+              ) : (
+                <p style={{ textAlign: 'center', color: '#6b7280' }}>Il carrello è vuoto.</p>
               )}
             </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Chiudi
-              </button>
-            </div>
+            {cartProducts.length > 0 && (
+              <div className="summary-totals">
+                <div className="summary-line">
+                  <span>Subtotale</span>
+                  <span>€{(cartProducts.reduce((sum, p) => sum + p.price * p.currentQuantity, 0)).toFixed(2)}</span>
+                </div>
+                <div className="summary-line">
+                  <span>Spedizione</span>
+                  <span>€{(totalPrice - cartProducts.reduce((sum, p) => sum + p.price * p.currentQuantity, 0)).toFixed(2)}</span>
+                </div>
+                <div className="summary-line summary-total-line">
+                  <span>Totale</span>
+                  <span>€{totalPrice.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Modal Personalizzato */}
+      {modal.isVisible && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">{modal.title}</h2>
+            <p className="modal-message">{modal.message}</p>
+            {modal.summary && (
+              <div className="summary-details">
+                <h3>Riepilogo Acquisto:</h3>
+                <ul>
+                  {modal.summary.products.map((p) => (
+                    <li key={p.id}>
+                      {p.name} {p.currentQuantity}x
+                    </li>
+                  ))}
+                </ul>
+                <p>
+                  Costo di spedizione:{" "}
+                  <span className="total">€{modal.summary.shippingCost.toFixed(2)}</span>
+                </p>
+                <p>
+                  Totale: <span className="total">€{modal.summary.totalPrice.toFixed(2)}</span>
+                </p>
+              </div>
+            )}
+            <button
+              onClick={closeModal}
+              className="modal-button"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
+};
+
+export default function App() {
+  return <CheckoutPage />;
 }
