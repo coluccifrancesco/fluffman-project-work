@@ -44,7 +44,6 @@
 .card-title:hover {
   cursor: pointer;
   text-decoration: underline 1.2px;
-
 }
 
 .card:hover {
@@ -72,4 +71,9 @@
   /* border-bottom: solid 2px var(--background); */
   background-color: var(--primary);
   text-align: center;
+}
+
+.card-buttons * {
+  background: transparent;
+  border: 0px transparent;
 }

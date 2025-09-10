@@ -2,8 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 
-export default function CardItem({ product, isFavorite, onToggleFavorite, onToggleAddToCart, isInCart }) {
-
+export default function CardItem({
+  product,
+  isFavorite,
+  onToggleFavorite,
+  onToggleAddToCart,
+  isInCart,
+}) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -28,9 +33,9 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
     }
 
     // Costruisci l'URL finale
-    if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    if (cleanPath.startsWith("http://") || cleanPath.startsWith("https://")) {
       imageUrl = cleanPath;
-    } else if (cleanPath.startsWith('/api/images/')) {
+    } else if (cleanPath.startsWith("/api/images/")) {
       imageUrl = `${BASE_URL}${cleanPath}`;
     } else {
       imageUrl = `${BASE_URL}/api/images/${cleanPath}`;
@@ -38,8 +43,8 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
   }
 
   const handleImageError = (e) => {
-    e.target.style.display = 'none';
-    e.target.nextElementSibling?.classList.remove('d-none');
+    e.target.style.display = "none";
+    e.target.nextElementSibling?.classList.remove("d-none");
   };
 
   return (
@@ -50,10 +55,10 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
             <img
               src={imageUrl}
               className="card-img-top img-fluid w-75"
-              alt={product?.name || 'Immagine prodotto'}
+              alt={product?.name || "Immagine prodotto"}
               onClick={handleCardClick}
               onError={handleImageError}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
             <div className="placeholder-image d-none">
               <div className="text-muted p-3">
@@ -76,7 +81,7 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
         <h5
           className="card-title fs-4 product_name"
           onClick={handleCardClick}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
         >
           {product?.name}
         </h5>
@@ -86,37 +91,47 @@ export default function CardItem({ product, isFavorite, onToggleFavorite, onTogg
             <>
               <div className="price-container">
                 <span className="text-decoration-line-through text-muted me-1">
-                  <FontAwesomeIcon icon={faEuroSign} />{product.price}
+                  <FontAwesomeIcon icon={faEuroSign} />
+                  {product.price}
                 </span>
                 <span className="text-danger fw-bold fs-5">
-                  <FontAwesomeIcon icon={faEuroSign} />{product.discount_price}
+                  <FontAwesomeIcon icon={faEuroSign} />
+                  {product.discount_price}
                 </span>
               </div>
             </>
           ) : (
             <span className="price text-dark fw-bold fs-5">
-              <FontAwesomeIcon icon={faEuroSign} />{product.price}
+              <FontAwesomeIcon icon={faEuroSign} />
+              {product.price}
             </span>
           )}
 
           <div className="card-buttons d-flex align-items-start">
             <button
-              className="btn p-0"
-              type="button"
+              className="p-0"
               onClick={() => onToggleFavorite(product.id)}
-              title={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+              title={
+                isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"
+              }
             >
-              <i className={`bi fs-4 me-3 ${isFavorite ? "bi-star-fill text-warning" : "bi-star"}`}></i>
+              <i
+                className={`bi fs-4 me-3 ${
+                  isFavorite ? "bi-star-fill text-warning" : "bi-star"
+                }`}
+              ></i>
             </button>
 
             <button
-              className="btn p-0"
-              type="button"
-
+              className="p-0"
               onClick={() => onToggleAddToCart(product.id)}
               title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
-              <i className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"}`}></i>
+              <i
+                className={`bi fs-4 me-3 ${
+                  isInCart ? "bi-cart-fill text-success" : "bi-cart"
+                }`}
+              ></i>
             </button>
           </div>
         </div>
