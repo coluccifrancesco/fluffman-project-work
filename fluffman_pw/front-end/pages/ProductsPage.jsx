@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductPages.css";
@@ -15,6 +16,7 @@ export default function ProductsPage() {
   const [viewMode, setViewMode] = useState("grid");
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
@@ -190,6 +192,8 @@ export default function ProductsPage() {
                 <li
                   key={product.id}
                   className="list-group-item d-flex justify-content-between align-items-center"
+                  onClick={() => navigate(`/products/${product.slug}`)}
+                  style={{ cursor: "pointer" }}
                 >
                   <div>
                     <strong>{product.name}</strong> <br />

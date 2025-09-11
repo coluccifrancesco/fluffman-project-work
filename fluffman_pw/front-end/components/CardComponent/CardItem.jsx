@@ -7,8 +7,8 @@ import { useCart } from "../../context/CartContext";
 export default function CardItem({ product }) {
   const { wishlist, toggleWishlist } = useWishlist();
   const { cart, addToCart, removeFromCart } = useCart();
-  const isFavorite = wishlist.some(item => item.id === product.id);
-  const isInCart = cart.some(item => item.id === product.id);
+  const isFavorite = wishlist.some((item) => item.id === product.id);
+  const isInCart = cart.some((item) => item.id === product.id);
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -116,19 +116,23 @@ export default function CardItem({ product }) {
               }
             >
               <i
-                className={`bi fs-4 me-3 ${isFavorite ? "bi-star-fill text-warning" : "bi-star"
-                  }`}
+                className={`bi fs-4 me-3 ${
+                  isFavorite ? "bi-star-fill text-warning" : "bi-star"
+                }`}
               ></i>
             </button>
 
             <button
               className="p-0"
-              onClick={() => isInCart ? removeFromCart(product.id) : addToCart(product.id, 1)}
+              onClick={() =>
+                isInCart ? removeFromCart(product.id) : addToCart(product.id, 1)
+              }
               title={isInCart ? "Rimuovi dal carrello" : "Aggiungi al carrello"}
             >
               <i
-                className={`bi fs-4 me-3 ${isInCart ? "bi-cart-fill text-success" : "bi-cart"
-                  }`}
+                className={`bi fs-4 me-3 ${
+                  isInCart ? "bi-cart-fill text-success" : "bi-cart"
+                }`}
               ></i>
             </button>
           </div>
