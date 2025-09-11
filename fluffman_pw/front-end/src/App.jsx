@@ -39,6 +39,8 @@ function App() {
               <Route path="/products/:slug" element={<SingleProductPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/cart" element={<CartPage />} />
+              {/* Catch-all per 404 */}
+              <Route path="*" element={<ErrorPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
