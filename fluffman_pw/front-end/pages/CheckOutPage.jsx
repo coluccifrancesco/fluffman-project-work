@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
 import "../styles/CheckOutPage.css";
+import { useNavigate } from "react-router-dom";
 
 // regex restrittiva (accetta solo .com .it .org .net .edu) - case insensitive
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.(com|it|org|net|edu)$/i;
 // lista dei domini validi
-export const VALID_DOMAINS = [
+export const VALID_DOMINIONS = [
   "gmail.com",
   "yahoo.com",
   "hotmail.com",
@@ -21,7 +21,11 @@ export const VALID_DOMAINS = [
   "zoho.com"
 ];
 
+
 const CheckoutPage = () => {
+  // Sposta useNavigate all'interno del componente
+  const navigate = useNavigate();
+
   // Stato per gli articoli del carrello. Inizializza dallo storage locale.
   const [cartItems, setCartItems] = useState(() => {
     try {
@@ -35,13 +39,7 @@ const CheckoutPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [modal, setModal] = useState({
-    isVisible: false,
-    title: "",
-    message: "",
-    summary: null,
-  });
-  const [emailError, setEmailError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
 
   // Ref per il focus sulla email
   const emailRef = useRef(null);
@@ -82,7 +80,7 @@ const CheckoutPage = () => {
   const [showFieldErrors, setShowFieldErrors] = useState(false);
 
   const BASE_URL = "http://localhost:3030";
-  const SELLER_EMAIL = "seller@example.com"; // Modificare con l'email del venditore
+  const SELLER_EMAIL = "seller@example.com";
 
   // Fetch dei dati dei prodotti del carrello
   useEffect(() => {
@@ -146,15 +144,6 @@ const CheckoutPage = () => {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
-  // Gestione della visibilità del modal
-  const showModal = (title, message, summary = null) => {
-    setModal({ isVisible: true, title, message, summary });
-  };
-
-  const closeModal = () => {
-    setModal({ isVisible: false, title: "", message: "", summary: null });
-  };
-
   const handleInputChange = (e, section) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -171,12 +160,19 @@ const CheckoutPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "email") {
-      setEmailError(value && !EMAIL_PATTERN.test(value.trim()));
+      const emailTrimmed = value.trim();
+      const [_, domain] = emailTrimmed.split("@");
+      if (!EMAIL_PATTERN.test(emailTrimmed)) {
+        setEmailError("Inserisci un'email valida (es. nome@dominio.it)");
+      } else if (!VALID_DOMINIONS.includes(domain)) {
+        setEmailError("Inserisci un dominio email valido (es. gmail.com, yahoo.com)");
+      } else {
+        setEmailError(null);
+      }
     }
   };
 
 
-  // Funzione per controllare i campi obbligatori mancanti
   const getMissingFields = () => {
     const { name, lastName, email, phone, billing } = formData;
     const fields = [];
@@ -189,10 +185,19 @@ const CheckoutPage = () => {
     if (!billing.city) fields.push("billing.city");
     if (!billing.province) fields.push("billing.province");
     if (!billing.country) fields.push("billing.country");
+
+    if (showDeliveryAddress) {
+      const { delivery } = formData;
+      if (!delivery.address) fields.push("delivery.address");
+      if (!delivery.zip) fields.push("delivery.zip");
+      if (!delivery.city) fields.push("delivery.city");
+      if (!delivery.province) fields.push("delivery.province");
+      if (!delivery.country) fields.push("delivery.country");
+    }
     return fields;
   };
 
-  // Aggiorna missingFields ogni volta che formData cambia
+
   useEffect(() => {
     setMissingFields(getMissingFields());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,44 +207,20 @@ const CheckoutPage = () => {
     e.preventDefault();
 
     const missing = getMissingFields();
-
-    // ✅ Validazione email con regex
-    if (formData.email) {
-      const emailTrimmed = formData.email.trim();
-      const [_, domain] = emailTrimmed.split("@");
-      if (!EMAIL_PATTERN.test(emailTrimmed)) {
-        missing.push("email");
-        setEmailError("Inserisci un'email valida");
-      } else if (!VALID_DOMAINS.includes(domain)) {
-        missing.push("email");
-        setEmailError("Inserisci un dominio email valido (es. gmail.com, yahoo.com)");
-      }
+    if (emailError) {
+      missing.push("email");
     }
     setMissingFields(missing);
+
     if (missing.length > 0) {
       setShowFieldErrors(true);
-      // ⚡ Scroll automatico sull'email se è tra i campi mancanti o non valida
       if (missing.includes("email") && emailRef.current) {
         emailRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         emailRef.current.focus();
       }
-      // Non inviare l'ordine se ci sono campi obbligatori mancanti
       return;
     }
-
     setShowFieldErrors(false);
-
-    // Prendi i dati dal formData per usarli nei template string
-    const { name, lastName, email, phone, billing, delivery } = formData;
-
-    const productListHtml = cartProducts
-      .map(
-        (p) =>
-          `<li>${p.name} (${p.currentQuantity}x) - €${(
-            p.price * p.currentQuantity
-          ).toFixed(2)}</li>`
-      )
-      .join("");
 
     const shippingCost =
       totalPrice -
@@ -248,65 +229,13 @@ const CheckoutPage = () => {
         0
       );
 
-    const emailBodyBuyer = `
-      <h1>Riepilogo del tuo Ordine</h1>
-      <p>Gentile ${name},</p>
-      <p>Il tuo ordine è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
-      <ul>
-        ${productListHtml}
-      </ul>
-      <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
-      <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
-      <p>Grazie per il tuo acquisto!</p>
-    `;
-
-    const emailBodySeller = `
-        <h1>Nuovo Ordine Ricevuto</h1>
-        <p>Ciao venditore,</p>
-        <p>Hai ricevuto un nuovo ordine da ${name} ${lastName}.</p>
-        <p>Dettagli dell'ordine:</p>
-        <ul>
-            ${productListHtml}
-        </ul>
-        <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
-        <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
-        <p>Dettagli utente:</p>
-        <ul>
-            <li>Nome: ${name}</li>
-            <li>Cognome: ${lastName}</li>
-            <li>Email: ${email}</li>
-            <li>Telefono: ${phone}</li>
-        </ul>
-        <p>Indirizzo di fatturazione:</p>
-        <ul>
-            <li>Indirizzo: ${billing.address}</li>
-            <li>CAP: ${billing.zip}</li>
-            <li>Città: ${billing.city}</li>
-            <li>Provincia: ${billing.province}</li>
-            <li>Nazione: ${billing.country}</li>
-        </ul>
-        ${showDeliveryAddress
-        ? `
-            <p>Indirizzo di consegna:</p>
-            <ul>
-                <li>Indirizzo: ${delivery.address}</li>
-                <li>CAP: ${delivery.zip}</li>
-                <li>Città: ${delivery.city}</li>
-                <li>Provincia: ${delivery.province}</li>
-                <li>Nazione: ${delivery.country}</li>
-            </ul>
-        `
-        : ""
-      }
-    `;
-
     const orderData = {
-      userEmail: email,
-      userName: name,
-      userLastName: lastName,
-      userPhone: phone,
-      billingAddress: billing,
-      totalPrice,
+      userEmail: formData.email,
+      userName: formData.name,
+      userLastName: formData.lastName,
+      userPhone: formData.phone,
+      billingAddress: formData.billing,
+      totalPrice: totalPrice,
       products: cartProducts.map((p) => ({
         id: p.id,
         name: p.name,
@@ -316,32 +245,10 @@ const CheckoutPage = () => {
     };
 
     if (showDeliveryAddress) {
-      orderData.deliveryAddress = delivery;
+      orderData.deliveryAddress = formData.delivery;
     }
 
     try {
-      // Invio email all'acquirente e al venditore
-      await Promise.all([
-        fetch(`${BASE_URL}/api/send-email`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            to: email,
-            subject: "Conferma del tuo Ordine",
-            body: emailBodyBuyer,
-          }),
-        }),
-        fetch(`${BASE_URL}/api/send-email`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            to: SELLER_EMAIL,
-            subject: `Nuovo Ordine da ${name} ${lastName}`,
-            body: emailBodySeller,
-          }),
-        }),
-      ]);
-
       // Salvataggio dell'ordine
       const purchaseResponse = await fetch(`${BASE_URL}/api/purchases`, {
         method: "POST",
@@ -357,12 +264,93 @@ const CheckoutPage = () => {
         );
       }
 
-      // Prepara il riepilogo per il modal prima di svuotare il carrello
-      const summary = {
-        products: cartProducts,
-        totalPrice: totalPrice,
-        shippingCost: shippingCost,
-      };
+      // 1. Recupera il numero d'ordine dalla risposta del server
+      const purchaseData = await purchaseResponse.json();
+      const orderNumber = purchaseData.order_number; // Assumi che il server ritorni { order_number: '...' }
+
+      // 2. Prepara il corpo delle email includendo il numero d'ordine
+      const productListHtml = cartProducts
+        .map(
+          (p) =>
+            `<li>${p.name} (${p.currentQuantity}x) - €${(
+              p.price * p.currentQuantity
+            ).toFixed(2)}</li>`
+        )
+        .join("");
+
+      const emailBodyBuyer = `
+        <h1>Riepilogo del tuo Ordine</h1>
+        <p>Gentile ${formData.name},</p>
+        <p>Il tuo ordine **#${orderNumber}** è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+        <ul>
+          ${productListHtml}
+        </ul>
+        <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
+        <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
+        <p>Grazie per il tuo acquisto!</p>
+      `;
+
+      const emailBodySeller = `
+          <h1>Nuovo Ordine Ricevuto</h1>
+          <p>Ciao venditore,</p>
+          <p>Hai ricevuto un nuovo ordine da ${formData.name} ${formData.lastName}.</p>
+          <p>Numero d'ordine: **#${orderNumber}**</p>
+          <p>Dettagli dell'ordine:</p>
+          <ul>
+              ${productListHtml}
+          </ul>
+          <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
+          <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
+          <p>Dettagli utente:</p>
+          <ul>
+              <li>Nome: ${formData.name}</li>
+              <li>Cognome: ${formData.lastName}</li>
+              <li>Email: ${formData.email}</li>
+              <li>Telefono: ${formData.phone}</li>
+          </ul>
+          <p>Indirizzo di fatturazione:</p>
+          <ul>
+              <li>Indirizzo: ${formData.billing.address}</li>
+              <li>CAP: ${formData.billing.zip}</li>
+              <li>Città: ${formData.billing.city}</li>
+              <li>Provincia: ${formData.billing.province}</li>
+              <li>Nazione: ${formData.billing.country}</li>
+          </ul>
+          ${showDeliveryAddress
+          ? `
+              <p>Indirizzo di consegna:</p>
+              <ul>
+                  <li>Indirizzo: ${formData.delivery.address}</li>
+                  <li>CAP: ${formData.delivery.zip}</li>
+                  <li>Città: ${formData.delivery.city}</li>
+                  <li>Provincia: ${formData.delivery.province}</li>
+                  <li>Nazione: ${formData.delivery.country}</li>
+              </ul>
+          `
+          : ""
+        }
+      `;
+      // Invio email all'acquirente e al venditore
+      await Promise.all([
+        fetch(`${BASE_URL}/api/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: formData.email,
+            subject: `Conferma del tuo Ordine #${orderNumber}`,
+            body: emailBodyBuyer,
+          }),
+        }),
+        fetch(`${BASE_URL}/api/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: SELLER_EMAIL,
+            subject: `Nuovo Ordine #${orderNumber} da ${formData.name} ${formData.lastName}`,
+            body: emailBodySeller,
+          }),
+        }),
+      ]);
 
       // Svuota il carrello e resetta il form
       setCartItems([]);
@@ -398,20 +386,22 @@ const CheckoutPage = () => {
       setShowDeliveryAddress(false);
       setIsAccordionOpen(false);
 
-      showModal(
-        "Acquisto effettuato con successo",
-        "Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.",
-        summary
-      );
+      // Prepara il riepilogo per la navigazione
+      const summary = {
+        products: cartProducts,
+        totalPrice: totalPrice,
+        shippingCost: shippingCost,
+      };
+
+      // 3. Naviga alla pagina di ringraziamento, passando i dati
+      navigate("/thankyou", { state: { orderSummary: summary, orderNumber: orderNumber } });
+
     } catch (error) {
       console.error("Errore durante l'elaborazione dell'ordine:", error);
-      showModal(
-        "Errore Generale",
-        `Si è verificato un errore durante l'ordine: ${error.message}. Riprova più tardi.`
-      );
+      // Mostra un alert di errore in caso di fallimento
+      alert(`Si è verificato un errore durante l'ordine: ${error.message}. Riprova più tardi.`);
     }
   };
-
   const handleAccordionToggle = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
@@ -612,81 +602,13 @@ const CheckoutPage = () => {
             border-top: 1px solid #e5e7eb;
             margin-top: 1rem;
           }
-          .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-          }
-          .modal-content {
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-          }
-          .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-          }
-          .modal-message {
-            color: #4b5563;
-          }
-          .modal-button {
-            background-color: #2563eb;
-            color: #ffffff;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            margin-top: 1.5rem;
-          }
-          .modal-button:hover {
-            background-color: #1e40af;
-          }
-          .summary-details {
-            text-align: left;
-            margin-top: 1rem;
-            color: #4b5563;
-          }
-          .summary-details h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-          }
-          .summary-details ul {
-            list-style: disc;
-            padding-left: 1.5rem;
-          }
-          .summary-details li {
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-          }
-          .summary-details p {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-          }
-          .summary-details .total {
-            font-weight: bold;
-          }
         `}
       </style>
       <div className="container">
         <div className="card card-checkout">
-          {/* Sezione del modulo di checkout */}
           <div className="form-section">
             <h1 className="title">Checkout</h1>
             <form onSubmit={handleOrder}>
-
               <h2 className="subtitle">Dati Personali</h2>
               <div className="form-grid">
                 <div className="form-group">
@@ -1072,43 +994,6 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal Personalizzato */}
-      {modal.isVisible && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="modal-title">{modal.title}</h2>
-            <p className="modal-message">{modal.message}</p>
-            {modal.summary && (
-              <div className="summary-details">
-                <h3>Riepilogo Acquisto:</h3>
-                <ul>
-                  {modal.summary.products.map((p) => (
-                    <li key={p.id}>
-                      {p.name} {p.currentQuantity}x
-                    </li>
-                  ))}
-                </ul>
-                <p>
-                  Costo di spedizione:{" "}
-                  <span className="total">
-                    €{modal.summary.shippingCost.toFixed(2)}
-                  </span>
-                </p>
-                <p>
-                  Totale:{" "}
-                  <span className="total">
-                    €{modal.summary.totalPrice.toFixed(2)}
-                  </span>
-                </p>
-              </div>
-            )}
-            <button onClick={closeModal} className="modal-button">
-              OK
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

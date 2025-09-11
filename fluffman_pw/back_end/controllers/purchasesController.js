@@ -2,7 +2,6 @@ import pool from "../db/connection.js";
 
 // STORE
 export async function store(req, res) {
-    // Estraiamo le variabili con i nomi esatti che arrivano dal frontend
     const {
         totalPrice,
         userName,
@@ -10,6 +9,7 @@ export async function store(req, res) {
         userEmail,
         userPhone,
         billingAddress,
+        deliveryAddress,
     } = req.body;
 
     const productsInCart = req.body.products;
@@ -18,10 +18,9 @@ export async function store(req, res) {
         return res.status(400).json({ error: true, message: "Il carrello è vuoto." });
     }
 
-    // Definiamo i campi per l'inserimento nel DB, mappando i nomi del frontend a quelli del DB
-    const user_id = 0; // Impostato a 0 per evitare l'errore "Column 'user_id' cannot be null"
-    const date = new Date().toISOString().split('T')[0]; // Data odierna
-    const card_number = 'N/A'; // Non gestito nel frontend
+    const user_id = 0;
+    const date = new Date().toISOString().split('T')[0];
+    const card_number = 'N/A';
     const total_price = totalPrice;
     const name = userName;
     const last_name = userLastName;
@@ -30,10 +29,10 @@ export async function store(req, res) {
     const address = billingAddress.address;
     const state = billingAddress.city;
     const cap = billingAddress.zip;
-    const shipping = 'Standard'; // Valore di default
-    const invoice = false; // Valore di default
-    const status = 'Pending'; // Stato iniziale dell'ordine
-    const shipping_invoice = billingAddress.address; // Usiamo l'indirizzo di fatturazione come predefinito
+    const shipping = 'Standard';
+    const invoice = false;
+    const status = 'Pending';
+    const shipping_invoice = deliveryAddress ? deliveryAddress.address : billingAddress.address;
 
     let connection;
 
@@ -65,12 +64,20 @@ export async function store(req, res) {
             );
         }
 
+        // Inserimento dell'acquisto senza order_number
         const [purchaseResult] = await connection.query(
             "INSERT INTO purchases (user_id, date, card_number, total_price, name, last_name, email, phone_number, address, state, cap, shipping, invoice, status, shipping_invoice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [user_id, date, card_number, total_price, name, last_name, email, phone_number, address, state, cap, shipping, invoice, status, shipping_invoice]
         );
 
         const purchaseId = purchaseResult.insertId;
+
+        // Genera il numero d'ordine basato sull'ID dell'acquisto
+        const orderNumber = `ORD-${purchaseId}`;
+        await connection.query(
+            "UPDATE purchases SET order_number = ? WHERE id = ?",
+            [orderNumber, purchaseId]
+        );
 
         for (const item of productsInCart) {
             await connection.query(
@@ -81,6 +88,7 @@ export async function store(req, res) {
 
         await connection.commit();
 
+        // Recupera l'acquisto appena creato per inviare i dati completi al frontend
         const [rows] = await pool.query("SELECT * FROM purchases WHERE id = ?", [purchaseId]);
         res.status(201).json(rows[0]);
 
