@@ -6,7 +6,7 @@
   --accent: #e7a150;
 }
 .cart {
-  min-height: calc(100vh - 300px);
+  min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
 }
