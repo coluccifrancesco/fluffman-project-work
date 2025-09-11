@@ -14,6 +14,7 @@ import WishlistPage from "../pages/WishlistPage";
 import CartPage from "../pages/CartPage";
 import ProductsPage from "../pages/ProductsPage";
 import CheckOutPage from "../pages/CheckOutPage";
+import ThankYouPage from "../pages/ThankYouPage";
 import ErrorPage from '../pages/ErrorPage';
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
               <Route path="/products/:slug" element={<SingleProductPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/cart" element={<CartPage />} />
+
+              <Route path="/thankyou" element={<ThankYouPage />} />
               {/* Catch-all per 404 */}
               <Route path="*" element={<ErrorPage />} />
             </Route>
