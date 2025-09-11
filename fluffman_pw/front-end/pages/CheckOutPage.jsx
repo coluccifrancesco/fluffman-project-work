@@ -1,5 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
 import "../styles/CheckOutPage.css";
+
+// regex restrittiva (accetta solo .com .it .org .net .edu) - case insensitive
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.(com|it|org|net|edu)$/i;
+// lista dei domini validi
+export const VALID_DOMAINS = [
+  "gmail.com",
+  "yahoo.com",
+  "hotmail.com",
+  "outlook.com",
+  "libero.it",
+  "tiscali.it",
+  "alice.it",
+  "virgilio.it",
+  "hotmail.it",
+  "icloud.com",
+  "protonmail.com",
+  "mail.com",
+  "zoho.com"
+];
 
 const CheckoutPage = () => {
   // Stato per gli articoli del carrello. Inizializza dallo storage locale.
@@ -21,6 +41,10 @@ const CheckoutPage = () => {
     message: "",
     summary: null,
   });
+  const [emailError, setEmailError] = useState(false);
+
+  // Ref per il focus sulla email
+  const emailRef = useRef(null);
 
   // Stato per i dati del modulo.
   const [formData, setFormData] = useState({
@@ -145,6 +169,10 @@ const CheckoutPage = () => {
   const handleDirectInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "email") {
+      setEmailError(value && !EMAIL_PATTERN.test(value.trim()));
+    }
   };
 
 
@@ -174,12 +202,31 @@ const CheckoutPage = () => {
     e.preventDefault();
 
     const missing = getMissingFields();
+
+    // ✅ Validazione email con regex
+    if (formData.email) {
+      const emailTrimmed = formData.email.trim();
+      const [_, domain] = emailTrimmed.split("@");
+      if (!EMAIL_PATTERN.test(emailTrimmed)) {
+        missing.push("email");
+        setEmailError("Inserisci un'email valida");
+      } else if (!VALID_DOMAINS.includes(domain)) {
+        missing.push("email");
+        setEmailError("Inserisci un dominio email valido (es. gmail.com, yahoo.com)");
+      }
+    }
     setMissingFields(missing);
     if (missing.length > 0) {
       setShowFieldErrors(true);
+      // ⚡ Scroll automatico sull'email se è tra i campi mancanti o non valida
+      if (missing.includes("email") && emailRef.current) {
+        emailRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        emailRef.current.focus();
+      }
       // Non inviare l'ordine se ci sono campi obbligatori mancanti
       return;
     }
+
     setShowFieldErrors(false);
 
     // Prendi i dati dal formData per usarli nei template string
@@ -672,11 +719,20 @@ const CheckoutPage = () => {
                     type="email"
                     id="email"
                     name="email"
+                    ref={emailRef}
                     value={formData.email}
                     onChange={handleDirectInputChange}
-                    placeholder="mariorossi@gmail.com"
-                    style={showFieldErrors && missingFields.includes("email") ? { borderColor: '#b91c1c' } : {}}
+                    style={showFieldErrors && missingFields.includes("email") || emailError
+                      ? { borderColor: '#b91c1c' }
+                      : {}
+                    }
+                    placeholder="esempio@email.com"
                   />
+                  {emailError && (
+                    <div style={{ color: '#b91c1c', fontSize: '0.95rem', marginTop: '0.25rem' }}>
+                      {emailError}
+                    </div>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">Telefono <span style={{ color: 'red' }}>*</span></label>
