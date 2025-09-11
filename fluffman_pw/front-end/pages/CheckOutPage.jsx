@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import '../styles/CheckOutPage.css'
+import { useState, useEffect } from "react";
+import "../styles/CheckOutPage.css";
 
 const CheckoutPage = () => {
   // Stato per gli articoli del carrello. Inizializza dallo storage locale.
@@ -15,7 +15,12 @@ const CheckoutPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [modal, setModal] = useState({ isVisible: false, title: "", message: "", summary: null });
+  const [modal, setModal] = useState({
+    isVisible: false,
+    title: "",
+    message: "",
+    summary: null,
+  });
 
   // Stato per i dati del modulo.
   const [formData, setFormData] = useState({
@@ -29,7 +34,7 @@ const CheckoutPage = () => {
       zip: "",
       city: "",
       province: "",
-      country: ""
+      country: "",
     },
     delivery: {
       address: "",
@@ -37,14 +42,14 @@ const CheckoutPage = () => {
       zip: "",
       city: "",
       province: "",
-      country: ""
+      country: "",
     },
     payment: {
       cardNumber: "",
       expireDate: "",
       securityCode: "",
-      cardOwner: ""
-    }
+      cardOwner: "",
+    },
   });
 
   const BASE_URL = "http://localhost:3030";
@@ -123,23 +128,24 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e, section) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
-        [name]: value
-      }
+        [name]: value,
+      },
     }));
   };
 
   const handleDirectInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleOrder = async (e) => {
     e.preventDefault();
-    const { name, lastName, email, phone, billing, delivery, payment } = formData;
+    const { name, lastName, email, phone, billing, delivery, payment } =
+      formData;
 
     const requiredFields = [
       name,
@@ -169,7 +175,12 @@ const CheckoutPage = () => {
       )
       .join("");
 
-    const shippingCost = totalPrice - cartProducts.reduce((sum, product) => sum + (product.price * product.currentQuantity), 0);
+    const shippingCost =
+      totalPrice -
+      cartProducts.reduce(
+        (sum, product) => sum + product.price * product.currentQuantity,
+        0
+      );
 
     const emailBodyBuyer = `
       <h1>Riepilogo del tuo Ordine</h1>
@@ -208,8 +219,9 @@ const CheckoutPage = () => {
             <li>Provincia: ${billing.province}</li>
             <li>Nazione: ${billing.country}</li>
         </ul>
-        ${showDeliveryAddress
-        ? `
+        ${
+          showDeliveryAddress
+            ? `
             <p>Indirizzo di consegna:</p>
             <ul>
                 <li>Indirizzo: ${delivery.address}</li>
@@ -219,8 +231,8 @@ const CheckoutPage = () => {
                 <li>Nazione: ${delivery.country}</li>
             </ul>
         `
-        : ""
-      }
+            : ""
+        }
     `;
 
     const orderData = {
@@ -275,7 +287,8 @@ const CheckoutPage = () => {
       if (!purchaseResponse.ok) {
         const purchaseErrorData = await purchaseResponse.json();
         throw new Error(
-          purchaseErrorData.message || "Errore sconosciuto nel salvataggio dell'ordine"
+          purchaseErrorData.message ||
+            "Errore sconosciuto nel salvataggio dell'ordine"
         );
       }
 
@@ -283,7 +296,7 @@ const CheckoutPage = () => {
       const summary = {
         products: cartProducts,
         totalPrice: totalPrice,
-        shippingCost: shippingCost
+        shippingCost: shippingCost,
       };
 
       // Svuota il carrello e resetta il form
@@ -294,14 +307,37 @@ const CheckoutPage = () => {
         lastName: "",
         email: "",
         phone: "",
-        billing: { address: "", address2: "", zip: "", city: "", province: "", country: "" },
-        delivery: { address: "", address2: "", zip: "", city: "", province: "", country: "" },
-        payment: { cardNumber: "", expireDate: "", securityCode: "", cardOwner: "" }
+        billing: {
+          address: "",
+          address2: "",
+          zip: "",
+          city: "",
+          province: "",
+          country: "",
+        },
+        delivery: {
+          address: "",
+          address2: "",
+          zip: "",
+          city: "",
+          province: "",
+          country: "",
+        },
+        payment: {
+          cardNumber: "",
+          expireDate: "",
+          securityCode: "",
+          cardOwner: "",
+        },
       });
       setShowDeliveryAddress(false);
       setIsAccordionOpen(false);
 
-      showModal("Acquisto effettuato con successo", "Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.", summary);
+      showModal(
+        "Acquisto effettuato con successo",
+        "Grazie per averci scelto, riceverai i tuoi prodotti entro 24/48h.",
+        summary
+      );
     } catch (error) {
       console.error("Errore durante l'elaborazione dell'ordine:", error);
       showModal(
@@ -580,7 +616,7 @@ const CheckoutPage = () => {
         `}
       </style>
       <div className="container">
-        <div className="card">
+        <div className="card card-checkout">
           {/* Sezione del modulo di checkout */}
           <div className="form-section">
             <h1 className="title">Checkout</h1>
@@ -642,18 +678,20 @@ const CheckoutPage = () => {
                     id="billingAddress"
                     name="address"
                     value={formData.billing.address}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Via Roma n.1"
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="billingAddress2">Piano, appartamento o scala</label>
+                  <label htmlFor="billingAddress2">
+                    Piano, appartamento o scala
+                  </label>
                   <input
                     type="text"
                     id="billingAddress2"
                     name="address2"
                     value={formData.billing.address2}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Es. Piano 2, Scala A"
                   />
                 </div>
@@ -664,7 +702,7 @@ const CheckoutPage = () => {
                     id="billingZip"
                     name="zip"
                     value={formData.billing.zip}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="00100"
                   />
                 </div>
@@ -675,7 +713,7 @@ const CheckoutPage = () => {
                     id="billingCity"
                     name="city"
                     value={formData.billing.city}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Roma"
                   />
                 </div>
@@ -686,7 +724,7 @@ const CheckoutPage = () => {
                     id="billingProvince"
                     name="province"
                     value={formData.billing.province}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="RM"
                   />
                 </div>
@@ -697,7 +735,7 @@ const CheckoutPage = () => {
                     id="billingCountry"
                     name="country"
                     value={formData.billing.country}
-                    onChange={(e) => handleInputChange(e, 'billing')}
+                    onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Italia"
                   />
                 </div>
@@ -711,7 +749,9 @@ const CheckoutPage = () => {
                   checked={showDeliveryAddress}
                   onChange={() => setShowDeliveryAddress(!showDeliveryAddress)}
                 />
-                <label htmlFor="checkChecked">Indirizzo di consegna diverso da quello di fatturazione</label>
+                <label htmlFor="checkChecked">
+                  Indirizzo di consegna diverso da quello di fatturazione
+                </label>
               </div>
               {showDeliveryAddress && (
                 <div className="form-grid">
@@ -722,18 +762,20 @@ const CheckoutPage = () => {
                       id="deliveryAddress"
                       name="address"
                       value={formData.delivery.address}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="Via Roma n.1"
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="deliveryAddress2">Piano, appartamento o scala</label>
+                    <label htmlFor="deliveryAddress2">
+                      Piano, appartamento o scala
+                    </label>
                     <input
                       type="text"
                       id="deliveryAddress2"
                       name="address2"
                       value={formData.delivery.address2}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="Es. Piano 2, Scala A"
                     />
                   </div>
@@ -744,7 +786,7 @@ const CheckoutPage = () => {
                       id="deliveryZip"
                       name="zip"
                       value={formData.delivery.zip}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="00100"
                     />
                   </div>
@@ -755,7 +797,7 @@ const CheckoutPage = () => {
                       id="deliveryCity"
                       name="city"
                       value={formData.delivery.city}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="Roma"
                     />
                   </div>
@@ -766,7 +808,7 @@ const CheckoutPage = () => {
                       id="deliveryProvince"
                       name="province"
                       value={formData.delivery.province}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="RM"
                     />
                   </div>
@@ -777,7 +819,7 @@ const CheckoutPage = () => {
                       id="deliveryCountry"
                       name="country"
                       value={formData.delivery.country}
-                      onChange={(e) => handleInputChange(e, 'delivery')}
+                      onChange={(e) => handleInputChange(e, "delivery")}
                       placeholder="Italia"
                     />
                   </div>
@@ -785,7 +827,10 @@ const CheckoutPage = () => {
               )}
 
               <div className="accordion-container">
-                <div className="accordion-header" onClick={handleAccordionToggle}>
+                <div
+                  className="accordion-header"
+                  onClick={handleAccordionToggle}
+                >
                   <h2>Aggiungi una carta per il pagamento</h2>
                   <span>{isAccordionOpen ? "▲" : "▼"}</span>
                 </div>
@@ -798,7 +843,7 @@ const CheckoutPage = () => {
                         id="cardNumber"
                         name="cardNumber"
                         value={formData.payment.cardNumber}
-                        onChange={(e) => handleInputChange(e, 'payment')}
+                        onChange={(e) => handleInputChange(e, "payment")}
                       />
                     </div>
                     <div className="form-grid">
@@ -809,30 +854,34 @@ const CheckoutPage = () => {
                           id="expireDate"
                           name="expireDate"
                           value={formData.payment.expireDate}
-                          onChange={(e) => handleInputChange(e, 'payment')}
+                          onChange={(e) => handleInputChange(e, "payment")}
                           placeholder="MM/YY"
                         />
                       </div>
                       <div className="form-group">
-                        <label htmlFor="securityCode">Codice di sicurezza</label>
+                        <label htmlFor="securityCode">
+                          Codice di sicurezza
+                        </label>
                         <input
                           type="text"
                           id="securityCode"
                           name="securityCode"
                           value={formData.payment.securityCode}
-                          onChange={(e) => handleInputChange(e, 'payment')}
+                          onChange={(e) => handleInputChange(e, "payment")}
                           placeholder="3 cifre sul retro"
                         />
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="cardOwner">Nome del proprietario della carta</label>
+                      <label htmlFor="cardOwner">
+                        Nome del proprietario della carta
+                      </label>
                       <input
                         type="text"
                         id="cardOwner"
                         name="cardOwner"
                         value={formData.payment.cardOwner}
-                        onChange={(e) => handleInputChange(e, 'payment')}
+                        onChange={(e) => handleInputChange(e, "payment")}
                         placeholder="Mario Rossi"
                       />
                     </div>
@@ -841,11 +890,8 @@ const CheckoutPage = () => {
               </div>
 
               {cartProducts.length > 0 && (
-                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                  <button
-                    type="submit"
-                    className="btn-submit"
-                  >
+                <div style={{ marginTop: "2rem", textAlign: "center" }}>
+                  <button type="submit" className="btn-submit">
                     Ordina e Paga
                   </button>
                 </div>
@@ -860,27 +906,52 @@ const CheckoutPage = () => {
               {cartProducts.length > 0 ? (
                 cartProducts.map((product) => (
                   <div key={product.id} className="product-item">
-                    <img src={product.image} alt={product.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Immagine'} />
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://placehold.co/100x100?text=Immagine")
+                      }
+                    />
                     <div>
                       <h3>{product.name}</h3>
                       <p>Quantità: {product.currentQuantity}</p>
                     </div>
-                    <span>€{(product.price * product.currentQuantity).toFixed(2)}</span>
+                    <span>
+                      €{(product.price * product.currentQuantity).toFixed(2)}
+                    </span>
                   </div>
                 ))
               ) : (
-                <p style={{ textAlign: 'center', color: '#6b7280' }}>Il carrello è vuoto.</p>
+                <p style={{ textAlign: "center", color: "#6b7280" }}>
+                  Il carrello è vuoto.
+                </p>
               )}
             </div>
             {cartProducts.length > 0 && (
               <div className="summary-totals">
                 <div className="summary-line">
                   <span>Subtotale</span>
-                  <span>€{(cartProducts.reduce((sum, p) => sum + p.price * p.currentQuantity, 0)).toFixed(2)}</span>
+                  <span>
+                    €
+                    {cartProducts
+                      .reduce((sum, p) => sum + p.price * p.currentQuantity, 0)
+                      .toFixed(2)}
+                  </span>
                 </div>
                 <div className="summary-line">
                   <span>Spedizione</span>
-                  <span>€{(totalPrice - cartProducts.reduce((sum, p) => sum + p.price * p.currentQuantity, 0)).toFixed(2)}</span>
+                  <span>
+                    €
+                    {(
+                      totalPrice -
+                      cartProducts.reduce(
+                        (sum, p) => sum + p.price * p.currentQuantity,
+                        0
+                      )
+                    ).toFixed(2)}
+                  </span>
                 </div>
                 <div className="summary-line summary-total-line">
                   <span>Totale</span>
@@ -910,17 +981,19 @@ const CheckoutPage = () => {
                 </ul>
                 <p>
                   Costo di spedizione:{" "}
-                  <span className="total">€{modal.summary.shippingCost.toFixed(2)}</span>
+                  <span className="total">
+                    €{modal.summary.shippingCost.toFixed(2)}
+                  </span>
                 </p>
                 <p>
-                  Totale: <span className="total">€{modal.summary.totalPrice.toFixed(2)}</span>
+                  Totale:{" "}
+                  <span className="total">
+                    €{modal.summary.totalPrice.toFixed(2)}
+                  </span>
                 </p>
               </div>
             )}
-            <button
-              onClick={closeModal}
-              className="modal-button"
-            >
+            <button onClick={closeModal} className="modal-button">
               OK
             </button>
           </div>
