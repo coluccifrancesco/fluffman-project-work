@@ -10,6 +10,7 @@ export default function ProductsPage() {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState("grid");
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -66,8 +67,6 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-
-
   if (loading) return <div className="text-center mt-5">Caricamento...</div>;
   if (error)
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
@@ -76,37 +75,27 @@ export default function ProductsPage() {
     <div className="hp_bg">
       <div className="p-3">
         <div className="container my-4">
-          {/* FILTRI */}
-          <div className="text-start d-flex gap-3 align-items-center flex-wrap">
-            {/* Animal filter*/}
-            <select
-              value={filters.animal_id}
-              onChange={(e) => {
-                e.preventDefault();
-                updateFilter("animal_id", e.target.value);
-              }}
-              className="select w-auto m-3"
-            >
-              <option value="all">Tutti i Prodotti</option>
-              <option value="1">Cani</option>
-              <option value="2">Gatti</option>
-              <option value="3">Pesci</option>
-              <option value="4">Roditori</option>
-              <option value="5">Uccelli</option>
-            </select>
+          {/* Contenitore dei filtri a sinistra */}
+          <div className="filters-container">
+            {/* Sezione Filtri */}
+            <div className="filters">
+              <select
+                value={filters.animal_id}
+                onChange={(e) => updateFilter("animal_id", e.target.value)}
+                className="select w-auto m-2"
+              >
+                <option value="all">Tutti i Prodotti</option>
+                <option value="1">Cani</option>
+                <option value="2">Gatti</option>
+                <option value="3">Pesci</option>
+                <option value="4">Roditori</option>
+                <option value="5">Uccelli</option>
+              </select>
 
-            {/* Brand filter*/}
-            <div
-              className="m-1"
-              style={{ maxHeight: "120px", overflowY: "auto" }}
-            >
               <select
                 value={filters.brand_id}
-                onChange={(e) => {
-                  e.preventDefault();
-                  updateFilter("brand_id", e.target.value);
-                }}
-                className="select w-auto"
+                onChange={(e) => updateFilter("brand_id", e.target.value)}
+                className="select w-auto m-2"
               >
                 <option value="">Tutti i Brand</option>
                 {brands.map((b) => (
@@ -116,19 +105,18 @@ export default function ProductsPage() {
                 ))}
               </select>
             </div>
+          </div>
 
-            {/* Filtro Ordinamento */}
+          {/* Sezione Ordinamento a destra */}
+          <div className="sorting">
             <select
               value={`${filters.sort_by}_${filters.sort_order}`}
               onChange={(e) => {
-                {
-                  e.preventDefault();
-                  const [by, order] = e.target.value.split("_");
-                  updateFilter("sort_by", by);
-                  updateFilter("sort_order", order);
-                }
+                const [by, order] = e.target.value.split("_");
+                updateFilter("sort_by", by);
+                updateFilter("sort_order", order);
               }}
-              className="select w-auto m-3"
+              className="select w-auto"
             >
               <option value="id_ASC">Default</option>
               <option value="price_ASC">Prezzo crescente</option>
@@ -136,40 +124,83 @@ export default function ProductsPage() {
               <option value="name_ASC">Nome A-Z</option>
               <option value="name_DESC">Nome Z-A</option>
             </select>
+          </div>
 
-            {/* Checkbox Prodotti Scontati */}
+          <h1 className="text-center my-5">Il nostro listino prodotti</h1>
+          {/* Toggle Griglia/Lista  */}
+          <div className="view-toggle mb-3">
+            <div className="toggles">
+              {/* Bottone Griglia */}
+              <div className="tooltip-wrapper">
+                <button
+                  className={`btn ${(viewMode === "grid", "btn-success")}`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  <i
+                    className="fa-solid fa-image"
+                    style={{ color: "white" }}
+                  ></i>
+                  <span className="tooltip-text">Griglia</span>
+                </button>
+              </div>
+
+              {/* Bottone Lista */}
+              <div className="tooltip-wrapper">
+                <button
+                  className={`btn ${(viewMode === "list", "btn-success")}`}
+                  onClick={() => setViewMode("list")}
+                >
+                  <i
+                    className="fa-solid fa-list"
+                    style={{ color: "white" }}
+                  ></i>
+                  <span className="tooltip-text">Lista</span>
+                </button>
+              </div>
+            </div>
+            {/* CHECKBOX PRODOTTI SCONTATI */}
             <label
-              className="m-1"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
+              className="m-2 d-flex align-items-center"
+              style={{ gap: "6px" }}
             >
               <input
                 type="checkbox"
                 checked={filters.discount === "1"}
-                onChange={(e) => {
-                  e.preventDefault();
-                  updateFilter("discount", e.target.checked ? "1" : "");
-                }}
+                onChange={(e) =>
+                  updateFilter("discount", e.target.checked ? "1" : "")
+                }
               />
               Solo Prodotti scontati
             </label>
           </div>
-
-          <h1 className="text-center my-5">Il nostro listino prodotti</h1>
-
           {/* Prodotti */}
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            {allProducts.map((product) => (
-              <div key={product.id} className="col">
-                <CardItem
-                  product={product}
-                />
-              </div>
-            ))}
-          </div>
+          {viewMode === "grid" ? (
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+              {allProducts.map((product) => (
+                <div key={product.id} className="col">
+                  <CardItem product={product} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ul className="list-group">
+              {allProducts.map((product) => (
+                <li
+                  key={product.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{product.name}</strong> <br />
+                    <small className="text-muted">
+                      {brands.find((b) => b.id === product.brand_id)?.name ||
+                        "Senza brand"}
+                    </small>
+                  </div>
+                  <span className="fw-bold">{product.price} €</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
