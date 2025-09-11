@@ -9,9 +9,9 @@ export default function CardItem({ product }) {
   const { wishlist, toggleWishlist } = useWishlist();
   const { cart, addToCart, removeFromCart } = useCart();
 
-  const isFavorite = wishlist.some(item => item.id === product.id);
+  const isFavorite = wishlist.some((item) => item.id === product.id);
 
-  const cartItem = cart.find(item => item.id === product.id);
+  const cartItem = cart.find((item) => item.id === product.id);
   const currentQuantity = cartItem ? cartItem.quantity : 0;
 
   // Stato per il toast del carrello
@@ -96,7 +96,7 @@ export default function CardItem({ product }) {
     setTimeout(() => {
       setShowRemoveToast(false);
     }, 3000);
-  }
+  };
 
   // Funzione per gestire il toast della wishlist e la classe dinamica
   const handleToggleWishlist = () => {
@@ -119,28 +119,44 @@ export default function CardItem({ product }) {
     <div className="card product_card text-center h-100 position-relative">
       {/* Toast di conferma per il carrello */}
       {showCartToast && (
-        <div className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-success py-2 px-3" role="alert" style={{ zIndex: 1050 }}>
+        <div
+          className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-success py-2 px-3"
+          role="alert"
+          style={{ zIndex: 1050 }}
+        >
           <p className="mb-0">Aggiunto al carrello!</p>
         </div>
       )}
 
       {/* Toast di conferma per la wishlist */}
       {showWishlistToast && (
-        <div className={`position-absolute top-0 start-50 translate-middle-x mt-2 alert ${wishlistToastClass} py-2 px-3`} role="alert" style={{ zIndex: 1050 }}>
+        <div
+          className={`position-absolute top-0 start-50 translate-middle-x mt-2 alert ${wishlistToastClass} py-2 px-3`}
+          role="alert"
+          style={{ zIndex: 1050 }}
+        >
           <p className="mb-0">{wishlistToastMessage}</p>
         </div>
       )}
 
       {/* Toast per la rimozione dal carrello */}
       {showRemoveToast && (
-        <div className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-danger py-2 px-3" role="alert" style={{ zIndex: 1050 }}>
+        <div
+          className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-danger py-2 px-3"
+          role="alert"
+          style={{ zIndex: 1050 }}
+        >
           <p className="mb-0">Articolo rimosso dal carrello!</p>
         </div>
       )}
 
       {/* Nuovo toast per esaurimento scorte */}
       {showStockToast && (
-        <div className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-warning py-2 px-3" role="alert" style={{ zIndex: 1050 }}>
+        <div
+          className="position-absolute top-0 start-50 translate-middle-x mt-2 alert alert-warning py-2 px-3"
+          role="alert"
+          style={{ zIndex: 1050 }}
+        >
           <p className="mb-0">Limite massimo di pezzi raggiunto!</p>
         </div>
       )}
@@ -207,9 +223,15 @@ export default function CardItem({ product }) {
             <button
               className="p-0"
               onClick={handleToggleWishlist}
-              title={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+              title={
+                isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"
+              }
             >
-              <i className={`bi fs-4 me-3 ${isFavorite ? "bi-star-fill text-warning" : "bi-star"}`}></i>
+              <i
+                className={`bi fs-4 me-3 ${
+                  isFavorite ? "bi-star-fill text-warning" : "bi-star"
+                }`}
+              ></i>
             </button>
 
             {currentQuantity > 0 ? (
