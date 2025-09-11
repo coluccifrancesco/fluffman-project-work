@@ -39,6 +39,22 @@ export default function ProductsPage() {
     setSearchParams(newParams, { replace: true });
   };
 
+  //Reset dei filtri per tornare alla pagina iniziale
+  const resetFilters = () => {
+    const defaultFilters = {
+      animal_id: "all",
+      brand_id: "",
+      sort_by: "id",
+      sort_order: "ASC",
+      discount: "",
+      price_range: "",
+    };
+    setFilters(defaultFilters);
+
+    const newParams = new URLSearchParams();
+    setSearchParams(newParams, { replace: true });
+  };
+
   useEffect(() => {
     setLoading(true);
     const query = new URLSearchParams();
@@ -123,6 +139,14 @@ export default function ProductsPage() {
                 </select>
               </div>
             </div>
+            {/* SELETTORE DI RESET */}
+            <div className="resetting">
+              <div className="text-center my-3">
+                <button className="reset" onClick={resetFilters}>
+                  Reset filtri
+                </button>
+              </div>
+            </div>
 
             {/* Sezione Ordinamento a destra */}
             <div className="sorting">
@@ -140,8 +164,12 @@ export default function ProductsPage() {
                 className="select w-auto"
               >
                 <option value="id_ASC">Default</option>
-                <option value="price_ASC">Prezzo crescente</option>
-                <option value="price_DESC">Prezzo decrescente</option>
+                <option value="price_ASC text-white">
+                  Prezzo crescente ↑{" "}
+                </option>
+                <option value="price_DESC text-white">
+                  Prezzo decrescente ↓{" "}
+                </option>
                 <option value="name_ASC">Nome A-Z</option>
                 <option value="name_DESC">Nome Z-A</option>
               </select>
@@ -211,7 +239,18 @@ export default function ProductsPage() {
             </label>
           </div>
           {/* Prodotti */}
-          {viewMode === "grid" ? (
+          {/* CAT MEME - EMPTY STATE */}
+          {allProducts.length === 0 ? (
+            <div className="d-flex justify-content-center flex-column align-items-center">
+              <img className="cat_meme" src="/sad_cat.png" alt="Sad cat" />
+              <div className="text-center mt-5 text-light-emphasis">
+                <strong>
+                  Nessun prodotto trovato con i criteri selezionati! Ci
+                  dispiace!
+                </strong>
+              </div>
+            </div>
+          ) : viewMode === "grid" ? (
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
               {allProducts.map((product) => (
                 <div key={product.id} className="col">

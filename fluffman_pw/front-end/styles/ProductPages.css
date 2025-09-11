@@ -10,7 +10,9 @@
 .bg {
   background-color: var(--background);
 }
-
+.cat_meme {
+  max-width: 10rem;
+}
 .select {
   color: var(--text);
   background-color: var(--accent);
@@ -44,8 +46,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
-
 .filters-container {
   flex: 1;
 }
@@ -62,6 +64,7 @@
 }
 
 .sorting {
+  flex: 1;
   justify-content: flex-end;
   flex-direction: column;
   align-items: flex-end;
@@ -108,4 +111,31 @@
 .tooltip-wrapper:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+.resetting {
+  flex: 0 0 auto;
+}
+
+.reset {
+  color: var(--text);
+  background-color: var(--accent);
+  padding: 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.33rem;
+  max-width: 200px;
+  width: 100%;
+  margin: 0.5rem;
+}
+
+.reset:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-color: var(--secondary);
+  cursor: pointer;
+}
+
+.reset:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 0.2rem rgba(175, 104, 24, 0.25);
 }
