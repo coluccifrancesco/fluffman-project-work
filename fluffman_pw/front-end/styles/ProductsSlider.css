@@ -1,7 +1,7 @@
 /*#region arrows*/
 .arrow_left_slider {
   position: absolute;
-  bottom: 350px; 
+  bottom: 200px; 
   left: -15px;
   width: 50px;
   height: 50px;
@@ -12,7 +12,7 @@
 
 .arrow_right_slider {
   position: absolute;
-  bottom: 350px; 
+  bottom: 200px; 
   right: -15px;
   width: 50px;
   height: 50px;
@@ -164,3 +164,5 @@
 }
 
 /*#endregion arrows*/
+
+

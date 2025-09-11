@@ -52,6 +52,11 @@ const CheckoutPage = () => {
     },
   });
 
+  // Stato per i campi obbligatori mancanti
+  const [missingFields, setMissingFields] = useState([]);
+  // Stato per mostrare errori visivi solo dopo submit
+  const [showFieldErrors, setShowFieldErrors] = useState(false);
+
   const BASE_URL = "http://localhost:3030";
   const SELLER_EMAIL = "seller@example.com"; // Modificare con l'email del venditore
 
@@ -142,29 +147,43 @@ const CheckoutPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+
+  // Funzione per controllare i campi obbligatori mancanti
+  const getMissingFields = () => {
+    const { name, lastName, email, phone, billing } = formData;
+    const fields = [];
+    if (!name) fields.push("name");
+    if (!lastName) fields.push("lastName");
+    if (!email) fields.push("email");
+    if (!phone) fields.push("phone");
+    if (!billing.address) fields.push("billing.address");
+    if (!billing.zip) fields.push("billing.zip");
+    if (!billing.city) fields.push("billing.city");
+    if (!billing.province) fields.push("billing.province");
+    if (!billing.country) fields.push("billing.country");
+    return fields;
+  };
+
+  // Aggiorna missingFields ogni volta che formData cambia
+  useEffect(() => {
+    setMissingFields(getMissingFields());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
+
   const handleOrder = async (e) => {
     e.preventDefault();
-    const { name, lastName, email, phone, billing, delivery, payment } =
-      formData;
 
-    const requiredFields = [
-      name,
-      lastName,
-      email,
-      billing.address,
-      billing.zip,
-      billing.city,
-      billing.province,
-      billing.country,
-    ];
-
-    if (requiredFields.some((field) => !field)) {
-      showModal(
-        "Attenzione",
-        "Per favore, compila tutti i campi obbligatori dell'indirizzo di fatturazione."
-      );
+    const missing = getMissingFields();
+    setMissingFields(missing);
+    if (missing.length > 0) {
+      setShowFieldErrors(true);
+      // Non inviare l'ordine se ci sono campi obbligatori mancanti
       return;
     }
+    setShowFieldErrors(false);
+
+    // Prendi i dati dal formData per usarli nei template string
+    const { name, lastName, email, phone, billing, delivery } = formData;
 
     const productListHtml = cartProducts
       .map(
@@ -219,9 +238,8 @@ const CheckoutPage = () => {
             <li>Provincia: ${billing.province}</li>
             <li>Nazione: ${billing.country}</li>
         </ul>
-        ${
-          showDeliveryAddress
-            ? `
+        ${showDeliveryAddress
+        ? `
             <p>Indirizzo di consegna:</p>
             <ul>
                 <li>Indirizzo: ${delivery.address}</li>
@@ -231,8 +249,8 @@ const CheckoutPage = () => {
                 <li>Nazione: ${delivery.country}</li>
             </ul>
         `
-            : ""
-        }
+        : ""
+      }
     `;
 
     const orderData = {
@@ -288,7 +306,7 @@ const CheckoutPage = () => {
         const purchaseErrorData = await purchaseResponse.json();
         throw new Error(
           purchaseErrorData.message ||
-            "Errore sconosciuto nel salvataggio dell'ordine"
+          "Errore sconosciuto nel salvataggio dell'ordine"
         );
       }
 
@@ -621,10 +639,11 @@ const CheckoutPage = () => {
           <div className="form-section">
             <h1 className="title">Checkout</h1>
             <form onSubmit={handleOrder}>
+
               <h2 className="subtitle">Dati Personali</h2>
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="name">Nome</label>
+                  <label htmlFor="name">Nome <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="name"
@@ -632,10 +651,11 @@ const CheckoutPage = () => {
                     value={formData.name}
                     onChange={handleDirectInputChange}
                     placeholder="Mario"
+                    style={showFieldErrors && missingFields.includes("name") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="lastName">Cognome</label>
+                  <label htmlFor="lastName">Cognome <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="lastName"
@@ -643,10 +663,11 @@ const CheckoutPage = () => {
                     value={formData.lastName}
                     onChange={handleDirectInputChange}
                     placeholder="Rossi"
+                    style={showFieldErrors && missingFields.includes("lastName") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
+                  <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="email"
                     id="email"
@@ -654,10 +675,11 @@ const CheckoutPage = () => {
                     value={formData.email}
                     onChange={handleDirectInputChange}
                     placeholder="mariorossi@gmail.com"
+                    style={showFieldErrors && missingFields.includes("email") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="phone">Telefono</label>
+                  <label htmlFor="phone">Telefono <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="tel"
                     id="phone"
@@ -665,14 +687,19 @@ const CheckoutPage = () => {
                     value={formData.phone}
                     onChange={handleDirectInputChange}
                     placeholder="+39 123 456 7890"
+                    style={showFieldErrors && missingFields.includes("phone") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
               </div>
+              <div style={{ marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center', color: '#b91c1c', fontSize: '0.95rem' }}>
+                I campi contrassegnati con <span style={{ color: 'red' }}>*</span> sono obbligatori
+              </div>
+
 
               <h2 className="subtitle">Indirizzo di Fatturazione</h2>
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="billingAddress">Indirizzo</label>
+                  <label htmlFor="billingAddress">Indirizzo <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="billingAddress"
@@ -680,6 +707,7 @@ const CheckoutPage = () => {
                     value={formData.billing.address}
                     onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Via Roma n.1"
+                    style={showFieldErrors && missingFields.includes("billing.address") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
@@ -696,7 +724,7 @@ const CheckoutPage = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="billingZip">CAP</label>
+                  <label htmlFor="billingZip">CAP <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="billingZip"
@@ -704,10 +732,11 @@ const CheckoutPage = () => {
                     value={formData.billing.zip}
                     onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="00100"
+                    style={showFieldErrors && missingFields.includes("billing.zip") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="billingCity">Città</label>
+                  <label htmlFor="billingCity">Città <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="billingCity"
@@ -715,10 +744,11 @@ const CheckoutPage = () => {
                     value={formData.billing.city}
                     onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Roma"
+                    style={showFieldErrors && missingFields.includes("billing.city") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="billingProvince">Provincia</label>
+                  <label htmlFor="billingProvince">Provincia <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="billingProvince"
@@ -726,10 +756,11 @@ const CheckoutPage = () => {
                     value={formData.billing.province}
                     onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="RM"
+                    style={showFieldErrors && missingFields.includes("billing.province") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="billingCountry">Nazione</label>
+                  <label htmlFor="billingCountry">Nazione <span style={{ color: 'red' }}>*</span></label>
                   <input
                     type="text"
                     id="billingCountry"
@@ -737,8 +768,12 @@ const CheckoutPage = () => {
                     value={formData.billing.country}
                     onChange={(e) => handleInputChange(e, "billing")}
                     placeholder="Italia"
+                    style={showFieldErrors && missingFields.includes("billing.country") ? { borderColor: '#b91c1c' } : {}}
                   />
                 </div>
+              </div>
+              <div style={{ marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center', color: '#b91c1c', fontSize: '0.95rem' }}>
+                I campi contrassegnati con <span style={{ color: 'red' }}>*</span> sono obbligatori
               </div>
 
               <h2 className="subtitle">Indirizzo di Consegna</h2>
@@ -754,76 +789,81 @@ const CheckoutPage = () => {
                 </label>
               </div>
               {showDeliveryAddress && (
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label htmlFor="deliveryAddress">Indirizzo</label>
-                    <input
-                      type="text"
-                      id="deliveryAddress"
-                      name="address"
-                      value={formData.delivery.address}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="Via Roma n.1"
-                    />
+                <>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="deliveryAddress">Indirizzo <span style={{ color: 'red' }}>*</span></label>
+                      <input
+                        type="text"
+                        id="deliveryAddress"
+                        name="address"
+                        value={formData.delivery.address}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="Via Roma n.1"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="deliveryAddress2">
+                        Piano, appartamento o scala
+                      </label>
+                      <input
+                        type="text"
+                        id="deliveryAddress2"
+                        name="address2"
+                        value={formData.delivery.address2}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="Es. Piano 2, Scala A"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="deliveryZip">CAP <span style={{ color: 'red' }}>*</span></label>
+                      <input
+                        type="text"
+                        id="deliveryZip"
+                        name="zip"
+                        value={formData.delivery.zip}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="00100"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="deliveryCity">Città <span style={{ color: 'red' }}>*</span></label>
+                      <input
+                        type="text"
+                        id="deliveryCity"
+                        name="city"
+                        value={formData.delivery.city}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="Roma"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="deliveryProvince">Provincia <span style={{ color: 'red' }}>*</span></label>
+                      <input
+                        type="text"
+                        id="deliveryProvince"
+                        name="province"
+                        value={formData.delivery.province}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="RM"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="deliveryCountry">Nazione <span style={{ color: 'red' }}>*</span></label>
+                      <input
+                        type="text"
+                        id="deliveryCountry"
+                        name="country"
+                        value={formData.delivery.country}
+                        onChange={(e) => handleInputChange(e, "delivery")}
+                        placeholder="Italia"
+                      />
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="deliveryAddress2">
-                      Piano, appartamento o scala
-                    </label>
-                    <input
-                      type="text"
-                      id="deliveryAddress2"
-                      name="address2"
-                      value={formData.delivery.address2}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="Es. Piano 2, Scala A"
-                    />
+                  <div style={{ marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center', color: '#b91c1c', fontSize: '0.95rem' }}>
+                    I campi contrassegnati con <span style={{ color: 'red' }}>*</span> sono obbligatori
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="deliveryZip">CAP</label>
-                    <input
-                      type="text"
-                      id="deliveryZip"
-                      name="zip"
-                      value={formData.delivery.zip}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="00100"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="deliveryCity">Città</label>
-                    <input
-                      type="text"
-                      id="deliveryCity"
-                      name="city"
-                      value={formData.delivery.city}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="Roma"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="deliveryProvince">Provincia</label>
-                    <input
-                      type="text"
-                      id="deliveryProvince"
-                      name="province"
-                      value={formData.delivery.province}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="RM"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="deliveryCountry">Nazione</label>
-                    <input
-                      type="text"
-                      id="deliveryCountry"
-                      name="country"
-                      value={formData.delivery.country}
-                      onChange={(e) => handleInputChange(e, "delivery")}
-                      placeholder="Italia"
-                    />
-                  </div>
-                </div>
+                </>
               )}
 
               <div className="accordion-container">
@@ -891,7 +931,20 @@ const CheckoutPage = () => {
 
               {cartProducts.length > 0 && (
                 <div style={{ marginTop: "2rem", textAlign: "center" }}>
-                  <button type="submit" className="btn-submit">
+                  {/* Messaggio di errore sopra il bottone se ci sono campi obbligatori mancanti e showFieldErrors è true */}
+                  {showFieldErrors && missingFields.length > 0 && (
+                    <div style={{ color: '#b91c1c', marginBottom: '1rem', fontWeight: 500 }}>
+                      Compila tutti i campi obbligatori per procedere con l'ordine.
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="btn-submit"
+                    style={{
+                      backgroundColor: missingFields.length > 0 ? '#9ca3af' : '#10b981',
+                      cursor: 'pointer',
+                    }}
+                  >
                     Ordina e Paga
                   </button>
                 </div>
@@ -910,8 +963,8 @@ const CheckoutPage = () => {
                       src={product.image}
                       alt={product.name}
                       onError={(e) =>
-                        (e.target.src =
-                          "https://placehold.co/100x100?text=Immagine")
+                      (e.target.src =
+                        "https://placehold.co/100x100?text=Immagine")
                       }
                     />
                     <div>
@@ -943,14 +996,15 @@ const CheckoutPage = () => {
                 <div className="summary-line">
                   <span>Spedizione</span>
                   <span>
-                    €
-                    {(
-                      totalPrice -
-                      cartProducts.reduce(
+                    {(() => {
+                      const shipping = totalPrice - cartProducts.reduce(
                         (sum, p) => sum + p.price * p.currentQuantity,
                         0
-                      )
-                    ).toFixed(2)}
+                      );
+                      return shipping === 0
+                        ? 'Gratis'
+                        : `€${shipping.toFixed(2)}`;
+                    })()}
                   </span>
                 </div>
                 <div className="summary-line summary-total-line">
