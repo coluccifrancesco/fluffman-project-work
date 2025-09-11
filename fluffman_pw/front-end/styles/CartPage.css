@@ -5,6 +5,7 @@
   --secondary: #af6818;
   --accent: #e7a150;
 }
+
 .cart {
   min-height: calc(100vh - 250px);
   display: flex;
@@ -17,6 +18,25 @@
 
 .quantity-container {
   border-radius: 5px;
+}
+
+.shop-continue-btn {
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-color: var(--accent);
+  color: white;
+  padding: 5px 20px;
+  transition: 0.2s;
+
+  &:hover{
+    background-color: var(--primary);
+    color: var(--background);
+  }
+
+  &:active{
+    border: 3px solid var(--background);
+    background-color: transparent;
+  }
 }
 
 .quantity-btn {
@@ -113,12 +133,13 @@
 }
 
 .check-btn {
-  padding: 15px 50px;
+  padding: 15px 49px;
   background-color: var(--background);
   color: var(--text);
   border: 3px solid var(--background);
   border-radius: 10px;
   transition: 0.2s;
+  font-weight: bold;
 
   i {
     margin-left: 15px;
@@ -127,8 +148,13 @@
   }
 
   &:hover {
-    background-color: var(--accent);
-    border: 3px solid var(--accent);
+    background-color: var(--primary);
+    border: 3px solid var(--primary);
+    color: var(--background);
+
+    i{
+      color: var(--background);
+    }
   }
 
   &:active {
@@ -150,6 +176,7 @@
   border: 3px solid var(--background);
   border-radius: 10px;
   transition: 0.2s;
+  font-weight: bold;
 
   i {
     margin-left: 15px;
@@ -165,6 +192,40 @@
 
     i {
       color: var(--accent);
+    }
+  }
+}
+
+.empty-cart {
+  padding: 15px 20px;
+  background-color: transparent;
+  color: red;
+  border: 3px solid red;
+  border-radius: 10px;
+  transition: 0.2s;
+
+  i {
+    margin-left: 15px;
+    color: red;
+    transition: 0.2s;
+  }
+
+  &:hover {
+    background-color: red;
+    color: white;
+
+    i {
+      color: white;
+    }
+  }
+
+  &:active {
+    border: 3px solid transparent;
+    color: transparent;
+    background-color: transparent;
+
+    i {
+      color: transparent;
     }
   }
 }
