@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductPages.css";
 // import { useWishlist } from "../context/WishlistContext";
 // import { useCart } from "../context/CartContext";
@@ -196,7 +198,25 @@ export default function ProductsPage() {
                         "Senza brand"}
                     </small>
                   </div>
-                  <span className="fw-bold">{product.price} €</span>
+
+                  {/* Prezzo con logica sconto */}
+                  {product.discount_price ? (
+                    <div className="price-container d-flex align-items-center">
+                      <span className="text-decoration-line-through text-muted me-2">
+                        <FontAwesomeIcon icon={faEuroSign} />
+                        {product.price}
+                      </span>
+                      <span className="text-danger fw-bold fs-5">
+                        <FontAwesomeIcon icon={faEuroSign} />
+                        {product.discount_price}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="price text-dark fw-bold fs-5">
+                      <FontAwesomeIcon icon={faEuroSign} />
+                      {product.price}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
