@@ -13,6 +13,66 @@ export default function CartPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  // Rimuove un prodotto dal carrello tramite context
+  const onRemove = (product) => {
+    removeFromCart(product.id);
+  };
+
+  // Gestisce l'aumento o la diminuzione della quantità tramite context
+  const handleQuantityChange = (product, change) => {
+    const newQuantity = product.currentQuantity + change;
+    if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
+      updateQuantity(product.id, newQuantity);
+    }
+  };
+
+  // Funzione per la validazione prima del reindirizzamento
+  const handleCheckoutRedirect = async () => {
+    try {
+      const productsResponse = await fetch(`${BASE_URL}/api/products`);
+      const productsData = await productsResponse.json();
+
+      let outOfStockItems = [];
+
+      for (const item of cart) {
+        const availableProduct = productsData.find((p) => p.id === item.id);
+        if (!availableProduct || item.quantity > availableProduct.quantity) {
+          outOfStockItems.push({
+            name: availableProduct
+              ? availableProduct.name
+              : `Prodotto con ID ${item.id}`,
+            requested: item.quantity,
+            available: availableProduct ? availableProduct.quantity : 0,
+          });
+        }
+      }
+
+      if (outOfStockItems.length > 0) {
+        let message =
+          "Ci sono problemi con la disponibilità dei seguenti prodotti:\n\n";
+        outOfStockItems.forEach((item) => {
+          message += ` - ${item.name}: quantità richiesta (${item.requested}) supera la disponibilità (${item.available})\n`;
+        });
+        message += "\nPer favore, aggiorna il tuo carrello.";
+        setModalMessage(message);
+        setShowModal(true);
+      } else {
+        navigate("/checkout");
+      }
+    } catch (error) {
+      setModalMessage(
+        "Si è verificato un errore durante la verifica della disponibilità. Riprova più tardi."
+      );
+      setShowModal(true);
+      console.error("Errore durante la verifica della disponibilità:", error);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
   // Fetch dei dati e gestione dell'immagine.
   useEffect(() => {
     async function fetchData() {
@@ -85,66 +145,6 @@ export default function CartPage() {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
-  // Rimuove un prodotto dal carrello tramite context
-  const onRemove = (product) => {
-    removeFromCart(product.id);
-  };
-
-  // Gestisce l'aumento o la diminuzione della quantità tramite context
-  const handleQuantityChange = (product, change) => {
-    const newQuantity = product.currentQuantity + change;
-    if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
-      updateQuantity(product.id, newQuantity);
-    }
-  };
-
-  // Funzione per la validazione prima del reindirizzamento
-  const handleCheckoutRedirect = async () => {
-    try {
-      const productsResponse = await fetch(`${BASE_URL}/api/products`);
-      const productsData = await productsResponse.json();
-
-      let outOfStockItems = [];
-
-      for (const item of cart) {
-        const availableProduct = productsData.find((p) => p.id === item.id);
-        if (!availableProduct || item.quantity > availableProduct.quantity) {
-          outOfStockItems.push({
-            name: availableProduct
-              ? availableProduct.name
-              : `Prodotto con ID ${item.id}`,
-            requested: item.quantity,
-            available: availableProduct ? availableProduct.quantity : 0,
-          });
-        }
-      }
-
-      if (outOfStockItems.length > 0) {
-        let message =
-          "Ci sono problemi con la disponibilità dei seguenti prodotti:\n\n";
-        outOfStockItems.forEach((item) => {
-          message += ` - ${item.name}: quantità richiesta (${item.requested}) supera la disponibilità (${item.available})\n`;
-        });
-        message += "\nPer favore, aggiorna il tuo carrello.";
-        setModalMessage(message);
-        setShowModal(true);
-      } else {
-        navigate("/checkout");
-      }
-    } catch (error) {
-      setModalMessage(
-        "Si è verificato un errore durante la verifica della disponibilità. Riprova più tardi."
-      );
-      setShowModal(true);
-      console.error("Errore durante la verifica della disponibilità:", error);
-    }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setModalMessage("");
-  };
-
   return (
     <div className="cart">
       <div className="pt-5 px-5 d-flex justify-content-between align-items-center">
@@ -196,9 +196,32 @@ export default function CartPage() {
                 >
                   +
                 </button>
-                <button className="trash-btn" onClick={() => onRemove(product)}>
+
+                {/* Trash button */}
+
+                <button typeof="button" className="trash-btn" data-bs-toggle="modal" data-bs-target="#trashModal">
                   <i className="fa-solid fa-trash-can"></i>
                 </button>
+
+                {/* Modale */}
+                <div className="modal fade" id="trashModal" tabIndex="-1" aria-labelledby="trashModalLabel" aria-hidden="true">
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="trashModalLabel">Attenzione!</h1>
+                        <button typeof="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div className="modal-body">
+                        <h5>Sei sicur@ di rimuovere <span className="text-danger">{product.name}</span> dal carrello?</h5>
+                      </div>
+                      <div className="modal-footer">
+                        <button typeof="button" className="btn btn-secondary" data-bs-dismiss="modal">No, non sono sicur@</button>
+                        <button onClick={() => { onRemove(product) }} typeof="button" className="btn btn-danger" data-bs-dismiss="modal">Si, rimuovi articolo</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div className="col-4 d-flex d-sm-none justify-content-start align-items-center">
                 <div className="d-flex justify-content-start align-items-center gap-1 flex-column">
@@ -220,12 +243,30 @@ export default function CartPage() {
                     -
                   </button>
                 </div>
-                <button
-                  className="trash-btn-mobile fs-5"
-                  onClick={() => onRemove(product)}
-                >
+
+                {/* Trash button */}
+
+                <button typeof="button" className="trash-btn" data-bs-toggle="modal" data-bs-target="#trashModalMobile">
                   <i className="fa-solid fa-trash-can"></i>
                 </button>
+
+                {/* Modale */}
+                <div className="modal fade" id="trashModalMobile" tabIndex="-1" aria-labelledby="trashModalMobileLabel" aria-hidden="true">
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content m-2">
+                      <div className="modal-header justify-content-center">
+                        <h1 className="modal-title fs-5" id="trashModalMobileLabel">Attenzione!</h1>
+                      </div>
+                      <div className="modal-body text-center">
+                        <h2>Sei sicur@ di rimuovere <span className="text-danger">{product.name}</span> dal carrello?</h2>
+                      </div>
+                      <div className="modal-footer justify-content-center">
+                        <button typeof="button" className="btn btn-secondary w-100 py-4" data-bs-dismiss="modal">No, non sono sicur@</button>
+                        <button onClick={() => { onRemove(product) }} typeof="button" className="btn btn-danger w-100 py-4" data-bs-dismiss="modal">Si, rimuovi articolo</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="col-3 col-md-2 d-flex justify-content-end align-items-center">
                 <h5 className="text-end m-0">
@@ -257,16 +298,16 @@ export default function CartPage() {
                         sum + product.price * product.currentQuantity,
                       0
                     ) ===
-                  0
+                    0
                     ? "Gratis"
                     : `€${(
-                        totalPrice -
-                        cartProducts.reduce(
-                          (sum, product) =>
-                            sum + product.price * product.currentQuantity,
-                          0
-                        )
-                      ).toFixed(2)}`}
+                      totalPrice -
+                      cartProducts.reduce(
+                        (sum, product) =>
+                          sum + product.price * product.currentQuantity,
+                        0
+                      )
+                    ).toFixed(2)}`}
                 </p>
               </div>
             </div>
