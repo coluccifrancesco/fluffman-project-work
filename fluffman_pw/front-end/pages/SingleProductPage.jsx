@@ -125,33 +125,6 @@ function SingleProductPage() {
               <p className="text-dark ">{product?.additional_information}</p>
               <TagsComponent product={product} />
 
-              <div className="quantity-container d-flex align-items-center mt-4">
-                <p className="me-3 mb-0">Quantità:</p>
-                <div className="d-flex align-items-center">
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={handleDecreaseQuantity}
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="text"
-                    className="form-control text-center mx-2"
-                    style={{ width: "60px" }}
-                    value={quantity}
-                    onChange={handleQuantityChange}
-                  />
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={handleIncreaseQuantity}
-                    disabled={quantity >= product.quantity}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
               {/* Messaggio di scorte limitate, visibile solo se la quantità è bassa */}
               {isLowOnStock && (
                 <div className="mt-3 text-danger fw-bold">
@@ -160,6 +133,32 @@ function SingleProductPage() {
               )}
             </div>
 
+            <div className="quantity-container d-flex align-items-center justify-content-center mt-4">
+              <p className="me-3 mb-0 text-black">Quantità:</p>
+              <div className="d-flex align-items-center">
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={handleDecreaseQuantity}
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  className="form-control text-center mx-2"
+                  style={{ width: "60px" }}
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                />
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={handleIncreaseQuantity}
+                  disabled={quantity >= product.quantity}
+                >
+                  +
+                </button>
+              </div>
+            </div>
             <div className="button-container d-flex justify-content-center">
               <button
                 className="star-btn mt-3 w-50 p-2"
