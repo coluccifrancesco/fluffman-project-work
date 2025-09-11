@@ -13,6 +13,73 @@ export default function CartPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+
+  // Rimuove un prodotto dal carrello tramite context
+  const onRemove = (productId) => {
+    removeFromCart(productId);
+  };
+
+  const emptyAll = (cartProducts) => {
+    cartProducts.map((product) => {
+      onRemove(product.id)
+    })
+  };
+
+  // Gestisce l'aumento o la diminuzione della quantità tramite context
+  const handleQuantityChange = (product, change) => {
+    const newQuantity = product.currentQuantity + change;
+    if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
+      updateQuantity(product.id, newQuantity);
+    }
+  };
+
+  // Funzione per la validazione prima del reindirizzamento
+  const handleCheckoutRedirect = async () => {
+    try {
+      const productsResponse = await fetch(`${BASE_URL}/api/products`);
+      const productsData = await productsResponse.json();
+
+      let outOfStockItems = [];
+
+      for (const item of cart) {
+        const availableProduct = productsData.find((p) => p.id === item.id);
+        if (!availableProduct || item.quantity > availableProduct.quantity) {
+          outOfStockItems.push({
+            name: availableProduct
+              ? availableProduct.name
+              : `Prodotto con ID ${item.id}`,
+            requested: item.quantity,
+            available: availableProduct ? availableProduct.quantity : 0,
+          });
+        }
+      }
+
+      if (outOfStockItems.length > 0) {
+        let message =
+          "Ci sono problemi con la disponibilità dei seguenti prodotti:\n\n";
+        outOfStockItems.forEach((item) => {
+          message += ` - ${item.name}: quantità richiesta (${item.requested}) supera la disponibilità (${item.available})\n`;
+        });
+        message += "\nPer favore, aggiorna il tuo carrello.";
+        setModalMessage(message);
+        setShowModal(true);
+      } else {
+        navigate("/checkout");
+      }
+    } catch (error) {
+      setModalMessage(
+        "Si è verificato un errore durante la verifica della disponibilità. Riprova più tardi."
+      );
+      setShowModal(true);
+      console.error("Errore durante la verifica della disponibilità:", error);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
   // Fetch dei dati e gestione dell'immagine.
   useEffect(() => {
     async function fetchData() {
@@ -85,72 +152,12 @@ export default function CartPage() {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
-  // Rimuove un prodotto dal carrello tramite context
-  const onRemove = (product) => {
-    removeFromCart(product.id);
-  };
-
-  // Gestisce l'aumento o la diminuzione della quantità tramite context
-  const handleQuantityChange = (product, change) => {
-    const newQuantity = product.currentQuantity + change;
-    if (newQuantity > 0 && newQuantity <= product.availableQuantity) {
-      updateQuantity(product.id, newQuantity);
-    }
-  };
-
-  // Funzione per la validazione prima del reindirizzamento
-  const handleCheckoutRedirect = async () => {
-    try {
-      const productsResponse = await fetch(`${BASE_URL}/api/products`);
-      const productsData = await productsResponse.json();
-
-      let outOfStockItems = [];
-
-      for (const item of cart) {
-        const availableProduct = productsData.find((p) => p.id === item.id);
-        if (!availableProduct || item.quantity > availableProduct.quantity) {
-          outOfStockItems.push({
-            name: availableProduct
-              ? availableProduct.name
-              : `Prodotto con ID ${item.id}`,
-            requested: item.quantity,
-            available: availableProduct ? availableProduct.quantity : 0,
-          });
-        }
-      }
-
-      if (outOfStockItems.length > 0) {
-        let message =
-          "Ci sono problemi con la disponibilità dei seguenti prodotti:\n\n";
-        outOfStockItems.forEach((item) => {
-          message += ` - ${item.name}: quantità richiesta (${item.requested}) supera la disponibilità (${item.available})\n`;
-        });
-        message += "\nPer favore, aggiorna il tuo carrello.";
-        setModalMessage(message);
-        setShowModal(true);
-      } else {
-        navigate("/checkout");
-      }
-    } catch (error) {
-      setModalMessage(
-        "Si è verificato un errore durante la verifica della disponibilità. Riprova più tardi."
-      );
-      setShowModal(true);
-      console.error("Errore durante la verifica della disponibilità:", error);
-    }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setModalMessage("");
-  };
-
   return (
     <div className="cart">
       <div className="pt-5 px-5 d-flex justify-content-between align-items-center">
         <h1 className="m-0">Il tuo carrello</h1>
         <Link to={"/"} className="text-decoration-none d-none d-sm-block">
-          <p className="m-0">Continua lo shopping!</p>
+          <button className="m-0 shop-continue-btn">Continua lo shopping!</button>
         </Link>
         <Link to={"/"} className="text-decoration-none d-block d-sm-none">
           <p className="m-0">Home</p>
@@ -178,6 +185,8 @@ export default function CartPage() {
               <div className="col-5 col-xxl-6 d-flex justify-content-center align-items-start flex-column">
                 <h5 className="m-0">{product.name}</h5>
               </div>
+
+              {/* Quantità tablet, desktop */}
               <div className="col-4 col-md-3 d-none d-sm-flex justify-content-start align-items-center gap-2">
                 <button
                   className="quantity-btn"
@@ -196,10 +205,34 @@ export default function CartPage() {
                 >
                   +
                 </button>
-                <button className="trash-btn" onClick={() => onRemove(product)}>
+
+                {/* Trash button */}
+                <button typeof="button" className="trash-btn" data-bs-toggle="modal" data-bs-target={`#trashModal-${product.id}`}>
                   <i className="fa-solid fa-trash-can"></i>
                 </button>
+
+                {/* Modale */}
+                <div className="modal fade" id={`trashModal-${product.id}`} tabIndex="-1" aria-labelledby={`${product.name}-label`} aria-hidden="true">
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h1 className="modal-title fs-5" id={`${product.name}-label`}>Attenzione!</h1>
+                        <button typeof="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div className="modal-body">
+                        <h5>Sei sicur@ di rimuovere <span className="text-danger">{product.name}</span> dal carrello?</h5>
+                      </div>
+                      <div className="modal-footer">
+                        <button typeof="button" className="btn btn-secondary" data-bs-dismiss="modal">No, non sono sicur@</button>
+                        <button onClick={() => { onRemove(product.id) }} typeof="button" className="btn btn-danger" data-bs-dismiss="modal">Si, rimuovi articolo</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
+
+              {/* Quantità mobile */}
               <div className="col-4 d-flex d-sm-none justify-content-start align-items-center">
                 <div className="d-flex justify-content-start align-items-center gap-1 flex-column">
                   <button
@@ -220,12 +253,30 @@ export default function CartPage() {
                     -
                   </button>
                 </div>
-                <button
-                  className="trash-btn-mobile fs-5"
-                  onClick={() => onRemove(product)}
-                >
+
+                {/* Trash button */}
+
+                <button typeof="button" className="trash-btn" data-bs-toggle="modal" data-bs-target={`#trashModalMobile${product.id}`}>
                   <i className="fa-solid fa-trash-can"></i>
                 </button>
+
+                {/* Modale */}
+                <div className="modal fade" id={`trashModalMobile${product.id}`} tabIndex="-1" aria-labelledby={`${product.name}-mobileLabel`} aria-hidden="true">
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content m-2">
+                      <div className="modal-header justify-content-center">
+                        <h1 className="modal-title fs-5" id={`${product.name}-mobileLabel`}>Attenzione!</h1>
+                      </div>
+                      <div className="modal-body text-center">
+                        <h2>Sei sicur@ di rimuovere <span className="text-danger">{product.name}</span> dal carrello?</h2>
+                      </div>
+                      <div className="modal-footer justify-content-center">
+                        <button typeof="button" className="btn btn-secondary w-100 py-4" data-bs-dismiss="modal">No, non sono sicur@</button>
+                        <button onClick={() => { onRemove(product.id) }} typeof="button" className="btn btn-danger w-100 py-4" data-bs-dismiss="modal">Si, rimuovi articolo</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="col-3 col-md-2 d-flex justify-content-end align-items-center">
                 <h5 className="text-end m-0">
@@ -257,16 +308,16 @@ export default function CartPage() {
                         sum + product.price * product.currentQuantity,
                       0
                     ) ===
-                  0
+                    0
                     ? "Gratis"
                     : `€${(
-                        totalPrice -
-                        cartProducts.reduce(
-                          (sum, product) =>
-                            sum + product.price * product.currentQuantity,
-                          0
-                        )
-                      ).toFixed(2)}`}
+                      totalPrice -
+                      cartProducts.reduce(
+                        (sum, product) =>
+                          sum + product.price * product.currentQuantity,
+                        0
+                      )
+                    ).toFixed(2)}`}
                 </p>
               </div>
             </div>
@@ -284,21 +335,43 @@ export default function CartPage() {
         )}
 
         {cartProducts.length > 0 && (
-          <div className="d-none d-sm-flex justify-content-end align-items-center check-cont">
-            <button className="check-btn" onClick={handleCheckoutRedirect}>
-              Checkout<i className="fa-solid fa-cart-shopping"></i>
-            </button>
+          <div className="d-none d-sm-flex justify-content-between align-items-top check-cont">
+            <div className="check-cont">
+              <button onClick={() => emptyAll(cartProducts)} className="empty-cart">Svuota il carello<i className="fa-solid fa-trash-can"></i></button>
+            </div>
+
+            <div className="check-cont d-flex justify-content-center align-items-end flex-column gap-2">
+              <button className="check-btn" onClick={handleCheckoutRedirect}>
+                Checkout<i className="fa-solid fa-cart-shopping"></i>
+              </button>
+
+              <Link to={"/"} className="text-decoration-none mt-2">
+                <button className="m-0 shop-continue-btn">Continua lo shopping!</button>
+              </Link>
+            </div>
+
           </div>
         )}
 
         {cartProducts.length > 0 && (
-          <div className="d-block d-sm-none check-cont">
-            <button
-              className="check-btn-mobile w-100"
-              onClick={handleCheckoutRedirect}
-            >
-              Checkout<i className="fa-solid fa-cart-shopping"></i>
-            </button>
+          <div className="d-block d-sm-none">
+            <div className="check-cont">
+              <button
+                className="check-btn-mobile w-100"
+                onClick={handleCheckoutRedirect}
+              >
+                Checkout<i className="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+
+            <Link to={"/"} className="text-decoration-none text-center">
+              <button className="m-0 shop-continue-btn w-100">Continua lo shopping!</button>
+            </Link>
+
+            <div className="check-cont">
+              <button onClick={() => emptyAll(cartProducts)} className="empty-cart w-100">Svuota il carello<i className="fa-solid fa-trash-can"></i></button>
+            </div>
+
           </div>
         )}
       </section>
