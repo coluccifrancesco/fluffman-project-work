@@ -139,6 +139,99 @@ export async function search(req, res) {
   }
 }
 
+// GET - Mostra prodotti correlati
+export async function getRelatedProducts(req, res) {
+  const { id } = req.params;
+
+  try {
+    //prodotto principale e attributi per la correlazione
+    const [mainProductRows] = await pool.query(
+      `
+            SELECT 
+            animal_id,
+                brand_id,
+                accessories,   
+                age,
+                weight,
+                food_type,
+                hair
+            FROM products
+            WHERE id = ?
+        `,
+      [id]
+    );
+
+    if (mainProductRows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Prodotto non trovato." });
+    }
+
+    const mainProduct = mainProductRows[0];
+    const { brand_id, animal_id, age, weight, food_type, hair, accessories } = mainProduct;
+
+    //query di ricerca con un sistema di punteggio in modo che sia in ordine decrescente
+    let query = `
+        SELECT
+            p.*,
+            i.name AS image_path,
+            (
+              (p.animal_id = ?) * 10 +         
+              (p.brand_id = ?) * 3 +            
+              (p.accessories = ?) * 2 +         
+              (p.age = ?) * 2 +                
+              (p.weight = ?) * 2 +             
+              (p.food_type = ?) * 1 +         
+                (p.hair = ?) * 1                
+            ) AS score
+        FROM products AS p
+        JOIN images AS i ON p.id = i.product_id
+        WHERE p.id != ? AND p.animal_id = ?  
+        HAVING score > 0                     
+        ORDER BY score DESC, RAND()           
+        LIMIT 20                              
+    `;
+
+    const values = [
+      animal_id,
+      brand_id,
+      accessories,
+      age,
+      weight,
+      food_type,
+      hair,
+      id,
+      animal_id,
+    ];
+
+    const [relatedProducts] = await pool.query(query, values);
+
+    //se la query complessa non trova nulla, prova a cercare solo per brand_id o animal_id con questa query
+    if (relatedProducts.length === 0) {
+      let fallbackQuery = `
+            SELECT
+                p.*,
+                i.name AS image_path
+            FROM products AS p
+            JOIN images AS i ON p.id = i.product_id
+            WHERE p.id != ? AND (p.brand_id = ? OR p.animal_id = ?)
+            ORDER BY RAND()
+            LIMIT 12
+        `;
+      const [fallbackProducts] = await pool.query(fallbackQuery, [id, brand_id, animal_id]);
+      return res.json(fallbackProducts);
+    }
+
+    res.json(relatedProducts);
+  } catch (err) {
+    console.error("Errore durante il recupero dei prodotti correlati:", err);
+    res.status(500).json({
+      error: true,
+      message: "Errore interno del server durante il recupero dei prodotti correlati.",
+    });
+  }
+}
+
 export async function showBySlug(req, res) {
   const { slug } = req.params;
   try {

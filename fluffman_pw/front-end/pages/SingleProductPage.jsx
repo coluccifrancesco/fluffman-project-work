@@ -1,11 +1,11 @@
 import CardProductDetail from "../components/CardComponent/CardProductDetails";
-import NewProducts from "../components/NewProducts";
 import "../styles/SingleProductPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TagsComponent from "../components/TagsComponent";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
+import RelatedProducts from "../components/RelatedProducts";
 
 function SingleProductPage() {
   const { slug } = useParams();
@@ -186,7 +186,7 @@ function SingleProductPage() {
         </div>
         <div className="container m-2 p-2">
           <h2 className="my-4 text-center">Prodotti Simili</h2>
-          <NewProducts />
+          <RelatedProducts productId={product.id} />
         </div>
       </div>
     </div>
