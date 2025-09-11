@@ -61,17 +61,20 @@ export async function search(req, res) {
     price_max,
     sort_by,
     sort_order,
+    price_range,
   } = req.query;
 
   let query = `
-        SELECT
-            p.*,
-            b.name AS brand_name,
-            i.name AS image_path
-        FROM products AS p
-        JOIN images AS i ON p.id = i.product_id
-        LEFT JOIN brands AS b ON p.brand_id = b.id
-    `;
+    SELECT
+        p.*,
+        b.name AS brand_name,
+        i.name AS image_path,
+        COALESCE(p.discount_price, p.price) AS final_price
+    FROM products AS p
+    JOIN images AS i ON p.id = i.product_id
+    LEFT JOIN brands AS b ON p.brand_id = b.id
+`;
+  // ho inserito la COALESCE per i filtri
   const values = [];
   const conditions = [];
 
@@ -102,6 +105,27 @@ export async function search(req, res) {
   if (price_max) {
     conditions.push(`p.price <= ?`);
     values.push(price_max);
+  }
+
+  if (price_range) {
+    switch (price_range) {
+      case "under10":
+        conditions.push(`COALESCE(p.discount_price, p.price) < 10`);
+        break;
+      case "10to20":
+        conditions.push(
+          `COALESCE(p.discount_price, p.price) BETWEEN 10 AND 20`
+        );
+        break;
+      case "20to40":
+        conditions.push(
+          `COALESCE(p.discount_price, p.price) BETWEEN 20 AND 40`
+        );
+        break;
+      case "over40":
+        conditions.push(`COALESCE(p.discount_price, p.price) > 40`);
+        break;
+    }
   }
 
   if (conditions.length > 0) {
@@ -157,7 +181,9 @@ export async function showBySlug(req, res) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: true, message: "Prodotto non trovato." });
+      return res
+        .status(404)
+        .json({ error: true, message: "Prodotto non trovato." });
     }
     // La riga successiva aggiungerà la quantità alla risposta
     res.json(rows[0]);

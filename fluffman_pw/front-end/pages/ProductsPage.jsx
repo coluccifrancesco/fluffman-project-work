@@ -28,6 +28,7 @@ export default function ProductsPage() {
     sort_by: searchParams.get("sort_by") || "id",
     sort_order: searchParams.get("sort_order") || "ASC",
     discount: searchParams.get("discount") || "",
+    price_range: searchParams.get("price_range") || "",
   });
 
   const updateFilter = (key, value) => {
@@ -48,6 +49,7 @@ export default function ProductsPage() {
       query.append("sort_by", filters.sort_by);
     if (filters.sort_order) query.append("sort_order", filters.sort_order);
     if (filters.discount) query.append("discount", "1");
+    if (filters.price_range) query.append("price_range", filters.price_range);
 
     fetch(`http://localhost:3030/api/products/search?${query.toString()}`)
       .then((res) => {
@@ -78,59 +80,90 @@ export default function ProductsPage() {
   return (
     <div className="hp_bg">
       <div className="p-3">
+        {/* title for products page */}
+        <h1 className="text-center my-5">Il nostro listino prodotti</h1>
+
         <div className="container my-4">
-          {/* Contenitore dei filtri a sinistra */}
-          <div className="filters-container">
-            {/* Sezione Filtri */}
-            <div className="filters">
+          <div className="filters-sorting-row">
+            {/* Contenitore dei filtri a sinistra */}
+            <div className="filters-container">
+              {/* Sezione Filtri */}
+              <div className="filters flex-column">
+                <label htmlFor="animal-select" className="text-muted">
+                  Seleziona il tipo di animale
+                </label>
+                <select
+                  id="animal-select"
+                  value={filters.animal_id}
+                  onChange={(e) => updateFilter("animal_id", e.target.value)}
+                  className="select m-2"
+                >
+                  <option value="all">Tutti i Prodotti</option>
+                  <option value="1">Cani</option>
+                  <option value="2">Gatti</option>
+                  <option value="3">Pesci</option>
+                  <option value="4">Roditori</option>
+                  <option value="5">Uccelli</option>
+                </select>
+                <label htmlFor="brand-select" className="text-muted">
+                  Seleziona l'ordine di visualizzazione
+                </label>
+                <select
+                  value={filters.brand_id}
+                  onChange={(e) => updateFilter("brand_id", e.target.value)}
+                  className="select m-2"
+                  id="brand-select"
+                >
+                  <option value="">Tutti i Brand</option>
+                  {brands.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Sezione Ordinamento a destra */}
+            <div className="sorting">
+              <label htmlFor="sort-select" className="text-muted">
+                Seleziona l'ordine di visualizzazione
+              </label>
               <select
-                value={filters.animal_id}
-                onChange={(e) => updateFilter("animal_id", e.target.value)}
-                className="select w-auto m-2"
+                id="sort-select"
+                value={`${filters.sort_by}_${filters.sort_order}`}
+                onChange={(e) => {
+                  const [by, order] = e.target.value.split("_");
+                  updateFilter("sort_by", by);
+                  updateFilter("sort_order", order);
+                }}
+                className="select w-auto"
               >
-                <option value="all">Tutti i Prodotti</option>
-                <option value="1">Cani</option>
-                <option value="2">Gatti</option>
-                <option value="3">Pesci</option>
-                <option value="4">Roditori</option>
-                <option value="5">Uccelli</option>
+                <option value="id_ASC">Default</option>
+                <option value="price_ASC">Prezzo crescente</option>
+                <option value="price_DESC">Prezzo decrescente</option>
+                <option value="name_ASC">Nome A-Z</option>
+                <option value="name_DESC">Nome Z-A</option>
               </select>
 
+              {/* ordinamento su base price-range */}
+              <label htmlFor="price-range" className="text-muted">
+                Seleziona un range di spesa
+              </label>
               <select
-                value={filters.brand_id}
-                onChange={(e) => updateFilter("brand_id", e.target.value)}
-                className="select w-auto m-2"
+                id="price-range"
+                value={filters.price_range}
+                onChange={(e) => updateFilter("price_range", e.target.value)}
+                className="select m-2"
               >
-                <option value="">Tutti i Brand</option>
-                {brands.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
+                <option value="">Tutti i prezzi</option>
+                <option value="under10">Sotto i 10 €</option>
+                <option value="10to20">Tra 10 e 20 €</option>
+                <option value="20to40">Tra 20 e 40 €</option>
+                <option value="over40">Sopra i 40 €</option>
               </select>
             </div>
           </div>
-
-          {/* Sezione Ordinamento a destra */}
-          <div className="sorting">
-            <select
-              value={`${filters.sort_by}_${filters.sort_order}`}
-              onChange={(e) => {
-                const [by, order] = e.target.value.split("_");
-                updateFilter("sort_by", by);
-                updateFilter("sort_order", order);
-              }}
-              className="select w-auto"
-            >
-              <option value="id_ASC">Default</option>
-              <option value="price_ASC">Prezzo crescente</option>
-              <option value="price_DESC">Prezzo decrescente</option>
-              <option value="name_ASC">Nome A-Z</option>
-              <option value="name_DESC">Nome Z-A</option>
-            </select>
-          </div>
-
-          <h1 className="text-center my-5">Il nostro listino prodotti</h1>
           {/* Toggle Griglia/Lista  */}
           <div className="view-toggle mb-3">
             <div className="toggles">
