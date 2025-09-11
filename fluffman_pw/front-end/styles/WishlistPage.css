@@ -1,0 +1,5 @@
+.wishlist-page {
+  min-height: calc(100vh - 500px);
+  display: flex;
+  flex-direction: column;
+}
