@@ -8,12 +8,22 @@ export default function OtherAnimalProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLoading, setShowLoading] = useState(false);
 
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 1000);
 
-
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoading(false);
+    }
+  }, [loading]);
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -37,8 +47,8 @@ export default function OtherAnimalProductsPage() {
   const rodentProducts = products.filter((product) => product.animal_id === 4);
   const birdProducts = products.filter((product) => product.animal_id === 5);
 
-  if (loading) {
-    return <div className="text-center mt-5">Caricamento...</div>;
+  if (showLoading) {
+    return <Loading />;
   }
 
   if (error) {

@@ -1,5 +1,5 @@
 import ProductsSlider from "../components/ProductsSlider";
-import CatLoading from "../components/Loading";
+import Loading from "../components/Loading";
 import "../styles/ProductPages.css";
 import { useEffect, useState } from "react";
 // import { useWishlist } from "../context/WishlistContext";
@@ -8,13 +8,24 @@ import { useEffect, useState } from "react";
 export default function CatProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
 
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 1000);
 
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoading(false);
+    }
+  }, [loading]);
 
   useEffect(() => {
     fetch("http://localhost:3030/api/products")
@@ -45,12 +56,12 @@ export default function CatProductsPage() {
     (product) => product.accessories === 1
   );
 
-  if (loading) {
-    return <div className="text-center mt-5">Caricamento...</div>;
-  }
-
   if (error) {
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
+  }
+
+  if (showLoading) {
+    return <Loading />;
   }
 
   return (

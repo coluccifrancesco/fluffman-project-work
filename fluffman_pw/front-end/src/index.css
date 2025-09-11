@@ -15,7 +15,9 @@
 * {
   font-family: "Geologica", sans-serif;
 }
-
+body {
+  background-color: #e6dcdb;
+}
 .section_container {
   position: relative;
   padding: 2rem 0;

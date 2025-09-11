@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
+import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +13,7 @@ export default function ProductsPage() {
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
 
@@ -21,6 +23,18 @@ export default function ProductsPage() {
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoading(false);
+    }
+  }, [loading]);
 
   const [filters, setFilters] = useState({
     animal_id: searchParams.get("animal_id") || "all",
@@ -89,7 +103,9 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  if (loading) return <div className="text-center mt-5">Caricamento...</div>;
+  if (showLoading) {
+    return <Loading />;
+  }
   if (error)
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
 
@@ -97,7 +113,13 @@ export default function ProductsPage() {
     <div className="hp_bg">
       <div className="p-3">
         {/* title for products page */}
-        <h1 className="text-center my-5">Il nostro listino prodotti</h1>
+        <div className="m-2 text-center mb-3">
+          <h1 className="text-center">Il nostro listino prodotti</h1>
+          <p className="text-light">
+            Qui troverai la nostra ampia scelta di prodotti per i tuoi amici
+            animali{" "}
+          </p>
+        </div>
 
         <div className="container my-4">
           <div className="filters-sorting-row">
