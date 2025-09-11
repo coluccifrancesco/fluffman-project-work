@@ -13,12 +13,12 @@ export default function CartPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  
+
   // Rimuove un prodotto dal carrello tramite context
   const onRemove = (productId) => {
     removeFromCart(productId);
   };
-  
+
   const emptyAll = (cartProducts) => {
     cartProducts.map((product) => {
       onRemove(product.id)
@@ -157,7 +157,7 @@ export default function CartPage() {
       <div className="pt-5 px-5 d-flex justify-content-between align-items-center">
         <h1 className="m-0">Il tuo carrello</h1>
         <Link to={"/"} className="text-decoration-none d-none d-sm-block">
-          <p className="m-0">Continua lo shopping!</p>
+          <button className="m-0 shop-continue-btn">Continua lo shopping!</button>
         </Link>
         <Link to={"/"} className="text-decoration-none d-block d-sm-none">
           <p className="m-0">Home</p>
@@ -335,16 +335,21 @@ export default function CartPage() {
         )}
 
         {cartProducts.length > 0 && (
-          <div className="d-none d-sm-flex justify-content-between align-items-center check-cont">
+          <div className="d-none d-sm-flex justify-content-between align-items-top check-cont">
             <div className="check-cont">
               <button onClick={() => emptyAll(cartProducts)} className="empty-cart">Svuota il carello<i className="fa-solid fa-trash-can"></i></button>
             </div>
 
-            <div className="check-cont">
+            <div className="check-cont d-flex justify-content-center align-items-end flex-column gap-2">
               <button className="check-btn" onClick={handleCheckoutRedirect}>
                 Checkout<i className="fa-solid fa-cart-shopping"></i>
               </button>
+
+              <Link to={"/"} className="text-decoration-none mt-2">
+                <button className="m-0 shop-continue-btn">Continua lo shopping!</button>
+              </Link>
             </div>
+
           </div>
         )}
 
@@ -359,9 +364,14 @@ export default function CartPage() {
               </button>
             </div>
 
+            <Link to={"/"} className="text-decoration-none text-center">
+              <button className="m-0 shop-continue-btn w-100">Continua lo shopping!</button>
+            </Link>
+
             <div className="check-cont">
               <button onClick={() => emptyAll(cartProducts)} className="empty-cart w-100">Svuota il carello<i className="fa-solid fa-trash-can"></i></button>
             </div>
+
           </div>
         )}
       </section>

@@ -20,6 +20,25 @@
   border-radius: 5px;
 }
 
+.shop-continue-btn {
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-color: var(--accent);
+  color: white;
+  padding: 5px 20px;
+  transition: 0.2s;
+
+  &:hover{
+    background-color: var(--primary);
+    color: var(--background);
+  }
+
+  &:active{
+    border: 3px solid var(--background);
+    background-color: transparent;
+  }
+}
+
 .quantity-btn {
   box-shadow: 2px 2px 5px transparent;
   border: none;
@@ -114,12 +133,13 @@
 }
 
 .check-btn {
-  padding: 15px 50px;
+  padding: 15px 49px;
   background-color: var(--background);
   color: var(--text);
   border: 3px solid var(--background);
   border-radius: 10px;
   transition: 0.2s;
+  font-weight: bold;
 
   i {
     margin-left: 15px;
@@ -128,8 +148,13 @@
   }
 
   &:hover {
-    background-color: var(--accent);
-    border: 3px solid var(--accent);
+    background-color: var(--primary);
+    border: 3px solid var(--primary);
+    color: var(--background);
+
+    i{
+      color: var(--background);
+    }
   }
 
   &:active {
@@ -151,6 +176,7 @@
   border: 3px solid var(--background);
   border-radius: 10px;
   transition: 0.2s;
+  font-weight: bold;
 
   i {
     margin-left: 15px;
@@ -188,7 +214,7 @@
     background-color: red;
     color: white;
 
-    i{
+    i {
       color: white;
     }
   }
