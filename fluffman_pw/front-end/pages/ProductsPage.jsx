@@ -9,6 +9,19 @@ import "../styles/ProductPages.css";
 // import { useWishlist } from "../context/WishlistContext";
 // import { useCart } from "../context/CartContext";
 
+// Hook per rilevare larghezza finestra
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+}
+
 export default function ProductsPage() {
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -16,20 +29,20 @@ export default function ProductsPage() {
   const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const width = useWindowWidth();
+  const isMobile = width <= 768;
 
   useEffect(() => {
     if (loading) {
       const timer = setTimeout(() => {
         setShowLoading(true);
       }, 500);
-
       return () => clearTimeout(timer);
     } else {
       setShowLoading(false);
@@ -53,7 +66,6 @@ export default function ProductsPage() {
     setSearchParams(newParams, { replace: true });
   };
 
-  //Reset dei filtri per tornare alla pagina iniziale
   const resetFilters = () => {
     const defaultFilters = {
       animal_id: "all",
@@ -64,7 +76,6 @@ export default function ProductsPage() {
       price_range: "",
     };
     setFilters(defaultFilters);
-
     const newParams = new URLSearchParams();
     setSearchParams(newParams, { replace: true });
   };
@@ -103,149 +114,108 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  if (showLoading) {
-    return <Loading />;
-  }
+  if (showLoading) return <Loading />;
   if (error)
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
 
   return (
     <div className="hp_bg">
       <div className="p-3">
-        {/* title for products page */}
         <div className="m-2 text-center mb-3">
           <h1 className="text-center">Il nostro listino prodotti</h1>
           <p className="text-light">
             Qui troverai la nostra ampia scelta di prodotti per i tuoi amici
-            animali{" "}
+            animali
           </p>
         </div>
 
         <div className="container my-4">
-          <div className="filters-sorting-row">
-            {/* Contenitore dei filtri a sinistra */}
-            <div className="filters-container">
-              {/* Sezione Filtri */}
-              <div className="filters flex-column">
-                <label htmlFor="animal-select" className="text-muted">
-                  Seleziona il tipo di animale
-                </label>
-                <select
-                  id="animal-select"
-                  value={filters.animal_id}
-                  onChange={(e) => updateFilter("animal_id", e.target.value)}
-                  className="select m-2"
-                >
-                  <option value="all">Tutti i Prodotti</option>
-                  <option value="1">Cani</option>
-                  <option value="2">Gatti</option>
-                  <option value="3">Pesci</option>
-                  <option value="4">Roditori</option>
-                  <option value="5">Uccelli</option>
-                </select>
-                <label htmlFor="brand-select" className="text-muted">
-                  Seleziona l'ordine di visualizzazione
-                </label>
-                <select
-                  value={filters.brand_id}
-                  onChange={(e) => updateFilter("brand_id", e.target.value)}
-                  className="select m-2"
-                  id="brand-select"
-                >
-                  <option value="">Tutti i Brand</option>
-                  {brands.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            {/* SELETTORE DI RESET */}
-            <div className="resetting">
-              <div className="text-center my-3">
-                <button className="reset" onClick={resetFilters}>
-                  Reset filtri
-                </button>
-              </div>
-            </div>
+          {/* FILTRI E ORDINATORI  */}
+          <div className="filters-sorting-row flex-wrap">
+            <select
+              value={filters.animal_id}
+              onChange={(e) => updateFilter("animal_id", e.target.value)}
+              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+            >
+              <option value="all">Tutti i Prodotti</option>
+              <option value="1">Cani</option>
+              <option value="2">Gatti</option>
+              <option value="3">Pesci</option>
+              <option value="4">Roditori</option>
+              <option value="5">Uccelli</option>
+            </select>
 
-            {/* Sezione Ordinamento a destra */}
-            <div className="sorting">
-              <label htmlFor="sort-select" className="text-muted">
-                Seleziona l'ordine di visualizzazione
-              </label>
-              <select
-                id="sort-select"
-                value={`${filters.sort_by}_${filters.sort_order}`}
-                onChange={(e) => {
-                  const [by, order] = e.target.value.split("_");
-                  updateFilter("sort_by", by);
-                  updateFilter("sort_order", order);
-                }}
-                className="select w-auto"
-              >
-                <option value="id_ASC">Default</option>
-                <option value="price_ASC text-white">
-                  Prezzo crescente ↑{" "}
+            <select
+              value={filters.brand_id}
+              onChange={(e) => updateFilter("brand_id", e.target.value)}
+              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+            >
+              <option value="">Tutti i Brand</option>
+              {brands.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
                 </option>
-                <option value="price_DESC text-white">
-                  Prezzo decrescente ↓{" "}
-                </option>
-                <option value="name_ASC">Nome A-Z</option>
-                <option value="name_DESC">Nome Z-A</option>
-              </select>
+              ))}
+            </select>
 
-              {/* ordinamento su base price-range */}
-              <label htmlFor="price-range" className="text-muted">
-                Seleziona un range di spesa
-              </label>
-              <select
-                id="price-range"
-                value={filters.price_range}
-                onChange={(e) => updateFilter("price_range", e.target.value)}
-                className="select m-2"
-              >
-                <option value="">Tutti i prezzi</option>
-                <option value="under10">Sotto i 10 €</option>
-                <option value="10to20">Tra 10 e 20 €</option>
-                <option value="20to40">Tra 20 e 40 €</option>
-                <option value="over40">Sopra i 40 €</option>
-              </select>
-            </div>
+            <select
+              value={`${filters.sort_by}_${filters.sort_order}`}
+              onChange={(e) => {
+                const [by, order] = e.target.value.split("_");
+                updateFilter("sort_by", by);
+                updateFilter("sort_order", order);
+              }}
+              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+            >
+              <option value="id_ASC">Default</option>
+              <option value="price_ASC">Prezzo crescente ↑</option>
+              <option value="price_DESC">Prezzo decrescente ↓</option>
+              <option value="name_ASC">Nome A-Z</option>
+              <option value="name_DESC">Nome Z-A</option>
+            </select>
+
+            <select
+              value={filters.price_range}
+              onChange={(e) => updateFilter("price_range", e.target.value)}
+              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+            >
+              <option value="">Tutti i prezzi</option>
+              <option value="under10">Sotto i 10 €</option>
+              <option value="10to20">Tra 10 e 20 €</option>
+              <option value="20to40">Tra 20 e 40 €</option>
+              <option value="over40">Sopra i 40 €</option>
+            </select>
+
+            <button
+              className={`reset m-2 ${isMobile ? "btn-sm" : ""}`}
+              onClick={resetFilters}
+            >
+              Reset filtri
+            </button>
           </div>
-          {/* Toggle Griglia/Lista  */}
-          <div className="view-toggle mb-3">
-            <div className="toggles">
-              {/* Bottone Griglia */}
-              <div className="tooltip-wrapper">
-                <button
-                  className={`btn ${(viewMode === "grid", "btn-success")}`}
-                  onClick={() => setViewMode("grid")}
-                >
-                  <i
-                    className="fa-solid fa-image"
-                    style={{ color: "white" }}
-                  ></i>
-                  <span className="tooltip-text">Griglia</span>
-                </button>
-              </div>
 
-              {/* Bottone Lista */}
-              <div className="tooltip-wrapper">
-                <button
-                  className={`btn ${(viewMode === "list", "btn-success")}`}
-                  onClick={() => setViewMode("list")}
-                >
-                  <i
-                    className="fa-solid fa-list"
-                    style={{ color: "white" }}
-                  ></i>
-                  <span className="tooltip-text">Lista</span>
-                </button>
-              </div>
+          {/* TOGGLE GRIGLIA/LISTA + SCONTI */}
+          <div
+            className="view-toggle mb-3 mt-2 d-flex align-items-center flex-wrap"
+            style={{ gap: "0.5rem" }}
+          >
+            <div className="toggles d-flex flex-wrap" style={{ gap: "0.2rem" }}>
+              <button
+                className={`btn btn-success ${isMobile ? "btn-sm" : ""}`}
+                onClick={() => setViewMode("grid")}
+                disabled={viewMode === "grid"} // disabilita se già attivo
+              >
+                <i className="fa-solid fa-image" style={{ color: "white" }}></i>
+              </button>
+              <button
+                className={`btn btn-success ${isMobile ? "btn-sm" : ""}`}
+                onClick={() => setViewMode("list")}
+                disabled={viewMode === "list"} // disabilita se già attivo
+              >
+                <i className="fa-solid fa-list" style={{ color: "white" }}></i>
+              </button>
             </div>
-            {/* CHECKBOX PRODOTTI SCONTATI */}
+
             <label
               className="m-2 d-flex align-items-center"
               style={{ gap: "6px" }}
@@ -260,8 +230,8 @@ export default function ProductsPage() {
               Solo Prodotti scontati
             </label>
           </div>
-          {/* Prodotti */}
-          {/* CAT MEME - EMPTY STATE */}
+
+          {/* PRODOTTI */}
           {allProducts.length === 0 ? (
             <div className="d-flex justify-content-center flex-column align-items-center">
               <img className="cat_meme" src="/sad_cat.png" alt="Sad cat" />
@@ -296,8 +266,6 @@ export default function ProductsPage() {
                         "Senza brand"}
                     </small>
                   </div>
-
-                  {/* Prezzo con logica sconto */}
                   {product.discount_price ? (
                     <div className="price-container d-flex align-items-center">
                       <span className="text-decoration-line-through text-muted me-2">
