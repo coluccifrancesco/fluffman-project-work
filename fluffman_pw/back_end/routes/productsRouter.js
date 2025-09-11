@@ -5,6 +5,7 @@ import express from "express";
 import {
     index,
     show,
+    getRelatedProducts,
     store,
     update,
     destroy,
@@ -27,6 +28,10 @@ router.get('/:slug', showBySlug);
 // Rotta show (cerca per ID)
 // Abbiamo reso il percorso più specifico per evitare conflitti con lo slug
 router.get('/id/:id', show);
+
+
+// Rotta related (cerca per ID)
+router.get('/:id/related', getRelatedProducts);
 
 // --- ROTTE CRUD BASE ---
 
