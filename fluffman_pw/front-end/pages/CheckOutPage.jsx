@@ -631,6 +631,9 @@ const CheckoutPage = () => {
             border-top: 1px solid #e5e7eb;
             margin-top: 1rem;
           }
+            .card-checkout:hover{
+            transform: none;
+            }
         `}
       </style>
       <div className="container">
