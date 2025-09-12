@@ -8,8 +8,12 @@ export default function Header() {
   const { wishlist } = useWishlist();
   const { cart } = useCart();
   // Calcola solo gli item con id valido (evita badge errato se ci sono oggetti vuoti)
-  const wishlistCount = Array.isArray(wishlist) ? wishlist.filter(item => item && item.id != null).length : 0;
-  const cartCount = Array.isArray(cart) ? cart.filter(item => item && item.id != null).length : 0;
+  const wishlistCount = Array.isArray(wishlist)
+    ? wishlist.filter((item) => item && item.id != null).length
+    : 0;
+  const cartCount = Array.isArray(cart)
+    ? cart.filter((item) => item && item.id != null).length
+    : 0;
 
   // Valore inserito nella searchbar
   const [searchValue, setSearchValue] = useState("");
@@ -17,14 +21,12 @@ export default function Header() {
 
   // Richiesta all'api per i prodotti
   const fetchData = (value) => {
-
     if (value.trim() == "") {
       setSearchResults([]);
-      return
+      return;
     }
 
     fetch("http://localhost:3030/api/products/search")
-
       // Logica di gestione degli errori
       .then((res) => {
         if (!res.ok) {
@@ -36,25 +38,25 @@ export default function Header() {
       // Filtro per il valore inserito dall'utente
       .then((data) => {
         const results = data.filter((product) => {
-          return product.name.toLowerCase().includes(value)
+          return product.name.toLowerCase().includes(value);
         });
 
         setSearchResults(results);
-      })
-  }
+      });
+  };
 
   const handleChange = (value) => {
     setSearchValue(value);
-    fetchData(value)
+    fetchData(value);
   };
 
   const handleOffCanvasCLick = () => {
-    const closeButton = document.getElementById('search-bar-close-btn');
+    const closeButton = document.getElementById("search-bar-close-btn");
 
     if (closeButton) {
       closeButton.click();
     }
-  }
+  };
 
   return (
     <header className="position-sticky top-0 w-100">
@@ -95,18 +97,18 @@ export default function Header() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
+            <NavLink to="/dogproducts" style={{ textDecoration: "none" }}>
               <p className="m-0">Cane</p>
             </NavLink>
           </li>
           <li>
-            <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
+            <NavLink to="/catproducts" style={{ textDecoration: "none" }}>
               <p className="m-0">Gatto</p>
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/OtherAnimalProducts"
+              to="/otheranimalproducts"
               style={{ textDecoration: "none" }}
             >
               <p className="m-0">Altri animali</p>
@@ -128,7 +130,10 @@ export default function Header() {
               <div className="position-relative">
                 <i className="fa-solid fa-star m-0"></i>
                 {wishlistCount > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.7rem" }}>
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    style={{ fontSize: "0.7rem" }}
+                  >
                     {wishlistCount}
                   </span>
                 )}
@@ -140,7 +145,10 @@ export default function Header() {
               <div className="position-relative">
                 <i className="fa-solid fa-cart-shopping m-0"></i>
                 {cartCount > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.7rem" }}>
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    style={{ fontSize: "0.7rem" }}
+                  >
                     {cartCount}
                   </span>
                 )}
@@ -150,8 +158,12 @@ export default function Header() {
         </ul>
 
         {/* Offcanvas ricerca */}
-        <div className="offcanvas offcanvas-top py-4" tabIndex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
-
+        <div
+          className="offcanvas offcanvas-top py-4"
+          tabIndex="-1"
+          id="offcanvasTop"
+          aria-labelledby="offcanvasTopLabel"
+        >
           <div className="offcanvas-header px-5">
             <button
               type="button"
@@ -189,22 +201,23 @@ export default function Header() {
           {/* Risultati ricerca */}
           {/* Inserire il condizionale con searchResults.lenght === 0  */}
           <div className="py-3 row">
-            {
-              searchResults.map((result) => {
-                return <div key={result.id} className="bg-white px-5 py-3 col-12">
-
-                  <Link onClick={handleOffCanvasCLick} style={{ textDecoration: "none" }} to={`/products/${result.slug}`}>
+            {searchResults.map((result) => {
+              return (
+                <div key={result.id} className="bg-white px-5 py-3 col-12">
+                  <Link
+                    onClick={handleOffCanvasCLick}
+                    style={{ textDecoration: "none" }}
+                    to={`/products/${result.slug}`}
+                  >
                     <div className="py-4 d-flex justify-content-between align-items-center container container-sm search-card">
                       <h5 className="m-0">{result.name}</h5>
                       <h5 className="ms-5 mb-0">€{result.price}</h5>
                     </div>
                   </Link>
-
                 </div>
-              })
-            }
+              );
+            })}
           </div>
-
         </div>
 
         {/* Elementi nav tablet-mobile */}
@@ -273,20 +286,20 @@ export default function Header() {
                   </li>
                 </NavLink>
 
-                <NavLink to="/DogProducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/dogproducts" style={{ textDecoration: "none" }}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Cane</p>
                   </li>
                 </NavLink>
 
-                <NavLink to="/CatProducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/catproducts" style={{ textDecoration: "none" }}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Gatto</p>
                   </li>
                 </NavLink>
 
                 <NavLink
-                  to="/OtherAnimalProducts"
+                  to="/otheranimalproducts"
                   style={{ textDecoration: "none" }}
                 >
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">

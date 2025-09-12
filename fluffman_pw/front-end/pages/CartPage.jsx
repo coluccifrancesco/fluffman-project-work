@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CartPage.css";
 import { useCart } from "../context/CartContext";
+import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -413,7 +414,10 @@ export default function CartPage() {
           <div className="d-none d-sm-flex justify-content-between align-items-top check-cont">
             <div className="check-cont">
               <button
-                onClick={() => emptyAll(cartProducts)}
+                onClick={() => {
+                  emptyAll(cartProducts);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="empty-cart"
               >
                 Svuota il carello<i className="fa-solid fa-trash-can"></i>

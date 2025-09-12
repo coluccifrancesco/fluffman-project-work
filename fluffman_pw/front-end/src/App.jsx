@@ -15,7 +15,7 @@ import CartPage from "../pages/CartPage";
 import ProductsPage from "../pages/ProductsPage";
 import CheckOutPage from "../pages/CheckOutPage";
 import ThankYouPage from "../pages/ThankYouPage";
-import ErrorPage from '../pages/ErrorPage';
+import ErrorPage from "../pages/ErrorPage";
 
 function App() {
   return (
