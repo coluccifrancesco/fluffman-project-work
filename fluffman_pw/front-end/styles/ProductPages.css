@@ -8,6 +8,7 @@
 
 .hp_bg {
   background-color: var(--background);
+  min-height: calc(100vh - 250px);
 }
 
 .cat_meme {

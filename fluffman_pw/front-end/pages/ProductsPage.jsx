@@ -114,7 +114,7 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  if (showLoading) return <Loading />;
+  // if (showLoading) return <Loading />;
   if (error)
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
 
@@ -261,61 +261,66 @@ export default function ProductsPage() {
           </div>
 
           {/* PRODOTTI */}
-          {allProducts.length === 0 ? (
-            <div className="d-flex justify-content-center flex-column align-items-center">
-              <img className="cat_meme" src="/sad_cat.png" alt="Sad cat" />
-              <div className="text-center mt-5 text-light-emphasis">
-                <strong>
-                  Nessun prodotto trovato con i criteri selezionati! Ci
-                  dispiace!
-                </strong>
-              </div>
-            </div>
-          ) : viewMode === "grid" ? (
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-              {allProducts.map((product) => (
-                <div key={product.id} className="col">
-                  <CardItem product={product} />
+          <div className="products-wrapper">
+            {/* Carico il Loading durante il fetch dei products */}
+            {showLoading && <Loading />}
+            {/* rimosso il cat_meme durante il rendering iniziale dei prodotti */}
+            {!loading && allProducts.length === 0 ? (
+              <div className="d-flex justify-content-center flex-column align-items-center">
+                <img className="cat_meme" src="/sad_cat.png" alt="Sad cat" />
+                <div className="text-center mt-5 text-light-emphasis">
+                  <strong>
+                    Nessun prodotto trovato con i criteri selezionati! Ci
+                    dispiace!
+                  </strong>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <ul className="list-group">
-              {allProducts.map((product) => (
-                <li
-                  key={product.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                  onClick={() => navigate(`/products/${product.slug}`)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div>
-                    <strong>{product.name}</strong> <br />
-                    <small className="text-muted">
-                      {brands.find((b) => b.id === product.brand_id)?.name ||
-                        "Senza brand"}
-                    </small>
+              </div>
+            ) : viewMode === "grid" ? (
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {allProducts.map((product) => (
+                  <div key={product.id} className="col">
+                    <CardItem product={product} />
                   </div>
-                  {product.discount_price ? (
-                    <div className="price-container d-flex align-items-center">
-                      <span className="text-decoration-line-through text-muted me-2">
+                ))}
+              </div>
+            ) : (
+              <ul className="list-group">
+                {allProducts.map((product) => (
+                  <li
+                    key={product.id}
+                    className="list-group-item d-flex justify-content-between align-items-center"
+                    onClick={() => navigate(`/products/${product.slug}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div>
+                      <strong>{product.name}</strong> <br />
+                      <small className="text-muted">
+                        {brands.find((b) => b.id === product.brand_id)?.name ||
+                          "Senza brand"}
+                      </small>
+                    </div>
+                    {product.discount_price ? (
+                      <div className="price-container d-flex align-items-center">
+                        <span className="text-decoration-line-through text-muted me-2">
+                          <FontAwesomeIcon icon={faEuroSign} />
+                          {product.price}
+                        </span>
+                        <span className="text-danger fw-bold fs-5">
+                          <FontAwesomeIcon icon={faEuroSign} />
+                          {product.discount_price}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="price text-dark fw-bold fs-5">
                         <FontAwesomeIcon icon={faEuroSign} />
                         {product.price}
                       </span>
-                      <span className="text-danger fw-bold fs-5">
-                        <FontAwesomeIcon icon={faEuroSign} />
-                        {product.discount_price}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="price text-dark fw-bold fs-5">
-                      <FontAwesomeIcon icon={faEuroSign} />
-                      {product.price}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>
