@@ -69,7 +69,7 @@ i {
   font-weight: bold;
 }
 
-.search-bar {
+.header-search-bar {
   border: 4px solid var(--background);
   font-size: 30px;
   border-radius: 12px;

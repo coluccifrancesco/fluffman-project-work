@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductPages.css";
@@ -25,7 +26,8 @@ function useWindowWidth() {
 export default function ProductsPage() {
 
   // valori per barra di ricerca
-  const [ searchValue, setSearchValue] = useState('');
+  const location = useLocation();
+  const [ searchValue, setSearchValue] = useState(location.state?.researchValue || '');
   const [ filteredProducts, setFilteredProducts ] = useState([]);
   
   const [allProducts, setAllProducts] = useState([]);
@@ -39,7 +41,7 @@ export default function ProductsPage() {
   // const { cart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-
+  
   const width = useWindowWidth();
   const isMobile = width <= 768;
 
@@ -81,6 +83,7 @@ export default function ProductsPage() {
       price_range: "",
     };
     setFilters(defaultFilters);
+    setSearchValue('')
     const newParams = new URLSearchParams();
     setSearchParams(newParams, { replace: true });
   };
@@ -117,6 +120,16 @@ export default function ProductsPage() {
       })
       .then((data) => {
         setAllProducts(data);
+        
+        if (searchValue.trim()) {
+          const filtered = data.filter(product => 
+            product.name.toLowerCase().includes(searchValue.toLowerCase())
+          )
+          setFilteredProducts(filtered)
+        } else {
+          setFilteredProducts(data)
+        }
+
         setLoading(false);
       })
       .catch((err) => {
@@ -225,7 +238,7 @@ export default function ProductsPage() {
             </div>
 
             {/* Francesco C. -> barra di ricerca */}
-            <div className="d-flex align-items-center flex-column justify-content-center">
+            <div className="d-flex align-items-center flex-column justify-content-center ms-1">
               <label htmlFor="select-range" className="text-muted text-sm">Ricerca</label>
               <input
                 value={searchValue}
@@ -310,7 +323,7 @@ export default function ProductsPage() {
               </div>
             ) : viewMode === "grid" ? (
               <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                {allProducts.map((product) => (
+                {filteredProducts.map((product) => (
                   <div key={product.id} className="col">
                     <CardItem product={product} />
                   </div>
@@ -318,7 +331,7 @@ export default function ProductsPage() {
               </div>
             ) : (
               <ul className="list-group">
-                {allProducts.map((product) => (
+                {filteredProducts.map((product) => (
                   <li
                     key={product.id}
                     className="list-group-item d-flex justify-content-between align-items-center"

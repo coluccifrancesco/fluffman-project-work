@@ -9,7 +9,7 @@ export default function Header() {
   const { wishlist } = useWishlist();
   const { cart } = useCart();
   let navigate = useNavigate();
-  
+
   // Calcola solo gli item con id valido (evita badge errato se ci sono oggetti vuoti)
   const wishlistCount = Array.isArray(wishlist)
     ? wishlist.filter((item) => item && item.id != null).length
@@ -63,10 +63,12 @@ export default function Header() {
 
   // rimanda alla productsPage con i valori per la ricerca inseriti nella barra dall'utente
   const searchProduct = (searchValue) => {
-  
+
     if (searchValue.length > 0) {
       handleOffCanvasCLick();
-      navigate('/products');
+      navigate('/products', {
+        state: { researchValue: searchValue }
+      });
     }
   };
 
@@ -193,7 +195,7 @@ export default function Header() {
             </label>
 
             {/* Barra di ricerca */}
-            <div className="search-bar d-flex justify-content-between align-items-center">
+            <div className="header-search-bar d-flex justify-content-between align-items-center">
               <input
                 value={searchValue}
                 onChange={(e) => {
@@ -211,21 +213,26 @@ export default function Header() {
           </div>
 
           {/* Risultati ricerca */}
-          <div className="py-3 row">
+          <div className="py-3 row list-unstyled">
             {searchResults.map((result) => {
               return (
-                <div key={result.id} className="bg-white px-5 py-3 col-12">
+                <li key={result.id} className="bg-white px-5 py-3 col-12">
                   <Link
                     onClick={handleOffCanvasCLick}
                     style={{ textDecoration: "none" }}
                     to={`/products/${result.slug}`}
                   >
-                    <div className="py-4 d-flex justify-content-between align-items-center container container-sm search-card">
+                    <div className="py-4 d-flex d-sm-none justify-content-between align-items-center container container-sm search-card">
+                      <h5 className="m-0">{result.name}</h5>
+                      <h5 className="ms-5 mb-0">€{result.price}</h5>
+                    </div>
+
+                    <div className="py-4 w-75 d-none d-sm-flex justify-content-between align-items-center container container-sm search-card">
                       <h5 className="m-0">{result.name}</h5>
                       <h5 className="ms-5 mb-0">€{result.price}</h5>
                     </div>
                   </Link>
-                </div>
+                </li>
               );
             })}
           </div>
