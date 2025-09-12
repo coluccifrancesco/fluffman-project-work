@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 // Componente per una singola scheda del negozio
 const StoreCard = ({ name, address, phone, hours, mapsLink }) => {
     return (
-        <div className="store-card rounded p-4 mb-4">
+        <div className="store-card h-100 d-flex flex-column justify-content-between rounded p-4 mb-4">
             <h3 className="store-name fw-bold">{name}</h3>
             <p className="store-address mb-1">{address}</p>
             <p className="store-phone mb-3">Telefono: {phone}</p>
