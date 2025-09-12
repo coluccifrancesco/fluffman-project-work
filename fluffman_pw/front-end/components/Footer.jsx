@@ -14,7 +14,7 @@ export default function Footer() {
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link>Indirizzi</Link>
+                  <Link to='/stores'>Indirizzi</Link>
                 </li>
                 <li className="unstyled">
                   <Link to="/privacy">Privacy</Link>

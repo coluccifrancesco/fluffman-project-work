@@ -17,6 +17,7 @@ import CheckOutPage from "../pages/CheckOutPage";
 import ThankYouPage from "../pages/ThankYouPage";
 import PrivacyPage from "../pages/PrivacyPage";
 import ErrorPage from "../pages/ErrorPage";
+import StoresPage from "../pages/StoresPage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/products/:slug" element={<SingleProductPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
+              <Route path="/stores" element={<StoresPage />} />
               <Route path="/cart" element={<CartPage />} />
 
               <Route path="/thankyou" element={<ThankYouPage />} />
