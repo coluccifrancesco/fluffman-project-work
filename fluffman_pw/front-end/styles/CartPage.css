@@ -7,7 +7,7 @@
 }
 
 .cart {
-  min-height: calc(100vh - 250px);
+  min-height: calc(51vh);
   display: flex;
   flex-direction: column;
 }
@@ -28,12 +28,12 @@
   padding: 5px 20px;
   transition: 0.2s;
 
-  &:hover{
+  &:hover {
     background-color: var(--primary);
     color: var(--background);
   }
 
-  &:active{
+  &:active {
     border: 3px solid var(--background);
     background-color: transparent;
   }
@@ -152,7 +152,7 @@
     border: 3px solid var(--primary);
     color: var(--background);
 
-    i{
+    i {
       color: var(--background);
     }
   }

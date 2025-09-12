@@ -2,8 +2,19 @@
 /* This component creates a loading cat image using gradients and div to separate each limb and body part of the smiling cat.
 It's possible to change color of every piece of the cat, sizing or speed of the loop */
 
-.bg {
+/*#region ROOT*/
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+/*#endregion ROOT */
+
+.bg-cat {
   min-height: calc(100vh - 250px);
+  background-color: var(--background);
 }
 
 .loading-cat {

@@ -2,7 +2,7 @@ import "../styles/CatLoading.css";
 
 export default function CatLoading() {
   return (
-    <div className="d-flex justify-content-center align-items-center bg">
+    <div className="d-flex justify-content-center align-items-center bg-cat">
       <div className="loading-cat">
         <div className="body"></div>
         <div className="head">
