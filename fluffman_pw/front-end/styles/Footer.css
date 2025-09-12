@@ -11,6 +11,7 @@
 footer {
   background-color: #f7fffd;
   color: #237a6a;
+  min-height: 25vh;
 }
 footer a {
   color: inherit;

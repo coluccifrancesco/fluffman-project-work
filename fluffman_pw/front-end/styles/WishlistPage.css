@@ -12,7 +12,7 @@
 }
 
 .wishlist-page {
-  min-height: calc(51vh);
+  min-height: calc(50.8vh);
   display: flex;
   flex-direction: column;
 }
@@ -26,4 +26,20 @@
 }
 .empty-wish:hover {
   transform: none !important;
+}
+
+/* Tablet version - max width 768px */
+@media (max-width: 768px) {
+  .wishlist-page {
+    min-height: auto;
+    padding: 1rem;
+  }
+}
+
+/* Phone small - max width 576px */
+@media (max-width: 576px) {
+  .wishlist-page {
+    min-height: auto;
+    padding: 1rem;
+  }
 }
