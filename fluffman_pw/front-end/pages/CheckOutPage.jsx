@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "../styles/CheckOutPage.css";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
@@ -23,7 +23,7 @@ export const VALID_DOMINIONS = [
   "zoho.com"
 ];
 // regex per numero di telefono (solo cifre, 10 caratteri, senza spazi o trattini)
-export const PHONE_PATTERN = /^\d{10}$/;
+export const PHONE_PATTERN = /^\+39 \d{10}$/;
 
 // URLs per i test e la produzione
 const BASE_URL = "http://localhost:3030";
@@ -41,8 +41,6 @@ const CheckoutPage = () => {
   const [emailError, setEmailError] = useState(null);
   const [phoneError, setPhoneError] = useState(null);
 
-  const emailRef = useRef(null);
-  const phoneRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -152,22 +150,18 @@ const CheckoutPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "email") {
-      const emailTrimmed = value.trim();
-      const [_, domain] = emailTrimmed.split("@");
-      if (!EMAIL_PATTERN.test(emailTrimmed)) {
-        setEmailError("Inserisci un'email valida (es. nome@dominio.it)");
-      } else if (!VALID_DOMINIONS.includes(domain)) {
-        setEmailError("Inserisci un dominio email valido (es. gmail.com, yahoo.com)");
+      if (value.trim() === "") {
+        setEmailError(true); // vuoto = errore
       } else {
-        setEmailError(null);
+        setEmailError(!EMAIL_PATTERN.test(value.trim()));
       }
     }
+
     if (name === "phone") {
-      const phoneTrimmed = value.trim();
-      if (!PHONE_PATTERN.test(phoneTrimmed)) {
-        setPhoneError("Inserisci un numero di telefono valido (es. 1234567890)");
+      if (value.trim() === "") {
+        setPhoneError(true); // vuoto = errore
       } else {
-        setPhoneError(null);
+        setPhoneError(!PHONE_PATTERN.test(value.trim()));
       }
     }
   };
@@ -177,8 +171,8 @@ const CheckoutPage = () => {
     const fields = [];
     if (!name) fields.push("name");
     if (!lastName) fields.push("lastName");
-    if (!email) fields.push("email");
-    if (!phone) fields.push("phone");
+    if (!email || emailError) fields.push("email");
+    if (!phone || phoneError) fields.push("phone");
     if (!billing.address) fields.push("billing.address");
     if (!billing.zip) fields.push("billing.zip");
     if (!billing.city) fields.push("billing.city");
@@ -205,24 +199,11 @@ const CheckoutPage = () => {
     e.preventDefault();
 
     const missing = getMissingFields();
-    if (emailError) {
-      missing.push("email");
-    }
-    if (phoneError) {
-      missing.push("phone");
-    }
     setMissingFields(missing);
 
     if (missing.length > 0) {
       setShowFieldErrors(true);
-      if (missing.includes("email") && emailRef.current) {
-        emailRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-        emailRef.current.focus();
-      }
-      if (missing.includes("phone") && phoneRef.current) {
-        phoneRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-        phoneRef.current.focus();
-      }
+      window.scrollTo({ behavior: "smooth", top });
       return;
     }
     setShowFieldErrors(false);
@@ -637,15 +618,14 @@ const CheckoutPage = () => {
         `}
       </style>
       <div className="container">
-      // Nel tuo CheckoutPage.jsx
         <CardCheckout
           handleOrder={handleOrder}
           formData={formData}
           handleDirectInputChange={handleDirectInputChange}
           handleInputChange={handleInputChange}
           showFieldErrors={showFieldErrors}
-          emailRef={emailRef}
           emailError={emailError}
+          phoneError={phoneError}
           showDeliveryAddress={showDeliveryAddress}
           setShowDeliveryAddress={setShowDeliveryAddress}
           handleAccordionToggle={handleAccordionToggle}
