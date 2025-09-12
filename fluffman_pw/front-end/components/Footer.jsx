@@ -17,10 +17,7 @@ export default function Footer() {
                   <Link>Indirizzi</Link>
                 </li>
                 <li className="unstyled">
-                  <Link>Buoni</Link>
-                </li>
-                <li className="unstyled">
-                  <Link>Privacy</Link>
+                  <Link to="/privacy">Privacy</Link>
                 </li>
               </ul>
             </div>

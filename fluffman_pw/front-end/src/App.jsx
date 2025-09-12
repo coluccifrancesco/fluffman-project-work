@@ -15,6 +15,7 @@ import CartPage from "../pages/CartPage";
 import ProductsPage from "../pages/ProductsPage";
 import CheckOutPage from "../pages/CheckOutPage";
 import ThankYouPage from "../pages/ThankYouPage";
+import PrivacyPage from "../pages/PrivacyPage";
 import ErrorPage from "../pages/ErrorPage";
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                 path="/otheranimalproducts"
                 element={<OtherAnimalProductsPage />}
               />
+              <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/products/:slug" element={<SingleProductPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/cart" element={<CartPage />} />
