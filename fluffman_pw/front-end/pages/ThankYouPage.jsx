@@ -5,9 +5,10 @@ import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 export default function ThankYouPage() {
     const location = useLocation();
     const orderSummary = location.state?.orderSummary;
+    const orderNumber = location.state?.orderNumber;
 
-    // Aggiungi questo controllo per gestire il caso in cui la pagina venga visitata direttamente
-    if (!orderSummary) {
+    // Aggiungi un controllo per il caso in cui il numero d'ordine non sia presente
+    if (!orderSummary || !orderNumber) {
         return (
             <div className="container mt-5 p-3 text-center">
                 <h2>Riepilogo non disponibile</h2>
@@ -22,7 +23,9 @@ export default function ThankYouPage() {
     return (
         <div className="container my-5">
             <h1 className="text-center mb-4 text-dark fw-bold">Grazie per averci scelto!</h1>
-            <p className="text-center text-muted">Il tuo ordine è stato ricevuto con successo.</p>
+            <p className="text-center text-muted">
+                Il tuo ordine **<span className="text-success">{orderNumber}</span>** è stato ricevuto con successo.
+            </p>
 
             <div className="container border rounded-4 shadow-sm p-4 mt-5">
                 <h3 className="recap-title mb-4">Riepilogo del tuo acquisto</h3>
