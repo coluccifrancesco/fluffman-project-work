@@ -27,21 +27,21 @@ export default function ProductsPage() {
 
   // valori per barra di ricerca
   const location = useLocation();
-  const [ searchValue, setSearchValue] = useState(location.state?.researchValue || '');
-  const [ filteredProducts, setFilteredProducts ] = useState([]);
-  
+  const [searchValue, setSearchValue] = useState(location.state?.researchValue || '');
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState("list");
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const width = useWindowWidth();
   const isMobile = width <= 768;
 
@@ -91,11 +91,11 @@ export default function ProductsPage() {
   const handleChange = (value) => {
     setSearchValue(value);
 
-    if (!value.trim()){
+    if (!value.trim()) {
       setFilteredProducts(allProducts);
     } else {
-      const filteredProducts = allProducts.filter(product => 
-        product.name.toLowerCase().includes(value.toLowerCase()) 
+      const filteredProducts = allProducts.filter(product =>
+        product.name.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredProducts(filteredProducts);
     }
@@ -120,9 +120,9 @@ export default function ProductsPage() {
       })
       .then((data) => {
         setAllProducts(data);
-        
+
         if (searchValue.trim()) {
-          const filtered = data.filter(product => 
+          const filtered = data.filter(product =>
             product.name.toLowerCase().includes(searchValue.toLowerCase())
           )
           setFilteredProducts(filtered)
@@ -145,7 +145,7 @@ export default function ProductsPage() {
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
 
-  // if (showLoading) return <Loading />;
+  if (showLoading) return <Loading />;
   if (error)
     return <div className="text-center mt-5 text-danger">Errore: {error}</div>;
 
@@ -321,15 +321,7 @@ export default function ProductsPage() {
                   </strong>
                 </div>
               </div>
-            ) : viewMode === "grid" ? (
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                {filteredProducts.map((product) => (
-                  <div key={product.id} className="col">
-                    <CardItem product={product} />
-                  </div>
-                ))}
-              </div>
-            ) : (
+            ) : viewMode === "list" ? (
               <ul className="list-group">
                 {filteredProducts.map((product) => (
                   <li
@@ -365,10 +357,18 @@ export default function ProductsPage() {
                   </li>
                 ))}
               </ul>
+            ) : (
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {filteredProducts.map((product) => (
+                  <div key={product.id} className="col">
+                    <CardItem product={product} />
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
