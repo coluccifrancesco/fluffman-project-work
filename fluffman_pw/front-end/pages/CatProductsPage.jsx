@@ -65,7 +65,7 @@ export default function CatProductsPage() {
   }
 
   return (
-    <div className="hp_bg p-2">
+    <div className="hp_bg">
       <div className="m-2 p-2 text-center">
         <h1>Il regno dei Gatti</h1>
         <p className="text-light">

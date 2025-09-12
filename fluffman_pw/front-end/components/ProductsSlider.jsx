@@ -38,17 +38,38 @@ export default function ProductsSlider({ title, products }) {
   const visibleProducts = products.slice(start, start + cardsPerPage);
 
   return (
-    <div className="m-2 p-2">
-      <h2 className="p-2 text-center">{title}</h2>
 
-      {!isMobile ? (
-        <div className="position-relative">
-          <div className="arrow_left_slider" onClick={handlePrev}></div>
-          <div className="row justify-content-center g-3 px-2 mx-5">
-            {visibleProducts.map((product) => (
+    <div className="container">
+
+      <div className="m-2 p-2 ">
+        <h2 className="p-2 text-center">{title}</h2>
+
+        {!isMobile ? (
+          <div className="position-relative">
+            <div className="arrow_left_slider" onClick={handlePrev}></div>
+            <div className="row justify-content-center g-3 px-2 mx-5">
+              {visibleProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
+                >
+                  <CardItem
+                    product={product}
+                    isFavorite={wishlist.some(item => item.id === product.id)}
+                    onToggleFavorite={toggleWishlist}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="arrow_right_slider" onClick={handleNext}></div>
+          </div>
+        ) : (
+          <div className="d-flex overflow-auto gap-3 pb-3">
+            {products.map((product) => (
               <div
                 key={product.id}
-                className={`col-12 ${isTablet ? "col-md-6" : "col-md-3"}`}
+                className="flex-shrink-0"
+                style={{ width: "80%", maxWidth: "250px" }}
               >
                 <CardItem
                   product={product}
@@ -58,25 +79,10 @@ export default function ProductsSlider({ title, products }) {
               </div>
             ))}
           </div>
-          <div className="arrow_right_slider" onClick={handleNext}></div>
-        </div>
-      ) : (
-        <div className="d-flex overflow-auto gap-3 pb-3">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="flex-shrink-0"
-              style={{ width: "80%", maxWidth: "250px" }}
-            >
-              <CardItem
-                product={product}
-                isFavorite={wishlist.some(item => item.id === product.id)}
-                onToggleFavorite={toggleWishlist}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+        )}
+      </div>
+
     </div>
+
   );
 }

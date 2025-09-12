@@ -228,9 +228,8 @@ export default function CardItem({ product }) {
               }
             >
               <i
-                className={`bi fs-4 me-3 ${
-                  isFavorite ? "bi-star-fill text-warning" : "bi-star"
-                }`}
+                className={`bi fs-4 me-3 ${isFavorite ? "bi-star-fill text-warning" : "bi-star"
+                  }`}
               ></i>
             </button>
 
