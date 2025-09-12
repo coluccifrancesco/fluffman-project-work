@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import CardItem from "../components/CardComponent/CardItem";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductPages.css";
@@ -23,6 +24,12 @@ function useWindowWidth() {
 }
 
 export default function ProductsPage() {
+
+  // valori per barra di ricerca
+  const location = useLocation();
+  const [ searchValue, setSearchValue] = useState(location.state?.researchValue || '');
+  const [ filteredProducts, setFilteredProducts ] = useState([]);
+  
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +41,7 @@ export default function ProductsPage() {
   // const { cart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-
+  
   const width = useWindowWidth();
   const isMobile = width <= 768;
 
@@ -76,8 +83,22 @@ export default function ProductsPage() {
       price_range: "",
     };
     setFilters(defaultFilters);
+    setSearchValue('')
     const newParams = new URLSearchParams();
     setSearchParams(newParams, { replace: true });
+  };
+
+  const handleChange = (value) => {
+    setSearchValue(value);
+
+    if (!value.trim()){
+      setFilteredProducts(allProducts);
+    } else {
+      const filteredProducts = allProducts.filter(product => 
+        product.name.toLowerCase().includes(value.toLowerCase()) 
+      );
+      setFilteredProducts(filteredProducts);
+    }
   };
 
   useEffect(() => {
@@ -99,6 +120,16 @@ export default function ProductsPage() {
       })
       .then((data) => {
         setAllProducts(data);
+        
+        if (searchValue.trim()) {
+          const filtered = data.filter(product => 
+            product.name.toLowerCase().includes(searchValue.toLowerCase())
+          )
+          setFilteredProducts(filtered)
+        } else {
+          setFilteredProducts(data)
+        }
+
         setLoading(false);
       })
       .catch((err) => {
@@ -130,7 +161,7 @@ export default function ProductsPage() {
         </div>
 
         <div className="container my-4">
-          {/* FILTRI E ORDINATORI  */}
+          {/* FILTRI E ORDINATORI */}
           <div className="filters-sorting-row flex-wrap">
             <div className="animal-select d-flex align-items-center flex-column justify-content-center">
               <label htmlFor="animal-select" className="text-muted text-sm">
@@ -205,6 +236,21 @@ export default function ProductsPage() {
                 <option value="over40">Sopra i 40 €</option>
               </select>
             </div>
+
+            {/* Francesco C. -> barra di ricerca */}
+            <div className="d-flex align-items-center flex-column justify-content-center ms-1">
+              <label htmlFor="select-range" className="text-muted text-sm">Ricerca</label>
+              <input
+                value={searchValue}
+                onChange={(e) => {
+                  handleChange(e.target.value);
+                }}
+                id="searchBar"
+                type="text"
+                className="search-bar"
+              />
+            </div>
+
             <div className="reset-wrapper d-flex align-items-center flex-column justify-content-end">
               <label htmlFor="reset" className="text-muted text-sm mb-3">
                 {" "}
@@ -277,7 +323,7 @@ export default function ProductsPage() {
               </div>
             ) : viewMode === "grid" ? (
               <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                {allProducts.map((product) => (
+                {filteredProducts.map((product) => (
                   <div key={product.id} className="col">
                     <CardItem product={product} />
                   </div>
@@ -285,7 +331,7 @@ export default function ProductsPage() {
               </div>
             ) : (
               <ul className="list-group">
-                {allProducts.map((product) => (
+                {filteredProducts.map((product) => (
                   <li
                     key={product.id}
                     className="list-group-item d-flex justify-content-between align-items-center"
