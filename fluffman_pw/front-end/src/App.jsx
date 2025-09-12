@@ -18,6 +18,10 @@ import ThankYouPage from "../pages/ThankYouPage";
 import PrivacyPage from "../pages/PrivacyPage";
 import ErrorPage from "../pages/ErrorPage";
 import StoresPage from "../pages/StoresPage";
+import ShippingPolicyPage from "../pages/ShippingPolicyPage"
+import TermsAndConditionsPage from "../pages/TermsAndConditionsPage";
+import RefundPolicyPage from "../pages/RefundPolicyPage";
+
 
 function App() {
   return (
@@ -43,6 +47,9 @@ function App() {
               <Route path="/products/:slug" element={<SingleProductPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/stores" element={<StoresPage />} />
+              <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+              <Route path="/refund-policy" element={<RefundPolicyPage />} />
               <Route path="/cart" element={<CartPage />} />
 
               <Route path="/thankyou" element={<ThankYouPage />} />

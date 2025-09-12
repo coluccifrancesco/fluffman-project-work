@@ -14,10 +14,10 @@ export default function Footer() {
                   <i className="fa-solid fa-arrow-up-right-from-square ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link to='/stores'>Indirizzi</Link>
+                  <Link to={'/stores'}>Indirizzi</Link>
                 </li>
                 <li className="unstyled">
-                  <Link to="/privacy">Privacy</Link>
+                  <Link to={"/privacy"}>Privacy</Link>
                 </li>
               </ul>
             </div>
@@ -41,13 +41,13 @@ export default function Footer() {
                   Spedizioni <i className="fa-solid fa-truck-fast ps-2"></i>
                 </h5>
                 <li className="unstyled">
-                  <Link>Condizioni e Costi di Spedizione</Link>
+                  <Link to={'/shipping-policy'}>Condizioni e Costi di Spedizione</Link>
                 </li>
                 <li className="unstyled">
-                  <Link>Termini e Condizioni di servizio</Link>
+                  <Link to={'/terms-and-conditions'}>Termini e Condizioni di servizio</Link>
                 </li>
                 <li className="unstyled">
-                  <Link>Informativa Rimborsi</Link>
+                  <Link to={"/refund-policy"}>Informativa Rimborsi</Link>
                 </li>
               </ul>
             </div>

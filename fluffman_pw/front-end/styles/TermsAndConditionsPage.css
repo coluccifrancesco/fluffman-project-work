@@ -1,0 +1,57 @@
+/* termsandconditionspage.css */
+.terms-and-conditions-page {
+    background-color: #f7f9fc;
+    padding: 2rem 0;
+}
+
+.content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+p,
+li {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+.note {
+    font-style: italic;
+    color: #6b7280;
+    margin-top: 2rem;
+}
+
+.note a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.note a:hover {
+    text-decoration: underline;
+}

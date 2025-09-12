@@ -45,8 +45,8 @@ export default function StoresPage() {
     ];
 
     return (
-        <div className="sp_bg">
-            <div className="p-3">
+        <div className="sp_bg py-5">
+            <div className="px-3 py-5">
                 <div className="container my-4">
                     <h1 className="text-center my-4">I nostri negozi</h1>
                     <div className="row justify-content-center">
