@@ -133,8 +133,8 @@ export default function ProductsPage() {
           {/* FILTRI E ORDINATORI  */}
           <div className="filters-sorting-row flex-wrap">
             <div className="animal-select d-flex align-items-center flex-column justify-content-center">
-              <label htmlFor="select-range" className="text-muted">
-                Price Range
+              <label htmlFor="animal-select" className="text-muted text-sm">
+                Seleziona il tipo di Animale
               </label>
               <select
                 value={filters.animal_id}
@@ -151,8 +151,8 @@ export default function ProductsPage() {
               </select>
             </div>
             <div className="brand-select d-flex align-items-center flex-column justify-content-center">
-              <label htmlFor="brand-select" className="text-muted">
-                Brand Selector
+              <label htmlFor="brand-select" className="text-muted text-sm">
+                Seleziona Brand
               </label>
               <select
                 value={filters.brand_id}
@@ -169,8 +169,8 @@ export default function ProductsPage() {
               </select>
             </div>
             <div className="sort-order d-flex align-items-center flex-column justify-content-center">
-              <label htmlFor="sort-order" className="text-muted">
-                Sort Order
+              <label htmlFor="sort-order" className="text-muted text-sm">
+                Ordinamento
               </label>
               <select
                 value={`${filters.sort_by}_${filters.sort_order}`}
@@ -189,8 +189,8 @@ export default function ProductsPage() {
               </select>
             </div>
             <div className="price-range d-flex align-items-center flex-column justify-content-center">
-              <label htmlFor="select-range" className="text-muted">
-                Price Range
+              <label htmlFor="select-range" className="text-muted text-sm">
+                Budget
               </label>
               <select
                 value={filters.price_range}
@@ -205,10 +205,10 @@ export default function ProductsPage() {
                 <option value="over40">Sopra i 40 €</option>
               </select>
             </div>
-            <div className="d-flex align-items-center flex-column justify-content-end">
-              <label htmlFor="reset" className="text-muted">
+            <div className="reset-wrapper d-flex align-items-center flex-column justify-content-end">
+              <label htmlFor="reset" className="text-muted text-sm mb-3">
                 {" "}
-                Filters Reset{" "}
+                Reset dei Filtri{" "}
               </label>
               <button
                 className={`reset m-2 ${isMobile ? "btn-sm" : ""}`}

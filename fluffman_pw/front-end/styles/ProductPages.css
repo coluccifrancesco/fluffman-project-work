@@ -72,6 +72,10 @@
   margin-bottom: 1rem;
 }
 
+.filters-sorting-row > .reset-wrapper {
+  margin-left: auto;
+}
+
 .view-toggle {
   display: flex;
   flex-direction: row;
@@ -144,5 +148,13 @@
   .tooltip-wrapper .tooltip-text {
     font-size: 0.65rem;
     padding: 2px 4px;
+  }
+
+  .filters-sorting-row > .reset-wrapper {
+    margin-left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
