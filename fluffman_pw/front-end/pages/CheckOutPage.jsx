@@ -264,11 +264,9 @@ const CheckoutPage = () => {
         );
       }
 
-      // 1. Recupera il numero d'ordine dalla risposta del server
       const purchaseData = await purchaseResponse.json();
-      const orderNumber = purchaseData.order_number; // Assumi che il server ritorni { order_number: '...' }
+      const orderNumber = purchaseData.order_number;
 
-      // 2. Prepara il corpo delle email includendo il numero d'ordine
       const productListHtml = cartProducts
         .map(
           (p) =>
@@ -278,29 +276,60 @@ const CheckoutPage = () => {
         )
         .join("");
 
+      // URL del logo per test in locale. Assicurati che il tuo server di sviluppo sia in esecuzione.
+      const logoUrl = `${BASE_URL}/Logo3.png`; // Sostituisci /Logo3.png con il percorso effettivo nella tua cartella public.
+
+      // Corpo dell'email per l'acquirente
       const emailBodyBuyer = `
+        <div style="text-align: center;">
+          <img src="${logoUrl}" alt="Logo Azienda" style="max-width: 150px; height: auto; margin-bottom: 20px;">
+        </div>
         <h1>Riepilogo del tuo Ordine</h1>
         <p>Gentile ${formData.name},</p>
-        <p>Il tuo ordine **#${orderNumber}** è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+        <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+        
+        <h2>Dettagli Ordine</h2>
         <ul>
           ${productListHtml}
         </ul>
         <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
-        <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
+        <p><b>Totale ordine: €${totalPrice.toFixed(2)}</b></p>
+        
+        <hr/>
+        
+        <h2>Indirizzo di Fatturazione</h2>
+        <ul>
+            <li>Indirizzo: ${formData.billing.address}</li>
+            ${formData.billing.address2 ? `<li>Dettagli aggiuntivi: ${formData.billing.address2}</li>` : ''}
+            <li>Città: ${formData.billing.city}, ${formData.billing.province} ${formData.billing.zip}</li>
+            <li>Nazione: ${formData.billing.country}</li>
+        </ul>
+        
+        ${showDeliveryAddress ? `
+          <h2>Indirizzo di Consegna</h2>
+          <ul>
+              <li>Indirizzo: ${formData.delivery.address}</li>
+              ${formData.delivery.address2 ? `<li>Dettagli aggiuntivi: ${formData.delivery.address2}</li>` : ''}
+              <li>Città: ${formData.delivery.city}, ${formData.delivery.province} ${formData.delivery.zip}</li>
+              <li>Nazione: ${formData.delivery.country}</li>
+          </ul>
+        ` : ''}
+        
         <p>Grazie per il tuo acquisto!</p>
       `;
 
+      // Corpo dell'email per il venditore (versione preferita)
       const emailBodySeller = `
           <h1>Nuovo Ordine Ricevuto</h1>
           <p>Ciao venditore,</p>
           <p>Hai ricevuto un nuovo ordine da ${formData.name} ${formData.lastName}.</p>
-          <p>Numero d'ordine: **#${orderNumber}**</p>
+          <p>Numero d'ordine: <b>#${orderNumber}</b></p>
           <p>Dettagli dell'ordine:</p>
           <ul>
               ${productListHtml}
           </ul>
           <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
-          <p><strong>Totale ordine: €${totalPrice.toFixed(2)}</strong></p>
+          <p><b>Totale ordine: €${totalPrice.toFixed(2)}</b></p>
           <p>Dettagli utente:</p>
           <ul>
               <li>Nome: ${formData.name}</li>
@@ -330,6 +359,7 @@ const CheckoutPage = () => {
           : ""
         }
       `;
+
       // Invio email all'acquirente e al venditore
       await Promise.all([
         fetch(`${BASE_URL}/api/send-email`, {
@@ -393,12 +423,11 @@ const CheckoutPage = () => {
         shippingCost: shippingCost,
       };
 
-      // 3. Naviga alla pagina di ringraziamento, passando i dati
+      // Naviga alla pagina di ringraziamento, passando i dati
       navigate("/thankyou", { state: { orderSummary: summary, orderNumber: orderNumber } });
 
     } catch (error) {
       console.error("Errore durante l'elaborazione dell'ordine:", error);
-      // Mostra un alert di errore in caso di fallimento
       alert(`Si è verificato un errore durante l'ordine: ${error.message}. Riprova più tardi.`);
     }
   };
