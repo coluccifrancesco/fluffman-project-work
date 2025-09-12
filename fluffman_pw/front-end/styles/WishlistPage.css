@@ -1,5 +1,29 @@
+/*#region ROOT*/
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+/*#endregion ROOT */
+.bg {
+  background-color: var(--background);
+}
+
 .wishlist-page {
-  min-height: calc(100vh - 250px);
+  min-height: calc(100vh - 300px);
   display: flex;
   flex-direction: column;
+}
+
+#product-btn {
+  background-color: var(--accent);
+}
+
+.empty-wish {
+  max-width: 200px;
+}
+.empty-wish:hover {
+  transform: none !important;
 }
