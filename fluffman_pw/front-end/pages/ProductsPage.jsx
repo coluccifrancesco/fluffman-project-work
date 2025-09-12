@@ -220,9 +220,13 @@ export default function ProductsPage() {
           </div>
 
           {/* TOGGLE GRIGLIA/LISTA + SCONTI */}
+          <label htmlFor="toggle-btns" className="text-muted text-sm">
+            Visualizzazione
+          </label>
           <div
             className="view-toggle mb-3 mt-2 d-flex align-items-center flex-wrap"
             style={{ gap: "0.5rem" }}
+            id="toggle-btns"
           >
             <div className="toggles d-flex flex-wrap" style={{ gap: "0.2rem" }}>
               <button
