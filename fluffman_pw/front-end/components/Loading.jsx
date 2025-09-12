@@ -1,6 +1,27 @@
+import { useEffect, useState } from "react";
 import "../styles/CatLoading.css";
 
 export default function CatLoading() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 500);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <div className="d-flex justify-content-center align-items-center bg-cat">
+        <p className="text-dark">Caricamento...</p>
+      </div>
+    );
+  }
   return (
     <div className="d-flex justify-content-center align-items-center bg-cat">
       <div className="loading-cat">
