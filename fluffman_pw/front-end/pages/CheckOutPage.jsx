@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "../styles/CheckOutPage.css";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 // regex restrittiva (accetta solo .com .it .org .net .edu) - case insensitive
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.(com|it|org|net|edu)$/i;
@@ -21,30 +22,23 @@ export const VALID_DOMINIONS = [
   "zoho.com"
 ];
 
+// URLs per i test e la produzione
+const BASE_URL = "http://localhost:3030";
+const SITE_BASE_URL = "http://localhost:3030"; // Cambia questo in "https://www.tuosito.com" in produzione!
+const SELLER_EMAIL = "seller@example.com";
 
 const CheckoutPage = () => {
-  // Sposta useNavigate all'interno del componente
   const navigate = useNavigate();
+  const { cart, clearCart } = useCart();
 
-  // Stato per gli articoli del carrello. Inizializza dallo storage locale.
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cartlist")) || [];
-    } catch (error) {
-      console.error("Errore nel parsing del localStorage:", error);
-      return [];
-    }
-  });
   const [cartProducts, setCartProducts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [emailError, setEmailError] = useState(null);
 
-  // Ref per il focus sulla email
   const emailRef = useRef(null);
 
-  // Stato per i dati del modulo.
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
@@ -74,18 +68,12 @@ const CheckoutPage = () => {
     },
   });
 
-  // Stato per i campi obbligatori mancanti
   const [missingFields, setMissingFields] = useState([]);
-  // Stato per mostrare errori visivi solo dopo submit
   const [showFieldErrors, setShowFieldErrors] = useState(false);
 
-  const BASE_URL = "http://localhost:3030";
-  const SELLER_EMAIL = "seller@example.com";
-
-  // Fetch dei dati dei prodotti del carrello
   useEffect(() => {
     async function fetchData() {
-      if (cartItems.length === 0) {
+      if (cart.length === 0) {
         setCartProducts([]);
         setTotalPrice(0);
         return;
@@ -94,7 +82,7 @@ const CheckoutPage = () => {
         const productsResponse = await fetch(`${BASE_URL}/api/products`);
         const productsData = await productsResponse.json();
 
-        const cartListData = cartItems
+        const cartListData = cart
           .map((item) => {
             const product = productsData.find((p) => p?.id === item?.id);
             if (!product) return null;
@@ -125,9 +113,8 @@ const CheckoutPage = () => {
       }
     }
     fetchData();
-  }, [cartItems]);
+  }, [cart]);
 
-  // Calcolo del prezzo totale ogni volta che i prodotti del carrello cambiano
   useEffect(() => {
     const subtotal = cartProducts.reduce(
       (sum, product) => sum + product.price * product.currentQuantity,
@@ -172,7 +159,6 @@ const CheckoutPage = () => {
     }
   };
 
-
   const getMissingFields = () => {
     const { name, lastName, email, phone, billing } = formData;
     const fields = [];
@@ -196,7 +182,6 @@ const CheckoutPage = () => {
     }
     return fields;
   };
-
 
   useEffect(() => {
     setMissingFields(getMissingFields());
@@ -249,7 +234,6 @@ const CheckoutPage = () => {
     }
 
     try {
-      // Salvataggio dell'ordine
       const purchaseResponse = await fetch(`${BASE_URL}/api/purchases`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -276,10 +260,9 @@ const CheckoutPage = () => {
         )
         .join("");
 
-      // URL del logo per test in locale. Assicurati che il tuo server di sviluppo sia in esecuzione.
-      const logoUrl = `${BASE_URL}/Logo3.png`; // Sostituisci /Logo3.png con il percorso effettivo nella tua cartella public.
+      // URL del logo che funziona sia in locale che in produzione
+      const logoUrl = `${SITE_BASE_URL}/Logo3.png`;
 
-      // Corpo dell'email per l'acquirente
       const emailBodyBuyer = `
         <div style="text-align: center;">
           <img src="${logoUrl}" alt="Logo Azienda" style="max-width: 150px; height: auto; margin-bottom: 20px;">
@@ -318,7 +301,6 @@ const CheckoutPage = () => {
         <p>Grazie per il tuo acquisto!</p>
       `;
 
-      // Corpo dell'email per il venditore (versione preferita)
       const emailBodySeller = `
           <h1>Nuovo Ordine Ricevuto</h1>
           <p>Ciao venditore,</p>
@@ -360,7 +342,6 @@ const CheckoutPage = () => {
         }
       `;
 
-      // Invio email all'acquirente e al venditore
       await Promise.all([
         fetch(`${BASE_URL}/api/send-email`, {
           method: "POST",
@@ -382,9 +363,9 @@ const CheckoutPage = () => {
         }),
       ]);
 
-      // Svuota il carrello e resetta il form
-      setCartItems([]);
-      localStorage.removeItem("cartlist");
+      // Svuota il carrello usando la funzione corretta dal Context
+      clearCart();
+
       setFormData({
         name: "",
         lastName: "",
@@ -416,14 +397,12 @@ const CheckoutPage = () => {
       setShowDeliveryAddress(false);
       setIsAccordionOpen(false);
 
-      // Prepara il riepilogo per la navigazione
       const summary = {
         products: cartProducts,
         totalPrice: totalPrice,
         shippingCost: shippingCost,
       };
 
-      // Naviga alla pagina di ringraziamento, passando i dati
       navigate("/thankyou", { state: { orderSummary: summary, orderNumber: orderNumber } });
 
     } catch (error) {
@@ -431,6 +410,7 @@ const CheckoutPage = () => {
       alert(`Si è verificato un errore durante l'ordine: ${error.message}. Riprova più tardi.`);
     }
   };
+
   const handleAccordionToggle = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
@@ -631,9 +611,6 @@ const CheckoutPage = () => {
             border-top: 1px solid #e5e7eb;
             margin-top: 1rem;
           }
-            .card-checkout:hover{
-            transform: none;
-            }
         `}
       </style>
       <div className="container">
@@ -704,7 +681,6 @@ const CheckoutPage = () => {
               <div style={{ marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center', color: '#b91c1c', fontSize: '0.95rem' }}>
                 I campi contrassegnati con <span style={{ color: 'red' }}>*</span> sono obbligatori
               </div>
-
 
               <h2 className="subtitle">Indirizzo di Fatturazione</h2>
               <div className="form-grid">
@@ -810,6 +786,7 @@ const CheckoutPage = () => {
                         value={formData.delivery.address}
                         onChange={(e) => handleInputChange(e, "delivery")}
                         placeholder="Via Roma n.1"
+                        style={showFieldErrors && missingFields.includes("delivery.address") ? { borderColor: '#b91c1c' } : {}}
                       />
                     </div>
                     <div className="form-group">
@@ -834,6 +811,7 @@ const CheckoutPage = () => {
                         value={formData.delivery.zip}
                         onChange={(e) => handleInputChange(e, "delivery")}
                         placeholder="00100"
+                        style={showFieldErrors && missingFields.includes("delivery.zip") ? { borderColor: '#b91c1c' } : {}}
                       />
                     </div>
                     <div className="form-group">
@@ -845,6 +823,7 @@ const CheckoutPage = () => {
                         value={formData.delivery.city}
                         onChange={(e) => handleInputChange(e, "delivery")}
                         placeholder="Roma"
+                        style={showFieldErrors && missingFields.includes("delivery.city") ? { borderColor: '#b91c1c' } : {}}
                       />
                     </div>
                     <div className="form-group">
@@ -856,6 +835,7 @@ const CheckoutPage = () => {
                         value={formData.delivery.province}
                         onChange={(e) => handleInputChange(e, "delivery")}
                         placeholder="RM"
+                        style={showFieldErrors && missingFields.includes("delivery.province") ? { borderColor: '#b91c1c' } : {}}
                       />
                     </div>
                     <div className="form-group">
@@ -867,6 +847,7 @@ const CheckoutPage = () => {
                         value={formData.delivery.country}
                         onChange={(e) => handleInputChange(e, "delivery")}
                         placeholder="Italia"
+                        style={showFieldErrors && missingFields.includes("delivery.country") ? { borderColor: '#b91c1c' } : {}}
                       />
                     </div>
                   </div>
@@ -941,7 +922,6 @@ const CheckoutPage = () => {
 
               {cartProducts.length > 0 && (
                 <div style={{ marginTop: "2rem", textAlign: "center" }}>
-                  {/* Messaggio di errore sopra il bottone se ci sono campi obbligatori mancanti e showFieldErrors è true */}
                   {showFieldErrors && missingFields.length > 0 && (
                     <div style={{ color: '#b91c1c', marginBottom: '1rem', fontWeight: 500 }}>
                       Compila tutti i campi obbligatori per procedere con l'ordine.
@@ -962,7 +942,6 @@ const CheckoutPage = () => {
             </form>
           </div>
 
-          {/* Sezione del riepilogo dell'ordine */}
           <div className="summary-section">
             <h2 className="title">Il tuo Ordine</h2>
             <div className="product-list">
@@ -1030,6 +1009,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default function App() {
-  return <CheckoutPage />;
-}
+export default CheckoutPage;
