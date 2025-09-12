@@ -1,0 +1,15 @@
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.hp_bg {
+  min-height: calc(100vh - 455px);
+}
+
+.privacy_text {
+  max-width: 500px;
+}

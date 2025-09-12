@@ -1,10 +1,12 @@
+import "../styles/PrivacyPage.css";
+
 export default function PrivacyPage() {
   return (
     <div className="hp_bg">
       <h1 className="text-center p-3">
         <strong>PRIVACY</strong>
       </h1>
-      <div className="container p-5">
+      <div className="container p-5 privacy_text">
         <p className="text-center text-white">
           Si informa che ai sensi del DLgs 196/03 (privacy) i dati personali
           raccolti mediante l'utilizzo di Fluffman Shop verranno utilizzati solo
