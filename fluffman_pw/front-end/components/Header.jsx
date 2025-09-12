@@ -72,6 +72,18 @@ export default function Header() {
     }
   };
 
+  //handlekeydown per utilizzo tasti esc e invio
+  const handleKeyDown = (e) => {
+    // Se il tasto premuto è 'Enter'
+    if (e.key === "Enter") {
+      searchProduct(searchValue); // Lancia la funzione di ricerca
+    }
+    // Se il tasto premuto è 'Escape'
+    if (e.key === "Escape") {
+      handleOffCanvasCLick(); // Chiude l'offcanvas
+    }
+  };
+
   return (
     <header className="position-sticky top-0 w-100">
       {/* Sezione spedizione gratuita */}
@@ -201,6 +213,7 @@ export default function Header() {
                 onChange={(e) => {
                   handleChange(e.target.value);
                 }}
+                onKeyUp={handleKeyDown}
                 id="searchBar"
                 type="text"
                 className="input-bar"
