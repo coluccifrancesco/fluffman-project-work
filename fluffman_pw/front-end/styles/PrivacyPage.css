@@ -8,6 +8,7 @@
 
 .hp_bg {
   min-height: calc(100vh - 455px);
+  background-color: var(--background);
 }
 
 .privacy_text {

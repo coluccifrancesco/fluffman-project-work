@@ -1,26 +1,35 @@
-.sp_bg {
-    background-color: #f7f9fc;
+:root {
+  --text: #f3f1ec;
+  --background: #5fbbaae1;
+  --primary: #daf6e3;
+  --secondary: #af6818;
+  --accent: #e7a150;
+}
+
+.hp_bg {
+  min-height: calc(100vh - 455px);
+  background-color: var(--background);
 }
 
 .store-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .store-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .store-name {
-    color: #1f2937;
-    font-size: 1.5rem;
+  color: #1f2937;
+  font-size: 1.5rem;
 }
 
 .store-address,
 .store-phone,
 .store-hours {
-    color: #4b5563;
+  color: #4b5563;
 }
