@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import { Link, NavLink } from "react-router-dom";
@@ -7,6 +8,8 @@ import "../styles/Header.css";
 export default function Header() {
   const { wishlist } = useWishlist();
   const { cart } = useCart();
+  let navigate = useNavigate();
+  
   // Calcola solo gli item con id valido (evita badge errato se ci sono oggetti vuoti)
   const wishlistCount = Array.isArray(wishlist)
     ? wishlist.filter((item) => item && item.id != null).length
@@ -55,6 +58,15 @@ export default function Header() {
 
     if (closeButton) {
       closeButton.click();
+    }
+  };
+
+  // rimanda alla productsPage con i valori per la ricerca inseriti nella barra dall'utente
+  const searchProduct = (searchValue) => {
+  
+    if (searchValue.length > 0) {
+      handleOffCanvasCLick();
+      navigate('/products');
     }
   };
 
@@ -192,14 +204,13 @@ export default function Header() {
                 className="input-bar"
               />
 
-              <button className="form-button">
+              <button className="form-button" onClick={() => searchProduct(searchValue)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
               </button>
             </div>
           </div>
 
           {/* Risultati ricerca */}
-          {/* Inserire il condizionale con searchResults.lenght === 0  */}
           <div className="py-3 row">
             {searchResults.map((result) => {
               return (
@@ -280,7 +291,7 @@ export default function Header() {
             {/* Voci menù */}
             <div className="offcanvas-body px-4 bg-light">
               <ul className="list-unstyled m-0">
-                <NavLink to="/" style={{ textDecoration: "none" }}>
+                <NavLink to="/products" style={{ textDecoration: "none" }}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Prodotti</p>
                   </li>
@@ -307,13 +318,13 @@ export default function Header() {
                   </li>
                 </NavLink>
 
-                <NavLink style={{ textDecoration: "none" }}>
+                <NavLink to="/wishlist" style={{ textDecoration: "none" }}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Wishlist</p>
                   </li>
                 </NavLink>
 
-                <NavLink to={"/cart"} style={{ textDecoration: "none" }}>
+                <NavLink to="/cart" style={{ textDecoration: "none" }}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <i className="fa-solid fa-cart-shopping m-0"></i>
                   </li>

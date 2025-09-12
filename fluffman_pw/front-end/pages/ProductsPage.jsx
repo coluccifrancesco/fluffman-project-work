@@ -23,6 +23,11 @@ function useWindowWidth() {
 }
 
 export default function ProductsPage() {
+
+  // valori per barra di ricerca
+  const [ searchValue, setSearchValue] = useState('');
+  const [ filteredProducts, setFilteredProducts ] = useState([]);
+  
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +85,19 @@ export default function ProductsPage() {
     setSearchParams(newParams, { replace: true });
   };
 
+  const handleChange = (value) => {
+    setSearchValue(value);
+
+    if (!value.trim()){
+      setFilteredProducts(allProducts);
+    } else {
+      const filteredProducts = allProducts.filter(product => 
+        product.name.toLowerCase().includes(value.toLowerCase()) 
+      );
+      setFilteredProducts(filteredProducts);
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     const query = new URLSearchParams();
@@ -130,7 +148,7 @@ export default function ProductsPage() {
         </div>
 
         <div className="container my-4">
-          {/* FILTRI E ORDINATORI  */}
+          {/* FILTRI E ORDINATORI */}
           <div className="filters-sorting-row flex-wrap">
             <div className="animal-select d-flex align-items-center flex-column justify-content-center">
               <label htmlFor="animal-select" className="text-muted text-sm">
@@ -205,6 +223,21 @@ export default function ProductsPage() {
                 <option value="over40">Sopra i 40 €</option>
               </select>
             </div>
+
+            {/* Francesco C. -> barra di ricerca */}
+            <div className="d-flex align-items-center flex-column justify-content-center">
+              <label htmlFor="select-range" className="text-muted text-sm">Ricerca</label>
+              <input
+                value={searchValue}
+                onChange={(e) => {
+                  handleChange(e.target.value);
+                }}
+                id="searchBar"
+                type="text"
+                className="search-bar"
+              />
+            </div>
+
             <div className="reset-wrapper d-flex align-items-center flex-column justify-content-end">
               <label htmlFor="reset" className="text-muted text-sm mb-3">
                 {" "}
