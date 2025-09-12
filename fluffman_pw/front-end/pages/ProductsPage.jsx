@@ -132,66 +132,91 @@ export default function ProductsPage() {
         <div className="container my-4">
           {/* FILTRI E ORDINATORI  */}
           <div className="filters-sorting-row flex-wrap">
-            <select
-              value={filters.animal_id}
-              onChange={(e) => updateFilter("animal_id", e.target.value)}
-              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
-            >
-              <option value="all">Tutti i Prodotti</option>
-              <option value="1">Cani</option>
-              <option value="2">Gatti</option>
-              <option value="3">Pesci</option>
-              <option value="4">Roditori</option>
-              <option value="5">Uccelli</option>
-            </select>
-
-            <select
-              value={filters.brand_id}
-              onChange={(e) => updateFilter("brand_id", e.target.value)}
-              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
-            >
-              <option value="">Tutti i Brand</option>
-              {brands.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={`${filters.sort_by}_${filters.sort_order}`}
-              onChange={(e) => {
-                const [by, order] = e.target.value.split("_");
-                updateFilter("sort_by", by);
-                updateFilter("sort_order", order);
-              }}
-              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
-            >
-              <option value="id_ASC">Default</option>
-              <option value="price_ASC">Prezzo crescente ↑</option>
-              <option value="price_DESC">Prezzo decrescente ↓</option>
-              <option value="name_ASC">Nome A-Z</option>
-              <option value="name_DESC">Nome Z-A</option>
-            </select>
-
-            <select
-              value={filters.price_range}
-              onChange={(e) => updateFilter("price_range", e.target.value)}
-              className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
-            >
-              <option value="">Tutti i prezzi</option>
-              <option value="under10">Sotto i 10 €</option>
-              <option value="10to20">Tra 10 e 20 €</option>
-              <option value="20to40">Tra 20 e 40 €</option>
-              <option value="over40">Sopra i 40 €</option>
-            </select>
-
-            <button
-              className={`reset m-2 ${isMobile ? "btn-sm" : ""}`}
-              onClick={resetFilters}
-            >
-              Reset filtri
-            </button>
+            <div className="animal-select d-flex align-items-center flex-column justify-content-center">
+              <label htmlFor="select-range" className="text-muted">
+                Price Range
+              </label>
+              <select
+                value={filters.animal_id}
+                onChange={(e) => updateFilter("animal_id", e.target.value)}
+                className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+                id="animal-select"
+              >
+                <option value="all">Tutti i Prodotti</option>
+                <option value="1">Cani</option>
+                <option value="2">Gatti</option>
+                <option value="3">Pesci</option>
+                <option value="4">Roditori</option>
+                <option value="5">Uccelli</option>
+              </select>
+            </div>
+            <div className="brand-select d-flex align-items-center flex-column justify-content-center">
+              <label htmlFor="brand-select" className="text-muted">
+                Brand Selector
+              </label>
+              <select
+                value={filters.brand_id}
+                onChange={(e) => updateFilter("brand_id", e.target.value)}
+                className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+                id="brand-select"
+              >
+                <option value="">Tutti i Brand</option>
+                {brands.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="sort-order d-flex align-items-center flex-column justify-content-center">
+              <label htmlFor="sort-order" className="text-muted">
+                Sort Order
+              </label>
+              <select
+                value={`${filters.sort_by}_${filters.sort_order}`}
+                onChange={(e) => {
+                  const [by, order] = e.target.value.split("_");
+                  updateFilter("sort_by", by);
+                  updateFilter("sort_order", order);
+                }}
+                className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+              >
+                <option value="id_ASC">Default</option>
+                <option value="price_ASC">Prezzo crescente ↑</option>
+                <option value="price_DESC">Prezzo decrescente ↓</option>
+                <option value="name_ASC">Nome A-Z</option>
+                <option value="name_DESC">Nome Z-A</option>
+              </select>
+            </div>
+            <div className="price-range d-flex align-items-center flex-column justify-content-center">
+              <label htmlFor="select-range" className="text-muted">
+                Price Range
+              </label>
+              <select
+                value={filters.price_range}
+                onChange={(e) => updateFilter("price_range", e.target.value)}
+                className={`select m-2 ${isMobile ? "btn-sm" : ""}`}
+                id="select-range"
+              >
+                <option value="">Tutti i prezzi</option>
+                <option value="under10">Sotto i 10 €</option>
+                <option value="10to20">Tra 10 e 20 €</option>
+                <option value="20to40">Tra 20 e 40 €</option>
+                <option value="over40">Sopra i 40 €</option>
+              </select>
+            </div>
+            <div className="d-flex align-items-center flex-column justify-content-end">
+              <label htmlFor="reset" className="text-muted">
+                {" "}
+                Filters Reset{" "}
+              </label>
+              <button
+                className={`reset m-2 ${isMobile ? "btn-sm" : ""}`}
+                onClick={resetFilters}
+              >
+                X
+              </button>
+            </div>
           </div>
 
           {/* TOGGLE GRIGLIA/LISTA + SCONTI */}

@@ -44,12 +44,10 @@
 
 .reset {
   color: var(--text);
-  background-color: var(--accent);
-  padding: 0.5rem;
-  border: 1px solid var(--accent);
+  background-color: rgb(131, 10, 10);
+  border: 1px solid rgb(131, 10, 10);
   border-radius: 0.33rem;
-  max-width: 200px;
-  width: 100%;
+  max-width: 100px;
   margin: 0.5rem;
 }
 
