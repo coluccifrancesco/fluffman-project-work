@@ -56,7 +56,7 @@ export default function OtherAnimalProductsPage() {
   }
 
   return (
-    <div className="bg p-2">
+    <div className="hp_bg p-2">
       <div className="m-2 p-2 text-center">
         <h1>Non solo cani e gatti</h1>
         <p className="text-light">

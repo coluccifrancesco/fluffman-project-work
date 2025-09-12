@@ -65,7 +65,7 @@ export default function DogProductsPage() {
   }
 
   return (
-    <div className="bg p-2">
+    <div className="hp_bg p-2">
       <div className="m-2 p-2 text-center">
         <h1>Il meglio per il tuo cane</h1>
         <p className="text-light">
