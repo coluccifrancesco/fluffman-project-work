@@ -100,6 +100,7 @@
   color: #3a8376;
   transition: 0.2s;
   width: 100%;
+  outline: none;
 
   &:hover {
     box-shadow: 0 0 3px #3a837699;

@@ -237,7 +237,7 @@ export default function ProductsPage() {
               </select>
             </div>
 
-            {/* Francesco C. -> barra di ricerca */}
+            {/* barra di ricerca */}
             <div className="d-flex align-items-center flex-column justify-content-center ms-1">
               <label htmlFor="select-range" className="text-muted text-sm">Ricerca</label>
               <input
