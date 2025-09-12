@@ -24,7 +24,6 @@ function useWindowWidth() {
 }
 
 export default function ProductsPage() {
-
   // valori per barra di ricerca
   const location = useLocation();
   const [searchValue, setSearchValue] = useState(location.state?.researchValue || '');
@@ -41,6 +40,10 @@ export default function ProductsPage() {
   // const { cart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // Stati e costanti per la paginazione
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
 
   const width = useWindowWidth();
   const isMobile = width <= 768;
@@ -101,6 +104,12 @@ export default function ProductsPage() {
     }
   };
 
+  // Resetta la paginazione quando i prodotti filtrati cambiano
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProducts]);
+
+
   useEffect(() => {
     setLoading(true);
     const query = new URLSearchParams();
@@ -144,6 +153,13 @@ export default function ProductsPage() {
       .then((data) => setBrands(data))
       .catch((err) => console.error("Errore caricamento brand:", err));
   }, []);
+
+  // Calcolo per la paginazione
+  const lastProductIndex = currentPage * productsPerPage;
+  const firstProductIndex = lastProductIndex - productsPerPage;
+  const currentProducts = filteredProducts.slice(firstProductIndex, lastProductIndex);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
 
   if (showLoading) return <Loading />;
   if (error)
@@ -306,12 +322,21 @@ export default function ProductsPage() {
             </label>
           </div>
 
+          {/* Numero di prodotti e paginazione */}
+          {filteredProducts.length > 0 && (
+            <div className="d-flex justify-content-between align-items-center flex-wrap my-4">
+              <div className="text-light-emphasis">
+                Trovati: {filteredProducts.length} prodotti
+              </div>
+            </div>
+          )}
+
           {/* PRODOTTI */}
           <div className="products-wrapper">
             {/* Carico il Loading durante il fetch dei products */}
             {showLoading && <Loading />}
             {/* rimosso il cat_meme durante il rendering iniziale dei prodotti */}
-            {!loading && allProducts.length === 0 ? (
+            {!loading && filteredProducts.length === 0 ? (
               <div className="d-flex justify-content-center flex-column align-items-center">
                 <img className="cat_meme" src="/sad_cat.png" alt="Sad cat" />
                 <div className="text-center mt-5 text-light-emphasis">
@@ -323,7 +348,7 @@ export default function ProductsPage() {
               </div>
             ) : viewMode === "list" ? (
               <ul className="list-group">
-                {filteredProducts.map((product) => (
+                {currentProducts.map((product) => (
                   <li
                     key={product.id}
                     className="list-group-item d-flex justify-content-between align-items-center"
@@ -359,7 +384,7 @@ export default function ProductsPage() {
               </ul>
             ) : (
               <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                {filteredProducts.map((product) => (
+                {currentProducts.map((product) => (
                   <div key={product.id} className="col">
                     <CardItem product={product} />
                   </div>
@@ -367,6 +392,29 @@ export default function ProductsPage() {
               </div>
             )}
           </div>
+
+          {/* Controlli di paginazione inferiori */}
+          {filteredProducts.length > 0 && (
+            <div className="pagination-controls d-flex justify-content-center align-items-center mt-4">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="btn me-2 text-white btn-success"
+              >
+                Pagina precedente
+              </button>
+              <span className="text-light">
+                Pagina {currentPage} di {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="btn ms-2 text-white btn-success"
+              >
+                Pagina successiva
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div >
