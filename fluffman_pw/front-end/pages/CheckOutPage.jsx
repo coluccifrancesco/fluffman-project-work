@@ -22,6 +22,8 @@ export const VALID_DOMINIONS = [
   "mail.com",
   "zoho.com"
 ];
+// regex per numero di telefono (solo cifre, 10 caratteri, senza spazi o trattini)
+export const PHONE_PATTERN = /^\d{10}$/;
 
 // URLs per i test e la produzione
 const BASE_URL = "http://localhost:3030";
@@ -37,8 +39,10 @@ const CheckoutPage = () => {
   const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [emailError, setEmailError] = useState(null);
+  const [phoneError, setPhoneError] = useState(null);
 
   const emailRef = useRef(null);
+  const phoneRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -158,6 +162,14 @@ const CheckoutPage = () => {
         setEmailError(null);
       }
     }
+    if (name === "phone") {
+      const phoneTrimmed = value.trim();
+      if (!PHONE_PATTERN.test(phoneTrimmed)) {
+        setPhoneError("Inserisci un numero di telefono valido (es. 1234567890)");
+      } else {
+        setPhoneError(null);
+      }
+    }
   };
 
   const getMissingFields = () => {
@@ -196,6 +208,9 @@ const CheckoutPage = () => {
     if (emailError) {
       missing.push("email");
     }
+    if (phoneError) {
+      missing.push("phone");
+    }
     setMissingFields(missing);
 
     if (missing.length > 0) {
@@ -203,6 +218,10 @@ const CheckoutPage = () => {
       if (missing.includes("email") && emailRef.current) {
         emailRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         emailRef.current.focus();
+      }
+      if (missing.includes("phone") && phoneRef.current) {
+        phoneRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        phoneRef.current.focus();
       }
       return;
     }

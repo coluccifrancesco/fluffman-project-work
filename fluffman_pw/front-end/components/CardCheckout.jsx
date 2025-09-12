@@ -1,4 +1,4 @@
-export default function CardCheckout({ handleOrder, formData, handleDirectInputChange, handleInputChange, showFieldErrors, emailRef, emailError, showDeliveryAddress, setShowDeliveryAddress, handleAccordionToggle, isAccordionOpen, cartProducts, missingFields, totalPrice }) {
+export default function CardCheckout({ handleOrder, formData, handleDirectInputChange, handleInputChange, showFieldErrors, emailRef, phoneRef, emailError, phoneError, showDeliveryAddress, setShowDeliveryAddress, handleAccordionToggle, isAccordionOpen, cartProducts, missingFields, totalPrice }) {
     return (
         <div className="card card-checkout">
             <div className="form-section">
@@ -53,15 +53,30 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                         </div>
                         <div className="form-group">
                             <label htmlFor="phone">Telefono <span style={{ color: 'red' }}>*</span></label>
-                            <input
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleDirectInputChange}
-                                placeholder="+39 123 456 7890"
-                                style={showFieldErrors && missingFields.includes("phone") ? { borderColor: '#b91c1c' } : {}}
-                            />
+                            <div className="input-group">
+                                <span className="input-group-text">+39</span>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    className="form-control"
+                                    value={formData.phone}
+                                    onChange={handleDirectInputChange}
+                                    placeholder="1234567890"
+                                    ref={phoneRef}
+                                    error={phoneError}
+                                    style={
+                                        showFieldErrors && missingFields.includes("phone") || phoneError
+                                            ? { borderColor: '#b91c1c' }
+                                            : {}
+                                    }
+                                />
+                            </div>
+                            {phoneError && (
+                                <div style={{ color: "#b91c1c", fontSize: "0.95rem", marginTop: "0.25rem" }}>
+                                    {phoneError}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div style={{ marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center', color: '#b91c1c', fontSize: '0.95rem' }}>
