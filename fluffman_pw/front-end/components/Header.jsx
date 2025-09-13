@@ -84,6 +84,18 @@ export default function Header() {
     }
   };
 
+  const handleMenuOffCanvasClick = () => {
+    // Trova il pulsante di chiusura del menu offcanvas
+    const closeButton = document.querySelector(
+      '#offcanvasScrolling .btn-close'
+    );
+
+    // Se il pulsante esiste, lo schiaccia in automatico
+    if (closeButton) {
+      closeButton.click();
+    }
+  };
+
   return (
     <header className="position-sticky top-0 w-100">
       {/* Sezione spedizione gratuita */}
@@ -311,40 +323,39 @@ export default function Header() {
             {/* Voci menù */}
             <div className="offcanvas-body px-4 bg-light">
               <ul className="list-unstyled m-0">
-                <NavLink to="/products" style={{ textDecoration: "none" }}>
+                <NavLink to="/products" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Prodotti</p>
                   </li>
                 </NavLink>
 
-                <NavLink to="/dogproducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/dogproducts" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Cane</p>
                   </li>
                 </NavLink>
 
-                <NavLink to="/catproducts" style={{ textDecoration: "none" }}>
+                <NavLink to="/catproducts" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
+
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Gatto</p>
                   </li>
                 </NavLink>
 
-                <NavLink
-                  to="/otheranimalproducts"
-                  style={{ textDecoration: "none" }}
-                >
+                <NavLink to="/otheranimalproducts" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
+
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Altri animali</p>
                   </li>
                 </NavLink>
 
-                <NavLink to="/wishlist" style={{ textDecoration: "none" }}>
+                <NavLink to="/wishlist" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <p className="m-0">Wishlist</p>
                   </li>
                 </NavLink>
 
-                <NavLink to="/cart" style={{ textDecoration: "none" }}>
+                <NavLink to="/cart" style={{ textDecoration: "none" }} onClick={handleMenuOffCanvasClick}>
                   <li className="py-3 d-flex justify-content-center align-items-center offcanvas-item">
                     <i className="fa-solid fa-cart-shopping m-0"></i>
                   </li>
