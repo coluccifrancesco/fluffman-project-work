@@ -26,7 +26,9 @@ function useWindowWidth() {
 export default function ProductsPage() {
   // valori per barra di ricerca
   const location = useLocation();
-  const [searchValue, setSearchValue] = useState(location.state?.researchValue || '');
+  const [searchValue, setSearchValue] = useState(
+    location.state?.researchValue || ""
+  );
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [allProducts, setAllProducts] = useState([]);
@@ -86,7 +88,7 @@ export default function ProductsPage() {
       price_range: "",
     };
     setFilters(defaultFilters);
-    setSearchValue('')
+    setSearchValue("");
     const newParams = new URLSearchParams();
     setSearchParams(newParams, { replace: true });
   };
@@ -97,7 +99,7 @@ export default function ProductsPage() {
     if (!value.trim()) {
       setFilteredProducts(allProducts);
     } else {
-      const filteredProducts = allProducts.filter(product =>
+      const filteredProducts = allProducts.filter((product) =>
         product.name.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredProducts(filteredProducts);
@@ -108,7 +110,6 @@ export default function ProductsPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [filteredProducts]);
-
 
   useEffect(() => {
     setLoading(true);
@@ -131,12 +132,12 @@ export default function ProductsPage() {
         setAllProducts(data);
 
         if (searchValue.trim()) {
-          const filtered = data.filter(product =>
+          const filtered = data.filter((product) =>
             product.name.toLowerCase().includes(searchValue.toLowerCase())
-          )
-          setFilteredProducts(filtered)
+          );
+          setFilteredProducts(filtered);
         } else {
-          setFilteredProducts(data)
+          setFilteredProducts(data);
         }
 
         setLoading(false);
@@ -157,9 +158,11 @@ export default function ProductsPage() {
   // Calcolo per la paginazione
   const lastProductIndex = currentPage * productsPerPage;
   const firstProductIndex = lastProductIndex - productsPerPage;
-  const currentProducts = filteredProducts.slice(firstProductIndex, lastProductIndex);
+  const currentProducts = filteredProducts.slice(
+    firstProductIndex,
+    lastProductIndex
+  );
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
 
   if (showLoading) return <Loading />;
   if (error)
@@ -255,7 +258,9 @@ export default function ProductsPage() {
 
             {/* barra di ricerca */}
             <div className="d-flex align-items-center flex-column justify-content-center ms-1">
-              <label htmlFor="select-range" className="text-muted text-sm">Ricerca</label>
+              <label htmlFor="select-range" className="text-muted text-sm">
+                Ricerca
+              </label>
               <input
                 value={searchValue}
                 onChange={(e) => {
@@ -267,13 +272,12 @@ export default function ProductsPage() {
               />
             </div>
 
-            <div className="reset-wrapper d-flex align-items-center flex-column justify-content-end">
-              <label htmlFor="reset" className="text-muted text-sm mb-3">
-                {" "}
-                Reset dei Filtri{" "}
+            <div className="d-flex align-items-center flex-column justify-content-center ms-1 ">
+              <label htmlFor="reset" className="text-muted text-xs">
+                Reset Filtri
               </label>
               <button
-                className={`reset m-2 ${isMobile ? "btn-sm" : ""}`}
+                className={`reset ${isMobile ? "btn-sm" : ""}`}
                 onClick={resetFilters}
               >
                 X
@@ -407,7 +411,9 @@ export default function ProductsPage() {
                 Pagina {currentPage} di {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="btn ms-2 text-white btn-success"
               >
@@ -417,6 +423,6 @@ export default function ProductsPage() {
           )}
         </div>
       </div>
-    </div >
+    </div>
   );
 }

@@ -73,7 +73,7 @@
   margin-bottom: 1rem;
 }
 
-.filters-sorting-row>.reset-wrapper {
+.filters-sorting-row {
   margin-left: auto;
 }
 
@@ -135,7 +135,7 @@
     flex-wrap: wrap;
   }
 
-  .filters-sorting-row>.reset-wrapper {
+  .filters-sorting-row {
     margin-left: 0;
     width: 100%;
     display: flex;
