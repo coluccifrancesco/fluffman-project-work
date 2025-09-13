@@ -270,6 +270,7 @@ const CheckoutPage = () => {
         </div>
         <h1>Riepilogo del tuo Ordine</h1>
         <p>Gentile ${formData.name},</p>
+        <p>Ti rigraziamo per aver acquistato presso il nostro PetShop Fluffman,</p>
         <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
         
         <h2>Dettagli Ordine</h2>
