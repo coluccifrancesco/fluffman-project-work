@@ -140,20 +140,19 @@ function SingleProductPage() {
                   className="btn btn-outline-secondary btn-sm"
                   onClick={handleDecreaseQuantity}
                   disabled={quantity <= 1}
-                >
+                  style={{ backgroundColor: 'var(--accent)', width: '70px', height: '40px', borderRadius: '40%' }}>
                   -
                 </button>
                 <input
                   type="text"
                   className="form-control text-center mx-2"
                   style={{ width: "60px" }}
-                  value={quantity}
-                  onChange={handleQuantityChange}
-                />
+                  value={quantity} />
                 <button
                   className="btn btn-outline-secondary btn-sm"
                   onClick={handleIncreaseQuantity}
                   disabled={quantity >= product.quantity}
+                  style={{ backgroundColor: 'var(--accent)', width: '70px', height: '40px', borderRadius: '40%' }}
                 >
                   +
                 </button>
@@ -185,7 +184,6 @@ function SingleProductPage() {
           </div>
         </div>
         <div className="container m-2 p-2">
-          <h2 className="my-4 text-center">Prodotti Simili</h2>
           <RelatedProducts productId={product.id} />
         </div>
       </div>
