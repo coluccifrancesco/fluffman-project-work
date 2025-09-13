@@ -26,9 +26,7 @@ function useWindowWidth() {
 export default function ProductsPage() {
   // valori per barra di ricerca
   const location = useLocation();
-  const [searchValue, setSearchValue] = useState(
-    location.state?.researchValue || ""
-  );
+  const [searchValue, setSearchValue] = useState(location.state?.researchValue || "");
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [allProducts, setAllProducts] = useState([]);
@@ -36,7 +34,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("grid");
   // Usa context per wishlist e carrello
   // const { wishlist } = useWishlist();
   // const { cart } = useCart();
@@ -336,7 +334,7 @@ export default function ProductsPage() {
           )}
 
           {/* PRODOTTI */}
-          <div className="products-wrapper">
+          <div className="products-wrapper mb-4">
             {/* Carico il Loading durante il fetch dei products */}
             {showLoading && <Loading />}
             {/* rimosso il cat_meme durante il rendering iniziale dei prodotti */}
@@ -399,7 +397,7 @@ export default function ProductsPage() {
 
           {/* Controlli di paginazione inferiori */}
           {filteredProducts.length > 0 && (
-            <div className="pagination-controls d-flex justify-content-center align-items-center mt-4">
+            <div className="pagination-controls d-flex justify-content-center align-items-center pt-4 pb-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
