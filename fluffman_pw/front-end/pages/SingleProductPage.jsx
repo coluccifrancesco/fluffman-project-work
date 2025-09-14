@@ -58,18 +58,18 @@ function SingleProductPage() {
   };
 
   // Funzione per gestire l'input manuale nel campo di testo
-  const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value >= 1) {
-      if (product?.quantity) {
-        setQuantity(Math.min(value, product.quantity));
-      } else {
-        setQuantity(value);
-      }
-    } else if (e.target.value === "") {
-      setQuantity("");
-    }
-  };
+  // const handleQuantityChange = (e) => {
+  //   const value = parseInt(e.target.value, 10);
+  //   if (!isNaN(value) && value >= 1) {
+  //     if (product?.quantity) {
+  //       setQuantity(Math.min(value, product.quantity));
+  //     } else {
+  //       setQuantity(value);
+  //     }
+  //   } else if (e.target.value === "") {
+  //     setQuantity("");
+  //   }
+  // };
 
   // Funzione per aggiungere o rimuovere un prodotto dai preferiti tramite context
   const handleAddToWishlist = () => {

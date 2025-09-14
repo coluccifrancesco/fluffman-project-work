@@ -333,7 +333,8 @@ const CheckoutPage = () => {
       <h1>Riepilogo del tuo Ordine</h1>
       <p>Gentile ${formData.name},</p>
         <p>Ti rigraziamo per aver acquistato presso il nostro PetShop Fluffman,</p>
-      <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+        <p>in data ${new Date().toLocaleDateString()}</p>
+      <p>l tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
       
       <h2>Dettagli Ordine</h2>
       <ul>
@@ -362,8 +363,8 @@ const CheckoutPage = () => {
         </ul>
 
         <h2>Dettagli del Pagamento</h2>
-        <p>Metodo di pagamento utilizzato: carta di credito/debito</p>
-        
+        <p>Metodo di pagamento utilizzato: carta di credito/debito che termina con ${formData.payment.cardNumber.slice(-4)}</p>
+
       ` : ''}
       
       <p>Grazie per il tuo acquisto!</p>
