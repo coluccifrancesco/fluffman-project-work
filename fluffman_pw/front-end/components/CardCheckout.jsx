@@ -46,7 +46,7 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
 
                                 placeholder="esempio@email.com"
                             />
-                            <span id="emailHelpInline" class="form-text">Inserisci un indirizzo email con un dominio valido: esempio@email.com
+                            <span id="emailHelpInline" className="form-text">Inserisci un indirizzo email con un dominio valido: esempio@email.com
                             </span>
                         </div>
                         <div className="form-group">
@@ -65,7 +65,7 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                 }
 
                             />
-                            <span id="phoneHelpInline" class="form-text">Inserisci un numero di telefono valido: +39 1234567890
+                            <span id="phoneHelpInline" className="form-text">Inserisci un numero di telefono valido: +39 1234567890
                             </span>
                         </div>
                     </div>
@@ -266,6 +266,8 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                         name="cardNumber"
                                         value={formData.payment.cardNumber}
                                         onChange={(e) => handleInputChange(e, "payment")}
+                                        placeholder="1234 5678 9012 3456"
+                                        maxLength="19"
                                     />
                                 </div>
                                 <div className="form-grid">
@@ -278,6 +280,7 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                             value={formData.payment.expireDate}
                                             onChange={(e) => handleInputChange(e, "payment")}
                                             placeholder="MM/YY"
+                                            maxLength="5"
                                         />
                                     </div>
                                     <div className="form-group">
@@ -291,6 +294,7 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                             value={formData.payment.securityCode}
                                             onChange={(e) => handleInputChange(e, "payment")}
                                             placeholder="3 cifre sul retro"
+                                            maxLength="3"
                                         />
                                     </div>
                                 </div>

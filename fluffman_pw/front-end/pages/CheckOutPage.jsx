@@ -74,6 +74,7 @@ const CheckoutPage = () => {
   const [missingFields, setMissingFields] = useState([]);
   const [showFieldErrors, setShowFieldErrors] = useState(false);
 
+  // Fetch cart products
   useEffect(() => {
     async function fetchData() {
       if (cart.length === 0) {
@@ -134,8 +135,35 @@ const CheckoutPage = () => {
     setTotalPrice(finalTotal);
   }, [cartProducts]);
 
+  // Funzione per formattare il numero di carta di credito con spazi ogni 4 cifre
+  const formatCardNumber = (value) => {
+    return value
+      .replace(/\D/g, "")          // elimina tutto ciò che non è numero
+      .replace(/(.{4})/g, "$1 ")   // aggiunge uno spazio ogni 4 cifre
+      .trim();
+  };
+  // Funzione per formattare la data di scadenza nel formato MM/AA
+  const formatExpiryDate = (value) => {
+    const cleaned = value.replace(/\D/g, ""); // solo numeri
+    if (cleaned.length >= 3) {
+      return cleaned.slice(0, 2) + "/" + cleaned.slice(2, 4);
+    }
+    return cleaned;
+  };
+
   const handleInputChange = (e, section) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+
+    // sezione "payment": applico i formati
+    if (section === "payment") {
+      if (name === "cardNumber") {
+        value = formatCardNumber(value);
+      }
+      if (name === "expireDate") {
+        value = formatExpiryDate(value);
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [section]: {
@@ -195,6 +223,8 @@ const CheckoutPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
+
+
   const handleOrder = async (e) => {
     e.preventDefault();
 
@@ -203,10 +233,42 @@ const CheckoutPage = () => {
 
     if (missing.length > 0) {
       setShowFieldErrors(true);
-      window.scrollTo({ behavior: "smooth", top });
+      window.scrollTo({ behavior: "smooth", top: 0 });
       return;
     }
     setShowFieldErrors(false);
+
+    const errors = [];
+
+    const { cardNumber, expireDate, securityCode, cardOwner } = formData.payment;
+
+    // Numero carta: 16 cifre con spazi
+    if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber)) {
+      errors.push("Il numero di carta non è valido");
+    }
+
+    // Data scadenza: formato MM/YY e mese valido
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expireDate)) {
+      errors.push("La data di scadenza non è valida");
+    }
+
+    // CVV: 3 o 4 cifre
+    if (!/^\d{3,4}$/.test(securityCode)) {
+      errors.push("Il codice di sicurezza non è valido");
+    }
+
+    // Nome intestatario: almeno 2 caratteri
+    if (!cardOwner.trim() || cardOwner.trim().length < 2) {
+      errors.push("Il nome dell'intestatario non è valido");
+    }
+
+    if (errors.length > 0) {
+      alert(errors.join("\n")); // qui puoi anche mostrare errori in pagina
+      return;
+    }
+
+    alert("Dati carta validi! 🚀");
+    // qui in futuro potresti mandare i dati a un backend vero
 
     const shippingCost =
       totalPrice -
@@ -265,84 +327,88 @@ const CheckoutPage = () => {
       const logoUrl = `${SITE_BASE_URL}/Logo3.png`;
 
       const emailBodyBuyer = `
-        <div style="text-align: center;">
-          <img src="${logoUrl}" alt="Logo Azienda" style="max-width: 150px; height: auto; margin-bottom: 20px;">
-        </div>
-        <h1>Riepilogo del tuo Ordine</h1>
-        <p>Gentile ${formData.name},</p>
+      <div style="text-align: center;">
+        <img src="${logoUrl}" alt="Logo Azienda" style="max-width: 150px; height: auto; margin-bottom: 20px;">
+      </div>
+      <h1>Riepilogo del tuo Ordine</h1>
+      <p>Gentile ${formData.name},</p>
         <p>Ti rigraziamo per aver acquistato presso il nostro PetShop Fluffman,</p>
-        <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
-        
-        <h2>Dettagli Ordine</h2>
+      <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+      
+      <h2>Dettagli Ordine</h2>
+      <ul>
+        ${productListHtml}
+      </ul>
+      <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
+      <p><b>Totale ordine: €${totalPrice.toFixed(2)}</b></p>
+      
+      <hr/>
+      
+      <h2>Indirizzo di Fatturazione</h2>
+      <ul>
+          <li>Indirizzo: ${formData.billing.address}</li>
+          ${formData.billing.address2 ? `<li>Dettagli aggiuntivi: ${formData.billing.address2}</li>` : ''}
+          <li>Città: ${formData.billing.city}, ${formData.billing.province} ${formData.billing.zip}</li>
+          <li>Nazione: ${formData.billing.country}</li>
+      </ul>
+      
+      ${showDeliveryAddress ? `
+        <h2>Indirizzo di Consegna</h2>
         <ul>
-          ${productListHtml}
+            <li>Indirizzo: ${formData.delivery.address}</li>
+            ${formData.delivery.address2 ? `<li>Dettagli aggiuntivi: ${formData.delivery.address2}</li>` : ''}
+            <li>Città: ${formData.delivery.city}, ${formData.delivery.province} ${formData.delivery.zip}</li>
+            <li>Nazione: ${formData.delivery.country}</li>
+        </ul>
+
+        <h2>Dettagli del Pagamento</h2>
+        <p>Metodo di pagamento utilizzato: carta di credito/debito</p>
+        
+      ` : ''}
+      
+      <p>Grazie per il tuo acquisto!</p>
+    `;
+
+      const emailBodySeller = `
+        <h1>Nuovo Ordine Ricevuto</h1>
+        <p>Ciao venditore,</p>
+        <p>Hai ricevuto un nuovo ordine da ${formData.name} ${formData.lastName}.</p>
+        <p>Numero d'ordine: <b>#${orderNumber}</b></p>
+        <p>Dettagli dell'ordine:</p>
+        <ul>
+            ${productListHtml}
         </ul>
         <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
         <p><b>Totale ordine: €${totalPrice.toFixed(2)}</b></p>
-        
-        <hr/>
-        
-        <h2>Indirizzo di Fatturazione</h2>
+        <p>Dettagli utente:</p>
+        <ul>
+            <li>Nome: ${formData.name}</li>
+            <li>Cognome: ${formData.lastName}</li>
+            <li>Email: ${formData.email}</li>
+            <li>Telefono: ${formData.phone}</li>
+        </ul>
+        <p>Indirizzo di fatturazione:</p>
         <ul>
             <li>Indirizzo: ${formData.billing.address}</li>
-            ${formData.billing.address2 ? `<li>Dettagli aggiuntivi: ${formData.billing.address2}</li>` : ''}
-            <li>Città: ${formData.billing.city}, ${formData.billing.province} ${formData.billing.zip}</li>
+            <li>CAP: ${formData.billing.zip}</li>
+            <li>Città: ${formData.billing.city}</li>
+            <li>Provincia: ${formData.billing.province}</li>
             <li>Nazione: ${formData.billing.country}</li>
         </ul>
-        
-        ${showDeliveryAddress ? `
-          <h2>Indirizzo di Consegna</h2>
-          <ul>
-              <li>Indirizzo: ${formData.delivery.address}</li>
-              ${formData.delivery.address2 ? `<li>Dettagli aggiuntivi: ${formData.delivery.address2}</li>` : ''}
-              <li>Città: ${formData.delivery.city}, ${formData.delivery.province} ${formData.delivery.zip}</li>
-              <li>Nazione: ${formData.delivery.country}</li>
-          </ul>
-        ` : ''}
-        
-        <p>Grazie per il tuo acquisto!</p>
-      `;
-
-      const emailBodySeller = `
-          <h1>Nuovo Ordine Ricevuto</h1>
-          <p>Ciao venditore,</p>
-          <p>Hai ricevuto un nuovo ordine da ${formData.name} ${formData.lastName}.</p>
-          <p>Numero d'ordine: <b>#${orderNumber}</b></p>
-          <p>Dettagli dell'ordine:</p>
-          <ul>
-              ${productListHtml}
-          </ul>
-          <p>Costo di spedizione: €${shippingCost.toFixed(2)}</p>
-          <p><b>Totale ordine: €${totalPrice.toFixed(2)}</b></p>
-          <p>Dettagli utente:</p>
-          <ul>
-              <li>Nome: ${formData.name}</li>
-              <li>Cognome: ${formData.lastName}</li>
-              <li>Email: ${formData.email}</li>
-              <li>Telefono: ${formData.phone}</li>
-          </ul>
-          <p>Indirizzo di fatturazione:</p>
-          <ul>
-              <li>Indirizzo: ${formData.billing.address}</li>
-              <li>CAP: ${formData.billing.zip}</li>
-              <li>Città: ${formData.billing.city}</li>
-              <li>Provincia: ${formData.billing.province}</li>
-              <li>Nazione: ${formData.billing.country}</li>
-          </ul>
-          ${showDeliveryAddress
+        ${showDeliveryAddress
           ? `
-              <p>Indirizzo di consegna:</p>
-              <ul>
-                  <li>Indirizzo: ${formData.delivery.address}</li>
-                  <li>CAP: ${formData.delivery.zip}</li>
-                  <li>Città: ${formData.delivery.city}</li>
-                  <li>Provincia: ${formData.delivery.province}</li>
-                  <li>Nazione: ${formData.delivery.country}</li>
-              </ul>
-          `
+            <p>Indirizzo di consegna:</p>
+            <ul>
+                <li>Indirizzo: ${formData.delivery.address}</li>
+                <li>CAP: ${formData.delivery.zip}</li>
+                <li>Città: ${formData.delivery.city}</li>
+                <li>Provincia: ${formData.delivery.province}</li>
+                <li>Nazione: ${formData.delivery.country}</li>
+            </ul>
+        `
           : ""
         }
-      `;
+    `;
 
       await Promise.all([
         fetch(`${BASE_URL}/api/send-email`, {
@@ -421,202 +487,202 @@ const CheckoutPage = () => {
     <>
       <style>
         {`
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #f7f9fc;
-            margin: 0;
-            padding: 0;
-          }
-          .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-          }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          background-color: #f7f9fc;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem;
+        }
+        .card {
+          background-color: #ffffff;
+          border-radius: 1.5rem;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+          display: flex;
+          flex-direction: column;
+        }
+        @media (min-width: 1024px) {
           .card {
-            background-color: #ffffff;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
+            flex-direction: row;
           }
-          @media (min-width: 1024px) {
-            .card {
-              flex-direction: row;
-            }
-          }
-          .form-section {
-            padding: 2.5rem;
-            flex: 3;
-          }
+        }
+        .form-section {
+          padding: 2.5rem;
+          flex: 3;
+        }
+        .summary-section {
+          padding: 2.5rem;
+          background-color: #f9fafb;
+          border-top: 1px solid #e5e7eb;
+          flex: 2;
+          border-radius: 0 0 1.5rem 1.5rem;
+        }
+        @media (min-width: 1024px) {
           .summary-section {
-            padding: 2.5rem;
-            background-color: #f9fafb;
-            border-top: 1px solid #e5e7eb;
-            flex: 2;
-            border-radius: 0 0 1.5rem 1.5rem;
+            border-top: none;
+            border-left: 1px solid #e5e7eb;
+            border-radius: 0 1.5rem 1.5rem 0;
           }
-          @media (min-width: 1024px) {
-            .summary-section {
-              border-top: none;
-              border-left: 1px solid #e5e7eb;
-              border-radius: 0 1.5rem 1.5rem 0;
-            }
-          }
-          .title {
-            font-size: 2.25rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 1rem;
-          }
-          .subtitle {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-            margin-top: 1.5rem;
-          }
+        }
+        .title {
+          font-size: 2.25rem;
+          font-weight: bold;
+          color: #1f2937;
+          margin-bottom: 1.5rem;
+          border-bottom: 2px solid #e5e7eb;
+          padding-bottom: 1rem;
+        }
+        .subtitle {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #374151;
+          margin-bottom: 0.5rem;
+          margin-top: 1.5rem;
+        }
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        @media (min-width: 768px) {
           .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
+            grid-template-columns: 1fr 1fr;
           }
-          @media (min-width: 768px) {
-            .form-grid {
-              grid-template-columns: 1fr 1fr;
-            }
+        }
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        .form-group label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #4b5563;
+          margin-bottom: 0.25rem;
+        }
+        .form-group input {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .form-group input:focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+          outline: none;
+        }
+        .checkbox-group {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+        .checkbox-group input {
+          margin-right: 0.5rem;
+        }
+        .accordion-container {
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          margin-top: 2rem;
+        }
+        .accordion-header {
+          padding: 1rem;
+          cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #f9fafb;
+          border-radius: 0.5rem;
+        }
+        .accordion-header h2 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #374151;
+          margin: 0;
+        }
+        .accordion-body {
+          padding: 1rem;
+        }
+        .btn-submit {
+          width: 100%;
+          padding: 0.75rem 1.5rem;
+          font-size: 1.125rem;
+          font-weight: bold;
+          color: #ffffff;
+          background-color: #10b981;
+          border: none;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transition: background-color 0.15s ease-in-out;
+        }
+        .btn-submit:hover {
+          background-color: #059669;
+        }
+        .product-list {
+          max-height: 400px;
+          overflow-y: auto;
+          padding-right: 0.5rem;
+        }
+        .product-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          background-color: #ffffff;
+          padding: 1rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+          margin-bottom: 1rem;
+        }
+        .product-item img {
+          width: 64px;
+          height: 64px;
+          border-radius: 0.5rem;
+          object-fit: cover;
+        }
+        .product-item h3 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #4b5563;
+          margin: 0;
+        }
+        .product-item p {
+          font-size: 0.75rem;
+          color: #6b7280;
+          margin: 0;
+        }
+        .product-item span {
+          font-weight: bold;
+          color: #1f2937;
+          margin-left: auto;
+        }
+        .summary-totals {
+          margin-top: 2rem;
+          padding-top: 1rem;
+          border-top: 1px solid #e5e7eb;
+        }
+        .summary-line {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #374151;
+          margin-bottom: 0.5rem;
+        }
+        .summary-total-line {
+          font-size: 1.25rem;
+          font-weight: bold;
+          color: #1f2937;
+          padding-top: 0.5rem;
+          border-top: 1px solid #e5e7eb;
+          margin-top: 1rem;
+        }
+          .card-checkout:hover{
+          transform: none;
           }
-          .form-group {
-            margin-bottom: 1rem;
-          }
-          .form-group label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #4b5563;
-            margin-bottom: 0.25rem;
-          }
-          .form-group input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-          }
-          .form-group input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
-            outline: none;
-          }
-          .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-          }
-          .checkbox-group input {
-            margin-right: 0.5rem;
-          }
-          .accordion-container {
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            margin-top: 2rem;
-          }
-          .accordion-header {
-            padding: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f9fafb;
-            border-radius: 0.5rem;
-          }
-          .accordion-header h2 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #374151;
-            margin: 0;
-          }
-          .accordion-body {
-            padding: 1rem;
-          }
-          .btn-submit {
-            width: 100%;
-            padding: 0.75rem 1.5rem;
-            font-size: 1.125rem;
-            font-weight: bold;
-            color: #ffffff;
-            background-color: #10b981;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.15s ease-in-out;
-          }
-          .btn-submit:hover {
-            background-color: #059669;
-          }
-          .product-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-          }
-          .product-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background-color: #ffffff;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1rem;
-          }
-          .product-item img {
-            width: 64px;
-            height: 64px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-          }
-          .product-item h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #4b5563;
-            margin: 0;
-          }
-          .product-item p {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin: 0;
-          }
-          .product-item span {
-            font-weight: bold;
-            color: #1f2937;
-            margin-left: auto;
-          }
-          .summary-totals {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e5e7eb;
-          }
-          .summary-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #374151;
-            margin-bottom: 0.5rem;
-          }
-          .summary-total-line {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #1f2937;
-            padding-top: 0.5rem;
-            border-top: 1px solid #e5e7eb;
-            margin-top: 1rem;
-          }
-            .card-checkout:hover{
-            transform: none;
-            }
-        `}
+      `}
       </style>
       <div className="container">
         <CardCheckout
@@ -637,6 +703,6 @@ const CheckoutPage = () => {
       </div>
     </>
   );
-};
+}
 
 export default CheckoutPage;
