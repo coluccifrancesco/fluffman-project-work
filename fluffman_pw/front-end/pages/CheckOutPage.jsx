@@ -362,11 +362,11 @@ const CheckoutPage = () => {
             <li>Nazione: ${formData.delivery.country}</li>
         </ul>
 
-        <h2>Dettagli del Pagamento</h2>
-        <p>Metodo di pagamento utilizzato: carta di credito/debito che termina con ${formData.payment.cardNumber.slice(-4)}</p>
-
-      ` : ''}
-      
+        
+        ` : ''}
+      <h2>Dettagli del Pagamento</h2>
+      <p>Metodo di pagamento utilizzato: carta di credito/debito che termina con ${formData.payment.cardNumber.slice(-4)}</p>
+        
       <p>Grazie per il tuo acquisto!</p>
     `;
 
