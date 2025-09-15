@@ -72,6 +72,122 @@ export default function OurStoryPage() {
                             sostenibilità.
                         </p>
                     </div>
+
+                    {/* Sezione team */}
+                    <div className="my-5">
+                        <h2 className="text-center mb-4">Il Nostro Team</h2>
+                        <div className="row g-4 justify-content-center">
+                            {/* Membro 1 - Nicola Domingo Rizzo */}
+                            <div className="col-12 col-md-4 text-center">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
+                                    <img
+                                        className="rounded-circle mb-3"
+                                        src="/dev_pic/nico.jpg"
+                                        alt="Foto di Nicola Domingo Rizzo"
+                                        style={{ width: "150px", height: "150px" }}
+                                    />
+                                    <h3 className="mb-1">Nicola Domingo Rizzo</h3>
+                                    <p>Back-End Developer</p>
+                                    <a
+                                        href="https://github.com/nicoladomingorizzo"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-dark"
+                                    >
+                                        <i className="bi bi-github fs-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Membro 2 - Adriano Rotondo */}
+                            <div className="col-12 col-md-4 text-center">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
+                                    <img
+                                        className="rounded-circle mb-3"
+                                        src="fluffman_pw/front-end/public/dev_pic/adriano.jpeg"
+                                        alt="Foto di Adriano Rotondo"
+                                        style={{ width: "150px", height: "150px" }}
+                                    />
+                                    <h3 className="mb-1">Adriano Rotondo</h3>
+                                    <p>Front-End Developer</p>
+                                    <a
+                                        href="https://github.com/Adriano-Rotondo-dev"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-dark"
+                                    >
+                                        <i className="bi bi-github fs-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Membro 3 - Francesco Colucci */}
+                            <div className="col-12 col-md-4 text-center">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
+                                    <img
+                                        className="rounded-circle mb-3"
+                                        src="/dev_pic/colucci.jpg"
+                                        alt="Foto di Francesco Colucci"
+                                        style={{ width: "150px", height: "150px" }}
+                                    />
+                                    <h3 className="mb-1">Francesco Colucci</h3>
+                                    <p>Front-end Developer</p>
+                                    <a
+                                        href="https://github.com/coluccifrancesco"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-dark"
+                                    >
+                                        <i className="bi bi-github fs-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Membro 4 - Mariya Dyshkant */}
+                            <div className="col-12 col-md-4 text-center">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
+                                    <img
+                                        className="rounded-circle mb-3"
+                                        src="/dev_pic/mariya.jpg"
+                                        alt="Foto di Mariya Dyshkant"
+                                        style={{ width: "150px", height: "150px" }}
+                                    />
+                                    <h3 className="mb-1">Mariya Dyshkant</h3>
+                                    <p>Front-end Developer</p>
+                                    <a
+                                        href="https://github.com/mariyadyshkant"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-dark"
+                                    >
+                                        <i className="bi bi-github fs-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Membro 5 - Francesco Salus */}
+                            <div className="col-12 col-md-4 text-center">
+                                <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
+                                    <img
+                                        className="rounded-circle mb-3"
+                                        src="/public/dev_pic/ciccio.jpg"
+                                        alt="Foto di Francesco Sales"
+                                        style={{ width: "150px", height: "150px" }}
+                                    />
+                                    <h3 className="mb-1">Francesco Sales</h3>
+                                    <p>Front-end Developer</p>
+                                    <a
+                                        href="https://github.com/FrancescoSls97"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-dark"
+                                    >
+                                        <i className="bi bi-github fs-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
