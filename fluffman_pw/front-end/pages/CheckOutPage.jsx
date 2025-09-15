@@ -46,6 +46,8 @@ const CheckoutPage = () => {
   // Nuovi stati per la validazione di nome e cognome
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
+  const [paymentErrors, setPaymentErrors] = useState({});
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -254,37 +256,37 @@ const CheckoutPage = () => {
     }
     setShowFieldErrors(false);
 
-    const errors = [];
+    const newErrors = {};
 
     const { cardNumber, expireDate, securityCode, cardOwner } = formData.payment;
 
+
     // Numero carta: 16 cifre con spazi
     if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber)) {
-      errors.push("Il numero di carta non è valido");
+      newErrors.cardNumber = "Il numero di carta non è valido";
     }
 
     // Data scadenza: formato MM/YY e mese valido
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expireDate)) {
-      errors.push("La data di scadenza non è valida");
+      newErrors.expireDate = "La data di scadenza non è valida";
     }
 
     // CVV: 3 o 4 cifre
     if (!/^\d{3,4}$/.test(securityCode)) {
-      errors.push("Il codice di sicurezza non è valido");
+      newErrors.securityCode = "Il codice di sicurezza non è valido";
     }
 
-    // Nuova validazione per il nome del titolare della carta: solo lettere e spazi.
-    if (!NAME_PATTERN.test(cardOwner.trim())) {
-      errors.push("Il nome del titolare non è valido (solo lettere e spazi)");
+    // Nome intestatario: almeno 2 caratteri
+    if (!cardOwner.trim() || cardOwner.trim().length < 2) {
+      newErrors.cardOwner = "Il nome dell'intestatario non è valido";
     }
 
-    if (errors.length > 0) {
-      alert(errors.join("\n")); // qui puoi anche mostrare errori in pagina
+    if (Object.keys(newErrors).length > 0) {
+      setPaymentErrors(newErrors);
       return;
     }
+    setPaymentErrors({});
 
-    alert("Dati carta validi! 🚀");
-    // qui in futuro potresti mandare i dati a un backend vero
 
     const shippingCost =
       totalPrice -
@@ -721,6 +723,7 @@ const CheckoutPage = () => {
           phoneError={phoneError}
           nameError={nameError}
           lastNameError={lastNameError}
+          paymentErrors={paymentErrors}
           showDeliveryAddress={showDeliveryAddress}
           setShowDeliveryAddress={setShowDeliveryAddress}
           handleAccordionToggle={handleAccordionToggle}

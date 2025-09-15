@@ -1,4 +1,4 @@
-export default function CardCheckout({ handleOrder, formData, handleDirectInputChange, handleInputChange, showFieldErrors, emailError, phoneError, showDeliveryAddress, setShowDeliveryAddress, handleAccordionToggle, isAccordionOpen, cartProducts, missingFields, totalPrice }) {
+export default function CardCheckout({ handleOrder, formData, handleDirectInputChange, handleInputChange, showFieldErrors, emailError, phoneError, paymentErrors, showDeliveryAddress, setShowDeliveryAddress, handleAccordionToggle, isAccordionOpen, cartProducts, missingFields, totalPrice }) {
     return (
         <div className="card card-checkout">
             <div className="form-section">
@@ -268,7 +268,13 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                         onChange={(e) => handleInputChange(e, "payment")}
                                         placeholder="1234 5678 9012 3456"
                                         maxLength="19"
+                                        style={paymentErrors.cardNumber ? { borderColor: '#b91c1c' } : {}}
                                     />
+                                    {paymentErrors.cardNumber && (
+                                        <p style={{ color: '#b91c1c', fontSize: '0.9rem' }}>
+                                            {paymentErrors.cardNumber}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="form-grid">
                                     <div className="form-group">
@@ -281,7 +287,13 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                             onChange={(e) => handleInputChange(e, "payment")}
                                             placeholder="MM/YY"
                                             maxLength="5"
+                                            style={paymentErrors.expireDate ? { borderColor: '#b91c1c' } : {}}
                                         />
+                                        {paymentErrors.expireDate && (
+                                            <p style={{ color: '#b91c1c', fontSize: '0.9rem' }}>
+                                                {paymentErrors.expireDate}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="securityCode">
@@ -295,7 +307,13 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                             onChange={(e) => handleInputChange(e, "payment")}
                                             placeholder="3 cifre sul retro"
                                             maxLength="3"
+                                            style={paymentErrors.securityCode ? { borderColor: '#b91c1c' } : {}}
                                         />
+                                        {paymentErrors.securityCode && (
+                                            <p style={{ color: '#b91c1c', fontSize: '0.9rem' }}>
+                                                {paymentErrors.securityCode}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="form-group">
@@ -309,7 +327,13 @@ export default function CardCheckout({ handleOrder, formData, handleDirectInputC
                                         value={formData.payment.cardOwner}
                                         onChange={(e) => handleInputChange(e, "payment")}
                                         placeholder="Mario Rossi"
+                                        style={paymentErrors.cardOwner ? { borderColor: '#b91c1c' } : {}}
                                     />
+                                    {paymentErrors.cardOwner && (
+                                        <p style={{ color: '#b91c1c', fontSize: '0.9rem' }}>
+                                            {paymentErrors.cardOwner}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}
