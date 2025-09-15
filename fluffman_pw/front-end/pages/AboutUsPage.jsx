@@ -13,7 +13,7 @@ export default function OurStoryPage() {
                         <div className="col-12 col-md-6">
                             <img
                                 className="img-fluid rounded shadow"
-                                src="/our_story_placeholder.png"
+                                src="/dev_team.png"
                                 alt="la nostra storia"
                             />
                         </div>
