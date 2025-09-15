@@ -25,6 +25,9 @@ export const VALID_DOMINIONS = [
 // regex per numero di telefono (solo cifre, 10 caratteri, senza spazi o trattini)
 export const PHONE_PATTERN = /^\+39 \d{10}$/;
 
+// Regex per nome e cognome (accetta lettere, spazi e caratteri accentati)
+export const NAME_PATTERN = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/;
+
 // URLs per i test e la produzione
 const BASE_URL = "http://localhost:3030";
 const SITE_BASE_URL = "http://localhost:3030"; // Cambia questo in "https://www.tuosito.com" in produzione!
@@ -40,7 +43,9 @@ const CheckoutPage = () => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [emailError, setEmailError] = useState(null);
   const [phoneError, setPhoneError] = useState(null);
-
+  // Nuovi stati per la validazione di nome e cognome
+  const [nameError, setNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -177,6 +182,17 @@ const CheckoutPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
+    // Validazione per nome
+    if (name === "name") {
+      const isValid = NAME_PATTERN.test(value.trim());
+      setNameError(!isValid);
+    }
+    // Validazione per cognome
+    if (name === "lastName") {
+      const isValid = NAME_PATTERN.test(value.trim());
+      setLastNameError(!isValid);
+    }
+
     if (name === "email") {
       if (value.trim() === "") {
         setEmailError(true); // vuoto = errore
@@ -197,8 +213,8 @@ const CheckoutPage = () => {
   const getMissingFields = () => {
     const { name, lastName, email, phone, billing } = formData;
     const fields = [];
-    if (!name) fields.push("name");
-    if (!lastName) fields.push("lastName");
+    if (!name || nameError) fields.push("name");
+    if (!lastName || lastNameError) fields.push("lastName");
     if (!email || emailError) fields.push("email");
     if (!phone || phoneError) fields.push("phone");
     if (!billing.address) fields.push("billing.address");
@@ -221,7 +237,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     setMissingFields(getMissingFields());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  }, [formData, nameError, lastNameError]);
 
 
 
@@ -257,9 +273,9 @@ const CheckoutPage = () => {
       errors.push("Il codice di sicurezza non è valido");
     }
 
-    // Nome intestatario: almeno 2 caratteri
-    if (!cardOwner.trim() || cardOwner.trim().length < 2) {
-      errors.push("Il nome dell'intestatario non è valido");
+    // Nuova validazione per il nome del titolare della carta: solo lettere e spazi.
+    if (!NAME_PATTERN.test(cardOwner.trim())) {
+      errors.push("Il nome del titolare non è valido (solo lettere e spazi)");
     }
 
     if (errors.length > 0) {
@@ -576,6 +592,15 @@ const CheckoutPage = () => {
           box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
           outline: none;
         }
+        /* Stili per gli input con errori */
+        .form-group input.input-error {
+            border-color: #ef4444; /* Colore rosso per il bordo */
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
         .checkbox-group {
           display: flex;
           align-items: center;
@@ -694,6 +719,8 @@ const CheckoutPage = () => {
           showFieldErrors={showFieldErrors}
           emailError={emailError}
           phoneError={phoneError}
+          nameError={nameError}
+          lastNameError={lastNameError}
           showDeliveryAddress={showDeliveryAddress}
           setShowDeliveryAddress={setShowDeliveryAddress}
           handleAccordionToggle={handleAccordionToggle}
