@@ -384,16 +384,16 @@ export default function CartPage() {
                         sum + product.price * product.currentQuantity,
                       0
                     ) ===
-                  0
-                    ? "Gratis"
+                    0
+                    ? "Spedizione gratuita"
                     : `€${(
-                        totalPrice -
-                        cartProducts.reduce(
-                          (sum, product) =>
-                            sum + product.price * product.currentQuantity,
-                          0
-                        )
-                      ).toFixed(2)}`}
+                      totalPrice -
+                      cartProducts.reduce(
+                        (sum, product) =>
+                          sum + product.price * product.currentQuantity,
+                        0
+                      )
+                    ).toFixed(2)}`}
                 </p>
               </div>
             </div>
