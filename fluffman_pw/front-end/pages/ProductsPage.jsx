@@ -368,17 +368,17 @@ export default function ProductsPage() {
                     </div>
                     {product.discount_price ? (
                       <div className="price-container d-flex align-items-center">
-                        <span className="text-decoration-line-through text-muted me-2 fs-6 fs-md-5">
+                        <span className="text-decoration-line-through text-muted me-2 fs-7 fs-md-5">
                           <FontAwesomeIcon icon={faEuroSign} />
                           {product.price}
                         </span>
-                        <span className="text-danger fw-bold fs-6 fs-md-5">
+                        <span className="text-danger fw-bold fs-7 fs-md-5">
                           <FontAwesomeIcon icon={faEuroSign} />
                           {product.discount_price}
                         </span>
                       </div>
                     ) : (
-                      <span className="price text-dark fw-bold fs-6 fs-md-5">
+                      <span className="price text-dark fw-bold fs-7 fs-md-5">
                         <FontAwesomeIcon icon={faEuroSign} />
                         {product.price}
                       </span>

@@ -107,6 +107,10 @@
     width: 100%;
   }
 }
+.fs-7 {
+  font-size: 0.75rem !important;
+  line-height: 1.2;
+}
 
 /* MEDIA QUERY  */
 @media (max-width: 768px) {
