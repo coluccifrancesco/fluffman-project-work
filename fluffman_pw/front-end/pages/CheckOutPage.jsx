@@ -352,7 +352,7 @@ const CheckoutPage = () => {
       <p>Gentile ${formData.name},</p>
         <p>Ti rigraziamo per aver acquistato presso il nostro PetShop Fluffman,</p>
         <p>in data ${new Date().toLocaleDateString()}</p>
-      <p>l tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
+      <p>Il tuo ordine <b>#${orderNumber}</b> è stato ricevuto con successo. Di seguito trovi il riepilogo:</p>
       
       <h2>Dettagli Ordine</h2>
       <ul>
