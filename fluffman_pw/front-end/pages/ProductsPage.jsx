@@ -359,7 +359,7 @@ export default function ProductsPage() {
                     onClick={() => navigate(`/products/${product.slug}`)}
                     style={{ cursor: "pointer" }}
                   >
-                    <div>
+                    <div className="flex-shrink-1">
                       <strong>{product.name}</strong> <br />
                       <small className="text-muted">
                         {brands.find((b) => b.id === product.brand_id)?.name ||
@@ -367,7 +367,7 @@ export default function ProductsPage() {
                       </small>
                     </div>
                     {product.discount_price ? (
-                      <div className="price-container d-flex align-items-center">
+                      <div className="price-container d-flex align-items-center flex-shrink-0">
                         <span className="text-decoration-line-through text-muted me-2 fs-7 fs-md-5">
                           <FontAwesomeIcon icon={faEuroSign} />
                           {product.price}
@@ -378,7 +378,7 @@ export default function ProductsPage() {
                         </span>
                       </div>
                     ) : (
-                      <span className="price text-dark fw-bold fs-7 fs-md-5">
+                      <span className="price text-dark fw-bold fs-7 fs-md-5 flex-shrink-0">
                         <FontAwesomeIcon icon={faEuroSign} />
                         {product.price}
                       </span>
