@@ -82,7 +82,7 @@ export default function OurStoryPage() {
                                 <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
                                     <img
                                         className="rounded-circle mb-3"
-                                        src="/dev_pic/nico.jpg"
+                                        src="/dev_pic/nico.jpeg"
                                         alt="Foto di Nicola Domingo Rizzo"
                                         style={{ width: "150px", height: "150px" }}
                                     />
@@ -104,7 +104,7 @@ export default function OurStoryPage() {
                                 <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
                                     <img
                                         className="rounded-circle mb-3"
-                                        src="fluffman_pw/front-end/public/dev_pic/adriano.jpeg"
+                                        src="/dev_pic/adriano.jpeg"
                                         alt="Foto di Adriano Rotondo"
                                         style={{ width: "150px", height: "150px" }}
                                     />
@@ -126,7 +126,7 @@ export default function OurStoryPage() {
                                 <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
                                     <img
                                         className="rounded-circle mb-3"
-                                        src="/dev_pic/colucci.jpg"
+                                        src="/dev_pic/colucci.jpeg"
                                         alt="Foto di Francesco Colucci"
                                         style={{ width: "150px", height: "150px" }}
                                     />
@@ -148,7 +148,7 @@ export default function OurStoryPage() {
                                 <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
                                     <img
                                         className="rounded-circle mb-3"
-                                        src="/dev_pic/mariya.jpg"
+                                        src="/dev_pic/mariya.jpeg"
                                         alt="Foto di Mariya Dyshkant"
                                         style={{ width: "150px", height: "150px" }}
                                     />
@@ -170,7 +170,7 @@ export default function OurStoryPage() {
                                 <div className="p-4 bg-light border rounded shadow-sm h-100 d-flex flex-column align-items-center">
                                     <img
                                         className="rounded-circle mb-3"
-                                        src="/public/dev_pic/ciccio.jpg"
+                                        src="/dev_pic/ciccio.jpeg"
                                         alt="Foto di Francesco Sales"
                                         style={{ width: "150px", height: "150px" }}
                                     />
