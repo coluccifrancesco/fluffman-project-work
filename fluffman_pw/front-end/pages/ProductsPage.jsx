@@ -7,8 +7,6 @@ import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductPages.css";
-// import { useWishlist } from "../context/WishlistContext";
-// import { useCart } from "../context/CartContext";
 
 // Hook per rilevare larghezza finestra
 function useWindowWidth() {
@@ -24,7 +22,6 @@ function useWindowWidth() {
 }
 
 export default function ProductsPage() {
-  // valori per barra di ricerca
   const location = useLocation();
   const [searchValue, setSearchValue] = useState(
     location.state?.researchValue || ""
@@ -37,13 +34,9 @@ export default function ProductsPage() {
   const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
-  // Usa context per wishlist e carrello
-  // const { wishlist } = useWishlist();
-  // const { cart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Stati e costanti per la paginazione
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
 
@@ -106,9 +99,18 @@ export default function ProductsPage() {
     }
   };
 
-  // Resetta la paginazione quando i prodotti filtrati cambiano
+  // Funzione per scrollare la pagina in alto
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // Resetta la paginazione e scrolla in alto quando i prodotti filtrati cambiano
   useEffect(() => {
     setCurrentPage(1);
+    scrollToTop();
   }, [filteredProducts]);
 
   useEffect(() => {
@@ -401,7 +403,10 @@ export default function ProductsPage() {
           {filteredProducts.length > 0 && (
             <div className="pagination-controls d-flex justify-content-center align-items-center pt-4 pb-2">
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                onClick={() => {
+                  setCurrentPage((prev) => Math.max(prev - 1, 1));
+                  scrollToTop();
+                }}
                 disabled={currentPage === 1}
                 className="btn me-2 text-white btn-success"
               >
@@ -411,9 +416,10 @@ export default function ProductsPage() {
                 Pagina {currentPage} di {totalPages}
               </span>
               <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
+                onClick={() => {
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                  scrollToTop();
+                }}
                 disabled={currentPage === totalPages}
                 className="btn ms-2 text-white btn-success"
               >
