@@ -147,7 +147,7 @@ function SingleProductPage() {
                   type="text"
                   className="form-control text-center mx-2"
                   style={{ width: "60px" }}
-                  value={quantity} />
+                  defaultValue={quantity} />
                 <button
                   className="btn btn-outline-secondary btn-sm"
                   onClick={handleIncreaseQuantity}
